@@ -1,0 +1,135 @@
+package com.liu.springbootdemo.controller;
+
+import com.liu.springbootdemo.entity.Comment;
+import com.liu.springbootdemo.entity.Post;
+import com.liu.springbootdemo.entity.VO.Result;
+import com.liu.springbootdemo.entity.User;
+import com.liu.springbootdemo.mapper.CommentMapper;
+import com.liu.springbootdemo.mapper.UserMapper;
+import com.liu.springbootdemo.service.CommentService;
+import com.liu.springbootdemo.service.PostService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+
+/**
+ * Controller层
+ * 接收请求
+ * 参数校验与解析
+ * 调用Service层
+ * 返回统一的响应结果
+ */
+@RestController
+@RequestMapping("api/posts")
+public class PostController {
+    @Autowired
+    private PostService postService;
+
+    @Autowired
+    private CommentService commentService;
+
+    /**
+     * 创建帖子
+     * @param post
+     * @return 成功返回200和帖子内容
+     */
+    @PostMapping()
+    public ResponseEntity<Result<Post>> createPost(@RequestBody Post post){
+        // Controller只负责调用Service，不再关心如何获取用户ID
+        Post createPost = postService.createPost(post);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Result.success(createPost));
+    }
+
+    /**
+     * 更新帖子，会检查当前登录用户
+     * @param postId
+     * @param post
+     * @return  成功返回200和更新后帖子
+     */
+    @PatchMapping("/{id}")
+    public Result updatePost(@PathVariable("id") Long postId, @RequestBody Post post){
+        //结果是一样的，还是Patch更完善
+        post.setId(postId); //必须改不然后续Service或者其他代码使用了post里的id就会改错帖子
+        return Result.success(postService.updatePost(postId,post));    //默认返回则是200
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePost(@PathVariable("id") Long postId){
+        System.out.println("要删除的postId="+postId);
+
+        postService.deletePost(postId);
+        return ResponseEntity.noContent().build();
+        //return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);// 204状态码，
+    }
+
+
+    /**
+     * 获取帖子，过滤器不设检查，会自动修正分页，默认1页,10行，最大100行
+     * @param page
+     * @param size
+     * @return  200和当页帖子列表
+     */
+    @GetMapping()
+    public Result getPostsByPage(
+            @RequestParam(value = "page", defaultValue = "1", required = false) int page,
+            @RequestParam(value = "size", defaultValue = "20", required = false) int size
+    ){
+
+        if(page<1)page = 1;     //修正请求为默认页
+        if(size<1)size = 10;    //默认值10
+        if(size>100)size = 100;
+
+        return Result.success(postService.getPostsByPage(page,size));
+     }   //默认返回200
+
+    /**
+     * 获取单个帖子
+     *
+     * @return
+     */
+    @GetMapping("/{id}")
+    public Result getPostById(@PathVariable("id") Long postId){
+        return Result.success(postService.getPostById(postId));
+    }
+
+    @GetMapping("/allTitles")
+    public Result<List<Post>> getAllPostsTitle(){
+        return Result.success(postService.getAllTitles());
+    }
+
+
+
+    //-----------------------------Comment评论API处理-------------------------------
+    @PutMapping("{postId}/comments")
+    public ResponseEntity<Result<Comment>> createComment(@PathVariable("postId") Long postId,@RequestBody Comment comment){
+        Comment returnComment = commentService.createComment(postId,comment);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Result.success(returnComment));
+    }
+
+    /**
+     * 分页获取postId下评论
+     * @param postId
+     * @param page
+     * @param size
+     * @return  200和评论数组
+     */
+    @GetMapping("{postId}/comments")
+    public Result<List<Comment>> getCommentByPostIdByPage(
+            @PathVariable("postId") Long postId,
+            @RequestParam(value = "page",defaultValue = "1",required = false) int page,
+            @RequestParam(value = "size",defaultValue = "10",required = false) int size){
+        if(page<1)page = 1;
+        if(size<1)size = 10;
+        if(size>100)size =100;
+        return Result.success(commentService.findByPostIdByPage(postId,page,size));
+    }
+
+
+}

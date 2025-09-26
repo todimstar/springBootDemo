@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!-- Maven模型版本，固定为4.0.0 -->
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- 父项目配置，继承Spring Boot的默认配置 -->
+    <parent>
+        <!-- Spring Boot的groupId -->
+        <groupId>org.springframework.boot</groupId>
+        <!-- Spring Boot的starter父项目 -->
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <!-- Spring Boot版本号 -->
+        <version>3.5.5</version>
+        <!-- 父项目的相对路径，用于从仓库查找父项目 -->
+        <relativePath/>
+    </parent>
+
+    <!-- 当前项目的groupId，通常为公司或组织的标识 -->
+    <groupId>com.liu</groupId>
+    <!-- 当前项目的artifactId，即项目名称 -->
+    <artifactId>springBootDemo</artifactId>
+    <!-- 当前项目的版本号 -->
+    <version>0.0.1-SNAPSHOT</version>
+    <!-- 项目名称 -->
+    <name>springBootDemo</name>
+    <!-- 项目描述 -->
+    <description>springBootDemo</description>
+
+    <!-- 项目URL、许可证、开发者和SCM信息，可根据需要填写 -->
+    <url/>
+    <licenses>
+        <license/>
+    </licenses>
+    <developers>
+        <developer/>
+    </developers>
+    <scm>
+        <connection/>
+        <developerConnection/>
+        <tag/>
+        <url/>
+    </scm>
+
+    <!-- 项目属性配置 -->
+    <properties>
+        <!-- 指定Java版本为17 -->
+        <java.version>17</java.version>
+    </properties>
+
+    <!-- 项目依赖配置 -->
+    <dependencies>
+        <!-- Spring Boot Web Starter，包含Web开发所需的核心依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Spring Boot Test Starter，包含测试所需的核心依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <!-- 作用域为test，表示只在测试时使用 -->
+            <scope>test</scope>
+        </dependency>
+        <!-- MySQL 驱动 -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.33</version><!-- 使用通义给的版本 -->
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- MyBatis Spring Boot Starter -->
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>3.0.3</version> <!-- 建议使用较新稳定版 -->
+        </dependency>
+        <!-- 开发者工具，实时更新源码不用重启项目 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- Spring Security哈希加密依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <!-- Spring Security测试依赖 -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+
+        <!-- JWT (JSON Web Token) 依赖 -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.12.6</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.12.6</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>0.12.6</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- lombok实体类自动生成getset toString -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.20</version>
+        </dependency>
+
+    </dependencies>
+
+    <!-- 构建配置 -->
+    <build>
+        <plugins>
+            <!-- Spring Boot Maven插件，用于打包可执行jar -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

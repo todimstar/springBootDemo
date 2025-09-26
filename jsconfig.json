@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "target": "ES6",
+    "jsx": "preserve",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["community-frontend/src/*"]
+    },
+    "allowImportingTsExtensions": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true
+  },
+  "include": ["community-frontend/src/**/*.js", "community-frontend/src/**/*.jsx", "community-frontend/src/**/*.vue"],
+  "exclude": ["community-frontend/node_modules", "**/node_modules/*", "community-frontend/dist"]
+}
