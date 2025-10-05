@@ -14,3 +14,12 @@
 
 2025.09.25 12:25
 需要理清auth.js中pinia跟App.vue的联通
+
+2025.10.03 22:10
+用StoreToRefs来保持响应式,解构出isAuthenticated和user
+理解了computed的用法
+在App.vue用useRoute来获取当前路由，判断是否为登录页
+在App.vue中用v-if来判断是否显示欢迎信息
+用localStorage测试清空登录信息，刷新后需要重新登录
+
+2025.10.04 00:20

@@ -1,19 +1,25 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView,useRoute } from 'vue-router'
 // 引入 storeToRefs，这是一个辅助函数，可以帮助我们从 store 中解构出响应式的数据
 // 英文解释: storeToRefs 是一个来自 Pinia 的函数 (function)，
 // 它的作用是将一个 store 对象转换成一个包含所有 state、getter 和 action 的普通对象，
 // 但这个对象里的每一个属性都是一个 ref。这样我们就可以在不失去响应性的情况下解构 store。
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores/auth.js'
+import {computed} from 'vue'
 
 // 获取 auth store 实例
 const authStore = useAuthStore()
 
-// 使用 storeToRefs 来解构，确保 isAuthenticated 和 user 保持响应性
+// 使用 store-To-Refs 保持响应式来解构，确保 isAuthenticated 和 user 保持响应性
 const { isAuthenticated, user } = storeToRefs(authStore)
 // logout 是一个 action (动作)，可以直接从 store 中解构
 const { logout } = authStore
+const route = useRoute()
+// 判断当前路由是否为登录页
+const isLoginRoute = computed(() => {
+  return route.path === '/login' || route.name === 'login'
+})
 </script>
 
 <template>
@@ -26,16 +32,18 @@ const { logout } = authStore
         <router-link to="/posts">帖子列表</router-link>
         <router-link :to="{ name: 'about' }">关于我们</router-link>
 
-        <!-- 未登录时显示 -->
-        <router-link v-if="!isAuthenticated" to="/login">登录</router-link>
+        <!-- 不在登录页面时才显示用户信息 -->
+        <div class="user-info" v-if="!isLoginRoute">
+          <!-- 未登录时显示 -->
+          <router-link v-if="!isAuthenticated" to="/login" >登录</router-link>
 
-        <!-- 登录后显示 -->
-        <div v-else class="user-info">
-          <router-link to="/" class="profile-link">欢迎, {{ user.username }}</router-link>
-          <!-- @click.prevent 阻止 a 标签的默认跳转行为 -->
-          <a href="#" @click.prevent="logout" class="logout-link">登出</a>
+          <!-- 登录后显示 -->
+          <div v-else class="user-info">
+            <router-link to="/" class="profile-link">欢迎, {{ user.username }}</router-link>
+            <!-- @click.prevent 阻止 a 标签的默认跳转行为 -->
+            <a href="#" @click.prevent="logout" class="logout-link">登出</a>
+          </div>
         </div>
-<!--        <p>isAuthenticated:{{ isAuthenticated }}</p>-->
       </nav>
     </div>
   </header>
@@ -122,5 +130,10 @@ nav a:hover {
 .logout-link:hover {
   color: #fff;
   background-color: #f44336;
+}
+.user-info .profile-link {
+  background-color: #7accf528; /* 自定义底色 */
+  color: #251924;            /* 为了对比度，顺便设定文字颜色 */
+  font-weight: 600;          /* 让欢迎信息更醒目 */
 }
 </style>
