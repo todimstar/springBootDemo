@@ -12,4 +12,9 @@ public class Comment {
     private String content; //评论内容                  ，Service中检查是否为空
     private LocalDateTime createTime;   //评论创建时间   ，数据库负责
     private String ipAddress;  //评论者ip               ，待实现
+    //新增
+    private Long parentId; //父评论id ,默认为空
+    private Long replyToUserId;  //回复的用户id，默认为空
+    private int likeCount; //点赞量
+    private boolean isDeleted; //是否被删除
 }

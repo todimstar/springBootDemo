@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发布帖子 - TechForum</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+        
+        .navbar {
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+            color: #409eff;
+            text-decoration: none;
+        }
+        
+        .main-container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        
+        .editor-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+        
+        .editor-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid #f0f2f5;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .page-subtitle {
+            font-size: 14px;
+            color: #909399;
+        }
+        
+        .editor-body {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 24px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #303133;
+        }
+        
+        .form-label.required::after {
+            content: ' *';
+            color: #ff4d4f;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #409eff;
+            box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.1);
+        }
+        
+        .title-input {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        select.form-input {
+            cursor: pointer;
+        }
+        
+        .editor-toolbar {
+            display: flex;
+            gap: 10px;
+            padding: 10px 15px;
+            background: #f9fafc;
+            border: 1px solid #dcdfe6;
+            border-bottom: none;
+            border-radius: 4px 4px 0 0;
+        }
+        
+        .toolbar-btn {
+            padding: 6px 12px;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .toolbar-btn:hover {
+            border-color: #409eff;
+            color: #409eff;
+        }
+        
+        .editor-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: #dcdfe6;
+            border: 1px solid #dcdfe6;
+            border-radius: 0 0 4px 4px;
+            overflow: hidden;
+        }
+        
+        .editor-input {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            resize: vertical;
+            min-height: 400px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            background: #fff;
+        }
+        
+        .editor-input:focus {
+            outline: none;
+        }
+        
+        .editor-preview {
+            padding: 15px;
+            background: #fff;
+            overflow-y: auto;
+            min-height: 400px;
+            max-height: 600px;
+        }
+        
+        .editor-preview h1,
+        .editor-preview h2,
+        .editor-preview h3 {
+            margin: 16px 0 12px;
+            font-weight: 600;
+        }
+        
+        .editor-preview h1 {
+            font-size: 24px;
+            border-bottom: 1px solid #f0f2f5;
+            padding-bottom: 8px;
+        }
+        
+        .editor-preview h2 {
+            font-size: 20px;
+        }
+        
+        .editor-preview h3 {
+            font-size: 18px;
+        }
+        
+        .editor-preview p {
+            margin-bottom: 12px;
+            line-height: 1.8;
+        }
+        
+        .editor-preview code {
+            background: #f5f7fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            color: #e83e8c;
+        }
+        
+        .editor-preview pre {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 16px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+        
+        .editor-preview pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+        
+        .editor-preview ul,
+        .editor-preview ol {
+            margin: 12px 0;
+            padding-left: 30px;
+        }
+        
+        .editor-preview li {
+            margin-bottom: 8px;
+        }
+        
+        .tips-box {
+            background: #ecf5ff;
+            border: 1px solid #b3d8ff;
+            border-radius: 4px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+        
+        .tips-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        
+        .tips-content {
+            font-size: 13px;
+            color: #409eff;
+            line-height: 1.6;
+        }
+        
+        .cover-upload {
+            width: 100%;
+            height: 200px;
+            border: 2px dashed #dcdfe6;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+        
+        .cover-upload:hover {
+            border-color: #409eff;
+            background: #f5f9ff;
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+            color: #c0c4cc;
+        }
+        
+        .upload-text {
+            color: #606266;
+            font-size: 14px;
+        }
+        
+        .upload-hint {
+            color: #909399;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        .cover-preview {
+            width: 100%;
+            height: 200px;
+            border-radius: 4px;
+            object-fit: cover;
+        }
+        
+        .editor-footer {
+            padding: 20px 30px;
+            border-top: 1px solid #f0f2f5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .footer-left {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+        
+        .footer-right {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 10px 24px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #409eff;
+            color: #fff;
+        }
+        
+        .btn-primary:hover {
+            background: #66b1ff;
+        }
+        
+        .btn-default {
+            background: #fff;
+            border: 1px solid #dcdfe6;
+            color: #606266;
+        }
+        
+        .btn-default:hover {
+            border-color: #409eff;
+            color: #409eff;
+        }
+        
+        .char-count {
+            font-size: 12px;
+            color: #909399;
+        }
+        
+        @media (max-width: 768px) {
+            .editor-area {
+                grid-template-columns: 1fr;
+            }
+            .editor-preview {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="6.homepage-prototype.html" class="logo">🚀 TechForum</a>
+            <div>
+                <span style="color: #909399; font-size: 14px;">👤 张三</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="editor-card">
+            <div class="editor-header">
+                <h1 class="page-title">✏️ 发布新帖子</h1>
+                <p class="page-subtitle">分享你的知识和经验，帮助更多的人</p>
+            </div>
+
+            <div class="editor-body">
+                <!-- 提示信息 -->
+                <div class="tips-box">
+                    <div class="tips-icon">💡</div>
+                    <div class="tips-content">
+                        <strong>发帖提示：</strong><br>
+                        • 使用清晰的标题，让其他人一眼看出主题<br>
+                        • 支持Markdown语法，让内容更加美观<br>
+                        • 选择合适的分区，帮助内容被更多人发现<br>
+                        • 请遵守社区规范，不要发布违规内容
+                    </div>
+                </div>
+
+                <!-- 标题 -->
+                <div class="form-group">
+                    <label class="form-label required">帖子标题</label>
+                    <input 
+                        type="text" 
+                        class="form-input title-input" 
+                        placeholder="输入一个吸引人的标题..." 
+                        maxlength="100"
+                        oninput="updateCharCount('title', this.value, 100)"
+                    >
+                    <div class="char-count" style="text-align: right; margin-top: 5px;">
+                        <span id="title-count">0</span> / 100
+                    </div>
+                </div>
+
+                <!-- 分区选择 -->
+                <div class="form-group">
+                    <label class="form-label required">选择分区</label>
+                    <select class="form-input">
+                        <option value="">请选择分区</option>
+                        <option value="1">💻 技术分享</option>
+                        <option value="2">💼 职场生活</option>
+                        <option value="3">❓ 问答求助</option>
+                        <option value="4">🔧 工具资源</option>
+                        <option value="5">💬 闲聊灌水</option>
+                    </select>
+                </div>
+
+                <!-- 封面图 -->
+                <div class="form-group">
+                    <label class="form-label">封面图（可选）</label>
+                    <div class="cover-upload" onclick="document.getElementById('cover-input').click()">
+                        <div class="upload-icon">📷</div>
+                        <div class="upload-text">点击上传封面图</div>
+                        <div class="upload-hint">建议尺寸：1200×630，支持JPG、PNG格式，最大5MB</div>
+                    </div>
+                    <input type="file" id="cover-input" accept="image/*" style="display: none;" onchange="previewCover(this)">
+                </div>
+
+                <!-- Markdown编辑器 -->
+                <div class="form-group">
+                    <label class="form-label required">帖子内容</label>
+                    
+                    <!-- 工具栏 -->
+                    <div class="editor-toolbar">
+                        <button class="toolbar-btn" onclick="insertMarkdown('# ', '')">H1</button>
+                        <button class="toolbar-btn" onclick="insertMarkdown('## ', '')">H2</button>
+                        <button class="toolbar-btn" onclick="insertMarkdown('### ', '')">H3</button>
+                        <button class="toolbar-btn" onclick="insertMarkdown('**', '**')">B</button>
+                        <button class="toolbar-btn" onclick="insertMarkdown('*', '*')">I</button>
+                        <button class="toolbar-btn" onclick="insertMarkdown('`', '`')">Code</button>
+                        <button class="toolbar-btn" onclick="insertMarkdown('```\n', '\n```')">代码块</button>
+                        <button class="toolbar-btn" onclick="insertMarkdown('[', '](url)')">链接</button>
+                        <button class="toolbar-btn" onclick="uploadImage()">📷 图片</button>
+                    </div>
+                    
+                    <!-- 编辑区域 -->
+                    <div class="editor-area">
+                        <textarea 
+                            id="markdown-input"
+                            class="editor-input" 
+                            placeholder="在这里输入帖子内容，支持Markdown语法...
+
+示例：
+
+# 一级标题
+## 二级标题
+
+**粗体文字** *斜体文字*
+
+- 列表项1
+- 列表项2
+
+```java
+// 代码块示例
+public class Hello {
+    public static void main(String[] args) {
+        System.out.println(&quot;Hello, World!&quot;);
+    }
+}
+```
+
+[链接文字](https://example.com)"
+                            oninput="updatePreview(this.value)"
+                        ></textarea>
+                        
+                        <div class="editor-preview" id="preview">
+                            <p style="color: #909399; text-align: center; padding: 40px 20px;">
+                                实时预览将在这里显示...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="editor-footer">
+                <div class="footer-left">
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="save-draft">
+                        <span>保存为草稿</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="notify-followers">
+                        <span>通知我的粉丝</span>
+                    </label>
+                </div>
+                <div class="footer-right">
+                    <button class="btn btn-default" onclick="saveDraft()">保存草稿</button>
+                    <button class="btn btn-primary" onclick="publishPost()">发布帖子</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 更新字符计数
+        function updateCharCount(type, value, max) {
+            document.getElementById(type + '-count').textContent = value.length;
+        }
+
+        // 插入Markdown语法
+        function insertMarkdown(before, after) {
+            const textarea = document.getElementById('markdown-input');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+            const selectedText = text.substring(start, end);
+            
+            const newText = text.substring(0, start) + before + selectedText + after + text.substring(end);
+            textarea.value = newText;
+            
+            // 更新光标位置
+            const newCursorPos = start + before.length + selectedText.length + after.length;
+            textarea.setSelectionRange(newCursorPos, newCursorPos);
+            textarea.focus();
+            
+            updatePreview(newText);
+        }
+
+        // 更新预览
+        function updatePreview(markdown) {
+            const preview = document.getElementById('preview');
+            
+            // 简单的Markdown渲染（实际项目中应使用marked.js等库）
+            let html = markdown
+                // 标题
+                .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+                .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+                .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+                // 粗体和斜体
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                // 代码
+                .replace(/`(.+?)`/g, '<code>$1</code>')
+                // 链接
+                .replace(/\[([^\]]+)\]\(([^\)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
+                // 列表
+                .replace(/^\- (.+)$/gim, '<li>$1</li>')
+                // 段落
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/\n/g, '<br>');
+            
+            // 处理代码块
+            html = html.replace(/```([a-z]*)\n([\s\S]*?)```/g, function(match, lang, code) {
+                return '<pre><code>' + code.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</code></pre>';
+            });
+            
+            // 包裹在p标签中
+            if (html.trim()) {
+                html = '<p>' + html + '</p>';
+                // 清理多余的p标签
+                html = html.replace(/<p><\/p>/g, '');
+                html = html.replace(/<p><pre>/g, '<pre>').replace(/<\/pre><\/p>/g, '</pre>');
+                html = html.replace(/<p><h/g, '<h').replace(/<\/h([123])><\/p>/g, '</h$1>');
+            } else {
+                html = '<p style="color: #909399; text-align: center; padding: 40px 20px;">实时预览将在这里显示...</p>';
+            }
+            
+            preview.innerHTML = html;
+        }
+
+        // 上传图片
+        function uploadImage() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    // 实际项目中应该上传到服务器
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const imageUrl = event.target.result;
+                        insertMarkdown('![图片描述](', ')');
+                        // 这里应该替换为实际的图片URL
+                        alert('图片上传功能需要后端支持。临时URL：' + imageUrl.substring(0, 50) + '...');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            input.click();
+        }
+
+        // 预览封面
+        function previewCover(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = input.parentElement;
+                    preview.innerHTML = '<img src="' + e.target.result + '" class="cover-preview">';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // 保存草稿
+        function saveDraft() {
+            const title = document.querySelector('.title-input').value;
+            if (!title.trim()) {
+                alert('请输入标题');
+                return;
+            }
+            alert('草稿已保存！');
+        }
+
+        // 发布帖子
+        function publishPost() {
+            const title = document.querySelector('.title-input').value;
+            const category = document.querySelector('select').value;
+            const content = document.getElementById('markdown-input').value;
+            
+            if (!title.trim()) {
+                alert('请输入标题');
+                return;
+            }
+            if (!category) {
+                alert('请选择分区');
+                return;
+            }
+            if (!content.trim()) {
+                alert('请输入内容');
+                return;
+            }
+            
+            alert('帖子发布成功！');
+            // 实际项目中应该提交到后端
+            window.location.href = '7.post-detail-prototype.html';
+        }
+    </script>
+</body>
+</html>

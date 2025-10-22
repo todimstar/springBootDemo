@@ -12,4 +12,16 @@ public class Post {
     private String content; // 内容
     private LocalDateTime createTime;//创建时间
     private LocalDateTime updateTime;//修改时间
+    //新增
+    private Long categoryId;    //分区id
+    private String coverImage; //封面图URL
+    private int viewCount; //浏览量
+    private int likeCount; //点赞数
+    private int collectCount;  //收藏数
+    private int commentCount;  //评论量
+    private int status; //状态
+    private boolean isPinned;  //是否置顶
+    private boolean isEssence; //是否精华
+    private String ipAddress; //发布者IP
+
 }

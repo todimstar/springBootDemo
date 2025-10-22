@@ -1,8 +1,7 @@
 package com.liu.springbootdemo.utils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.liu.springbootdemo.entity.VO.Result;
+import com.liu.springbootdemo.POJO.vo.Result;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;

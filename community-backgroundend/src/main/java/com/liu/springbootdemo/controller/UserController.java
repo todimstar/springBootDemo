@@ -1,14 +1,15 @@
 package com.liu.springbootdemo.controller;
 
-import com.liu.springbootdemo.entity.DTO.LoginInControllerDTO;
-import com.liu.springbootdemo.entity.DTO.LoginResponseDTO;
-import com.liu.springbootdemo.entity.VO.Result;
+import com.liu.springbootdemo.POJO.dto.LoginInControllerDTO;
+import com.liu.springbootdemo.POJO.dto.LoginResponseDTO;
+import com.liu.springbootdemo.POJO.vo.Result;
 import com.liu.springbootdemo.entity.User;
 import com.liu.springbootdemo.exception.InvalidInputException;
 import com.liu.springbootdemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -92,6 +93,7 @@ public class UserController {
     // }
 
     @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
     public Result<List<User>> getAllUser(){
         return Result.success(userService.getAllUser());
     }

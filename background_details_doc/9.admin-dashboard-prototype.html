@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台 - TechForum</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
+            background: #f0f2f5;
+            color: #333;
+        }
+        
+        .admin-layout {
+            display: flex;
+            height: 100vh;
+        }
+        
+        /* 左侧菜单 */
+        .sidebar {
+            width: 240px;
+            background: #001529;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo {
+            padding: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .menu {
+            flex: 1;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+        
+        .menu-item {
+            padding: 12px 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255,255,255,0.65);
+        }
+        
+        .menu-item:hover {
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+        }
+        
+        .menu-item.active {
+            background: #1890ff;
+            color: #fff;
+        }
+        
+        /* 右侧内容区 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        /* 顶部导航 */
+        .header {
+            background: #fff;
+            padding: 0 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 4px rgba(0,21,41,0.08);
+        }
+        
+        .breadcrumb {
+            font-size: 14px;
+            color: #8c8c8c;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        
+        .avatar-small {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: bold;
+        }
+        
+        /* 内容区域 */
+        .content {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+        
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: #fff;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .stat-title {
+            font-size: 14px;
+            color: #8c8c8c;
+        }
+        
+        .stat-icon {
+            font-size: 32px;
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: 600;
+            color: #262626;
+        }
+        
+        .stat-footer {
+            margin-top: 12px;
+            font-size: 12px;
+            color: #8c8c8c;
+        }
+        
+        /* 内容卡片 */
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+            margin-bottom: 24px;
+        }
+        
+        .card-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .card-body {
+            padding: 24px;
+        }
+        
+        /* 表格 */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            text-align: left;
+            padding: 12px;
+            background: #fafafa;
+            border-bottom: 1px solid #f0f0f0;
+            font-weight: 600;
+            color: #262626;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        tr:hover {
+            background: #fafafa;
+        }
+        
+        /* 按钮 */
+        .btn {
+            padding: 6px 16px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #1890ff;
+            color: #fff;
+        }
+        
+        .btn-primary:hover {
+            background: #40a9ff;
+        }
+        
+        .btn-success {
+            background: #52c41a;
+            color: #fff;
+        }
+        
+        .btn-success:hover {
+            background: #73d13d;
+        }
+        
+        .btn-danger {
+            background: #ff4d4f;
+            color: #fff;
+        }
+        
+        .btn-danger:hover {
+            background: #ff7875;
+        }
+        
+        .btn-default {
+            background: #fff;
+            border: 1px solid #d9d9d9;
+            color: #262626;
+        }
+        
+        .btn-default:hover {
+            border-color: #40a9ff;
+            color: #40a9ff;
+        }
+        
+        /* 标签 */
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .tag-pending {
+            background: #fff7e6;
+            color: #fa8c16;
+        }
+        
+        .tag-approved {
+            background: #f6ffed;
+            color: #52c41a;
+        }
+        
+        .tag-rejected {
+            background: #fff1f0;
+            color: #ff4d4f;
+        }
+        
+        /* 搜索栏 */
+        .toolbar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .search-input {
+            flex: 1;
+            max-width: 300px;
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #40a9ff;
+        }
+        
+        select {
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        /* 分页 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+        
+        .page-btn {
+            padding: 6px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .page-btn:hover {
+            color: #40a9ff;
+            border-color: #40a9ff;
+        }
+        
+        .page-btn.active {
+            background: #1890ff;
+            color: #fff;
+            border-color: #1890ff;
+        }
+        
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: #fff;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .modal-close {
+            cursor: pointer;
+            font-size: 20px;
+            color: #8c8c8c;
+        }
+        
+        .modal-body {
+            padding: 24px;
+        }
+        
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+        }
+        
+        textarea.form-input {
+            resize: vertical;
+            min-height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- 左侧菜单 -->
+        <aside class="sidebar">
+            <div class="logo">
+                🚀 TechForum
+            </div>
+            <nav class="menu">
+                <div class="menu-item active" onclick="showPage('dashboard')">
+                    📊 数据总览
+                </div>
+                <div class="menu-item" onclick="showPage('posts')">
+                    📝 帖子管理
+                </div>
+                <div class="menu-item" onclick="showPage('review')">
+                    ✅ 帖子审核
+                </div>
+                <div class="menu-item" onclick="showPage('reports')">
+                    ⚠️ 举报处理
+                </div>
+                <div class="menu-item" onclick="showPage('users')">
+                    👥 用户管理
+                </div>
+                <div class="menu-item" onclick="showPage('categories')">
+                    📚 分区管理
+                </div>
+            </nav>
+        </aside>
+
+        <!-- 右侧内容 -->
+        <div class="main-content">
+            <!-- 顶部导航 -->
+            <header class="header">
+                <div class="breadcrumb">
+                    首页 / 数据总览
+                </div>
+                <div class="header-right">
+                    <span>🔔</span>
+                    <div class="user-info">
+                        <div class="avatar-small">管</div>
+                        <span>管理员</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 内容区域 -->
+            <main class="content">
+                <!-- 数据总览页面 -->
+                <div id="dashboard-page">
+                    <h1 class="page-title">数据总览</h1>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-title">总用户数</div>
+                                <div class="stat-icon">👥</div>
+                            </div>
+                            <div class="stat-value">12,345</div>
+                            <div class="stat-footer">
+                                较昨日 +234
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-title">总帖子数</div>
+                                <div class="stat-icon">📝</div>
+                            </div>
+                            <div class="stat-value">8,567</div>
+                            <div class="stat-footer">
+                                较昨日 +89
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-title">待审核帖子</div>
+                                <div class="stat-icon">⏳</div>
+                            </div>
+                            <div class="stat-value">23</div>
+                            <div class="stat-footer">
+                                需要处理
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-title">待处理举报</div>
+                                <div class="stat-icon">⚠️</div>
+                            </div>
+                            <div class="stat-value">5</div>
+                            <div class="stat-footer">
+                                需要处理
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">最近活动</div>
+                        </div>
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>时间</th>
+                                        <th>用户</th>
+                                        <th>操作</th>
+                                        <th>内容</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>10:23</td>
+                                        <td>张三</td>
+                                        <td>发布帖子</td>
+                                        <td>如何学习Spring Boot？</td>
+                                    </tr>
+                                    <tr>
+                                        <td>10:15</td>
+                                        <td>李四</td>
+                                        <td>注册账号</td>
+                                        <td>-</td>
+                                    </tr>
+                                    <tr>
+                                        <td>10:05</td>
+                                        <td>王五</td>
+                                        <td>评论</td>
+                                        <td>写得很好！</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 帖子审核页面 -->
+                <div id="review-page" style="display: none;">
+                    <h1 class="page-title">帖子审核</h1>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">待审核帖子 (23)</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="toolbar">
+                                <input type="text" class="search-input" placeholder="搜索帖子标题...">
+                                <select>
+                                    <option>全部分区</option>
+                                    <option>技术分享</option>
+                                    <option>职场生活</option>
+                                    <option>问答求助</option>
+                                </select>
+                            </div>
+                            
+                            <div class="table-wrapper">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>标题</th>
+                                            <th>作者</th>
+                                            <th>分区</th>
+                                            <th>提交时间</th>
+                                            <th>状态</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>#1234</td>
+                                            <td>Spring Boot项目实战教程</td>
+                                            <td>张三</td>
+                                            <td>技术分享</td>
+                                            <td>2024-01-15 10:23</td>
+                                            <td><span class="tag tag-pending">待审核</span></td>
+                                            <td>
+                                                <button class="btn btn-primary" onclick="showReviewModal(1234)">审核</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>#1235</td>
+                                            <td>求助：MySQL慢查询优化</td>
+                                            <td>李四</td>
+                                            <td>问答求助</td>
+                                            <td>2024-01-15 09:45</td>
+                                            <td><span class="tag tag-pending">待审核</span></td>
+                                            <td>
+                                                <button class="btn btn-primary" onclick="showReviewModal(1235)">审核</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>#1236</td>
+                                            <td>面试经验分享</td>
+                                            <td>王五</td>
+                                            <td>职场生活</td>
+                                            <td>2024-01-15 09:12</td>
+                                            <td><span class="tag tag-pending">待审核</span></td>
+                                            <td>
+                                                <button class="btn btn-primary" onclick="showReviewModal(1236)">审核</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="pagination">
+                                <button class="page-btn">上一页</button>
+                                <button class="page-btn active">1</button>
+                                <button class="page-btn">2</button>
+                                <button class="page-btn">3</button>
+                                <button class="page-btn">下一页</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 举报处理页面 -->
+                <div id="reports-page" style="display: none;">
+                    <h1 class="page-title">举报处理</h1>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">待处理举报 (5)</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-wrapper">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>举报对象</th>
+                                            <th>举报人</th>
+                                            <th>举报原因</th>
+                                            <th>举报时间</th>
+                                            <th>状态</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>#101</td>
+                                            <td>帖子 #1234</td>
+                                            <td>用户A</td>
+                                            <td>内容违规</td>
+                                            <td>2024-01-15 11:00</td>
+                                            <td><span class="tag tag-pending">待处理</span></td>
+                                            <td>
+                                                <button class="btn btn-primary" onclick="showReportModal(101)">处理</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>#102</td>
+                                            <td>评论 #5678</td>
+                                            <td>用户B</td>
+                                            <td>恶意攻击</td>
+                                            <td>2024-01-15 10:30</td>
+                                            <td><span class="tag tag-pending">待处理</span></td>
+                                            <td>
+                                                <button class="btn btn-primary" onclick="showReportModal(102)">处理</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 用户管理页面 -->
+                <div id="users-page" style="display: none;">
+                    <h1 class="page-title">用户管理</h1>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">用户列表 (12,345)</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="toolbar">
+                                <input type="text" class="search-input" placeholder="搜索用户名或邮箱...">
+                                <select>
+                                    <option>全部用户</option>
+                                    <option>普通用户</option>
+                                    <option>管理员</option>
+                                    <option>已封禁</option>
+                                </select>
+                            </div>
+                            
+                            <div class="table-wrapper">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>用户名</th>
+                                            <th>邮箱</th>
+                                            <th>角色</th>
+                                            <th>帖子数</th>
+                                            <th>注册时间</th>
+                                            <th>状态</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>#10001</td>
+                                            <td>张三</td>
+                                            <td>zhangsan@example.com</td>
+                                            <td>普通用户</td>
+                                            <td>234</td>
+                                            <td>2024-01-01</td>
+                                            <td><span class="tag tag-approved">正常</span></td>
+                                            <td>
+                                                <button class="btn btn-default">编辑</button>
+                                                <button class="btn btn-danger" onclick="banUser(10001)">封禁</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>#10002</td>
+                                            <td>李四</td>
+                                            <td>lisi@example.com</td>
+                                            <td>普通用户</td>
+                                            <td>123</td>
+                                            <td>2024-01-05</td>
+                                            <td><span class="tag tag-approved">正常</span></td>
+                                            <td>
+                                                <button class="btn btn-default">编辑</button>
+                                                <button class="btn btn-danger" onclick="banUser(10002)">封禁</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 分区管理页面 -->
+                <div id="categories-page" style="display: none;">
+                    <h1 class="page-title">分区管理</h1>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">分区列表</div>
+                            <button class="btn btn-primary" onclick="showCategoryModal()">+ 新建分区</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-wrapper">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>分区名称</th>
+                                            <th>描述</th>
+                                            <th>帖子数</th>
+                                            <th>排序</th>
+                                            <th>状态</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>#1</td>
+                                            <td>💻 技术分享</td>
+                                            <td>编程技术、算法、架构设计</td>
+                                            <td>1234</td>
+                                            <td>100</td>
+                                            <td><span class="tag tag-approved">启用</span></td>
+                                            <td>
+                                                <button class="btn btn-default">编辑</button>
+                                                <button class="btn btn-danger">禁用</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>#2</td>
+                                            <td>💼 职场生活</td>
+                                            <td>面试经验、职业规划</td>
+                                            <td>567</td>
+                                            <td>90</td>
+                                            <td><span class="tag tag-approved">启用</span></td>
+                                            <td>
+                                                <button class="btn btn-default">编辑</button>
+                                                <button class="btn btn-danger">禁用</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- 审核模态框 -->
+    <div id="review-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">审核帖子</div>
+                <span class="modal-close" onclick="closeModal('review-modal')">×</span>
+            </div>
+            <div class="modal-body">
+                <h3>Spring Boot项目实战教程</h3>
+                <p style="color: #8c8c8c; margin-bottom: 20px;">作者：张三 | 分区：技术分享 | 提交时间：2024-01-15 10:23</p>
+                
+                <div style="border: 1px solid #f0f0f0; padding: 16px; border-radius: 4px; margin-bottom: 20px; max-height: 300px; overflow-y: auto;">
+                    <p>这是帖子内容预览...</p>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">审核结果</label>
+                    <select class="form-input">
+                        <option value="approved">通过</option>
+                        <option value="rejected">拒绝</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">审核说明（拒绝时必填）</label>
+                    <textarea class="form-input" placeholder="请输入拒绝原因..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" onclick="closeModal('review-modal')">取消</button>
+                <button class="btn btn-primary" onclick="submitReview()">提交</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showPage(page) {
+            // 隐藏所有页面
+            document.querySelectorAll('[id$="-page"]').forEach(p => {
+                p.style.display = 'none';
+            });
+            
+            // 显示选中页面
+            document.getElementById(page + '-page').style.display = 'block';
+            
+            // 更新菜单active状态
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // 更新面包屑
+            const titles = {
+                'dashboard': '数据总览',
+                'posts': '帖子管理',
+                'review': '帖子审核',
+                'reports': '举报处理',
+                'users': '用户管理',
+                'categories': '分区管理'
+            };
+            document.querySelector('.breadcrumb').textContent = '首页 / ' + titles[page];
+        }
+        
+        function showReviewModal(id) {
+            document.getElementById('review-modal').classList.add('show');
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+        
+        function submitReview() {
+            alert('审核提交成功！');
+            closeModal('review-modal');
+        }
+        
+        function banUser(id) {
+            if (confirm('确定要封禁该用户吗？')) {
+                alert('用户已被封禁');
+            }
+        }
+        
+        function showCategoryModal() {
+            alert('新建分区功能');
+        }
+        
+        function showReportModal(id) {
+            alert('处理举报 #' + id);
+        }
+    </script>
+</body>
+</html>

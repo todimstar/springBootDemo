@@ -84,7 +84,7 @@ class PostServiceImplTest {
 //        when(userMapper.findByUsername("testuser")).thenReturn(currentUser);
 
         // --- 2. 执行阶段 (Act) ---
-        postService.createPost(postFromClient);
+        postService.createPost(currentUser.getId(), postFromClient);
 
         // --- 3. 断言阶段 (Assert) ---
 

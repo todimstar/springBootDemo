@@ -1,7 +1,5 @@
 package com.liu.springbootdemo.filter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.liu.springbootdemo.entity.VO.Result;
 import com.liu.springbootdemo.utils.JwtUtil;
 import com.liu.springbootdemo.utils.ResponseUtil;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -62,6 +60,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // a. 根据用户名加载用户的详细信息 (UserDetails)
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
+                if(userDetails != null){
+                    System.out.println("用户："+userDetails.getUsername());
+                    System.out.println("其权限："+userDetails.getAuthorities());
+                }else{
+                    System.out.println("wtf?Details==null");
+                }
+
                 // b. 验证Token是否有效（用户名匹配且未过期）
                 if (jwtUtil.validateToken(jwt, userDetails)) {
                     // c. 如果Token有效，则构建一个【已认证】的 Authentication 对象
@@ -70,6 +75,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             null, // 我们已经验证过Token了，所以不需要凭证(credentials)
                             userDetails.getAuthorities() // 用户的权限信息
                     );
+
+                    if(authToken != null){
+                        System.out.println("用户："+authToken.getName());
+                        System.out.println("其权限："+authToken.getAuthorities());
+                    }else{
+                        System.out.println("wtf?authToken==null");
+                    }
+
                     // 可选: 保存请求的ip、session等细节信息以便日志审查
                     authToken.setDetails(
                             new WebAuthenticationDetailsSource().buildDetails(request)
@@ -78,6 +91,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     // d. 【最关键的一步】将这个已认证的对象，设置到安全上下文中
                     // 这样，Spring Security就知道当前请求的用户是谁，以及他拥有什么权限，其他模块也可以通过SecurityContextHolder获取当前登录用户信息
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                }else{
+                    System.out.println("wtf无效token?");
+                    throw new RuntimeException();
                 }
             }
 

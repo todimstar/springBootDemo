@@ -5,6 +5,9 @@ import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
+/**
+ * 还有三连状态查询，热度查询，新更新，新创建
+ */
 @Mapper
 public interface PostMapper {
     /**
@@ -29,12 +32,31 @@ public interface PostMapper {
 
     /**
      * 查
+     * 根据id查帖子状态
+     * @Param id 帖子id
+     * @return 状态码 0草稿，1待审核，2已发布，3已拒绝，4已删除
+     */
+    @Select("SELECT status FROM posts WHERE id = #{id}")
+    int findStatusById(Long id);
+
+
+    /**
+     * 查
      * 根据userId查帖子列表
      * @Param userId 用户id
      * @return posts 帖子对象列表
      */
     @Select("SELECT * FROM posts WHERE user_id = #{userId}")
     List<Post> findPostsByUserId(@Param("userId")Long userId);
+
+    /**
+     * 查
+     * 根据categoryId查帖子列表
+     * @Param categoryId 分区id
+     * @return posts 帖子对象列表
+     */
+    @Select("SELECT * FROM posts WHERE category_id = #{categoryId}")
+    List<Post> findPostsByCategoryId(@Param("categoryId")Long categoryId);
 
     /**
      * 分页查
@@ -84,5 +106,33 @@ public interface PostMapper {
      */
     @Delete("DELETE FROM posts WHERE id = #{id}")
     int deleteById(Long id);
+
+
+    /**
+     * 统计分区下帖子数量(删除和展示时校验一致性使用)
+     * @param categoryId 分区id
+     * @return size 数量
+     */
+    @Select("SELECT count(*) FROM posts WHERE category_id = #{categoryId}")
+    int countCategoryPostByCategoryId(Long categoryId);
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * 统计某分区下的帖子数（用于删除分区前检查）
+     * @param categoryId 分区ID
+     * @return 帖子数量
+     */
+    @Select("SELECT COUNT(*) FROM posts WHERE category_id = #{categoryId}")
+    int countByCategoryId(Long categoryId);
 
 }

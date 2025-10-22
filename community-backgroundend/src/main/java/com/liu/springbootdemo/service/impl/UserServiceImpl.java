@@ -1,6 +1,6 @@
 package com.liu.springbootdemo.service.impl;
 
-import com.liu.springbootdemo.entity.DTO.LoginResponseDTO;
+import com.liu.springbootdemo.POJO.dto.LoginResponseDTO;
 import com.liu.springbootdemo.entity.User;
 import com.liu.springbootdemo.exception.InvalidInputException;
 import com.liu.springbootdemo.exception.UserAlreadyExistsException;

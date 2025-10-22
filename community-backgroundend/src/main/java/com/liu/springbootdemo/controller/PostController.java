@@ -2,18 +2,17 @@ package com.liu.springbootdemo.controller;
 
 import com.liu.springbootdemo.entity.Comment;
 import com.liu.springbootdemo.entity.Post;
-import com.liu.springbootdemo.entity.VO.Result;
+import com.liu.springbootdemo.POJO.vo.Result;
 import com.liu.springbootdemo.entity.User;
-import com.liu.springbootdemo.mapper.CommentMapper;
-import com.liu.springbootdemo.mapper.UserMapper;
 import com.liu.springbootdemo.service.CommentService;
 import com.liu.springbootdemo.service.PostService;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +27,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("api/posts")
+//@Validated
 public class PostController {
     @Autowired
     private PostService postService;
@@ -41,9 +41,9 @@ public class PostController {
      * @return 成功返回200和帖子内容
      */
     @PostMapping()
-    public ResponseEntity<Result<Post>> createPost(@RequestBody Post post){
-        // Controller只负责调用Service，不再关心如何获取用户ID
-        Post createPost = postService.createPost(post);
+    public ResponseEntity<Result<Post>> createPost(@AuthenticationPrincipal User user, @RequestBody Post post){ //稍显分层的安全获取user，不过本项目之前已经设计用了SecurityUntil.getCurrentUser()获取，这里只用单次实验@AuthenticationPrincipal会用ok
+        // Controller只负责从网络获取用户并将id传参和调用Service
+        Post createPost = postService.createPost(user.getId(),post);
         return ResponseEntity.status(HttpStatus.CREATED).body(Result.success(createPost));
     }
 
@@ -77,14 +77,18 @@ public class PostController {
      * @return  200和当页帖子列表
      */
     @GetMapping()
-    public Result getPostsByPage(
-            @RequestParam(value = "page", defaultValue = "1", required = false) int page,
-            @RequestParam(value = "size", defaultValue = "20", required = false) int size
+    public Result getPostsByPage(//TODO:改造为DTO和VO，传出需要<>
+            @RequestParam(value = "page", defaultValue = "1", required = false)
+//            @Min(1)
+            int page,
+            @RequestParam(value = "size", defaultValue = "20", required = false)
+//                                     @Min(10) @Max(100)
+                                     int size
     ){
 
-        if(page<1)page = 1;     //修正请求为默认页
-        if(size<1)size = 10;    //默认值10
-        if(size>100)size = 100;
+       if(page<1)page = 1;     //修正请求为默认页
+       if(size<1)size = 10;    //默认值10
+       if(size>100)size = 100;
 
         return Result.success(postService.getPostsByPage(page,size));
      }   //默认返回200

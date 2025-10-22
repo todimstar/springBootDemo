@@ -18,7 +18,7 @@ public class JwtUtil {
     private final String SECRET_KEY = "YourSuperSecureAndLongSecretKeyForThisCommunityTechForumProject";
 
     // jwtToken过期时间
-    private final long EXPIRATION_TIME = 1000*3600*10; //10小时毫秒
+    private final long EXPIRATION_TIME = 1000*3600*24*7; //24小时*7天毫秒
 
     // 从Token中提取用户名
     public String extractUsername(String token){

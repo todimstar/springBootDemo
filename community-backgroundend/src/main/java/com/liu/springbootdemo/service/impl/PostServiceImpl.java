@@ -34,12 +34,12 @@ public class PostServiceImpl implements PostService {
      * @return post 数据库中存的帖子
      */
     @Override
-    public Post createPost(Post post) {
+    public Post createPost(Long currentUserId, Post post) {
         // 1. 从SecurityContext获取当前登录用户的信息
-        User currentUser = SecurityUtil.getCurrentUser();
+//        User currentUser = SecurityUtil.getCurrentUser();
 
         // 2. 将当前用户的ID设置到post对象中
-        post.setUserId(currentUser.getId());
+        post.setUserId(currentUserId);
 
         // 3. 校验帖子内容
         if(!StringUtils.hasText(post.getTitle())){
@@ -87,7 +87,7 @@ public class PostServiceImpl implements PostService {
             throw new InvalidInputException("要修改的内容为空");
         }
 
-        // 帖子不归属当前用户
+        // 帖子不归属当前用户    --> TODO:可以加管理员校验实现管理员修改帖子
         if(!postInDb.getUserId().equals(currentUser.getId())){
 //            logger.warn("帖子 \"" + post.getTitle() + "\"不属于当前用户[" + currentUser.getUsername() + "]");
             throw new NotAuthorException("帖子 \"" + postInDb.getTitle() + "\"不属于当前用户[" + currentUser.getUsername() + "]");
@@ -115,7 +115,7 @@ public class PostServiceImpl implements PostService {
             throw new NotFindException("帖子不存在，无法删除");
         }
 
-        // 比较帖子是否属于当前用户
+        // 比较帖子是否属于当前用户     -->TODO:同样可以加管理员校验，用Security查看用户身份，那就是currentUser的身份
         if(!postInDB.getUserId().equals(currentUser.getId())){
             throw new NotAuthorException("帖子\"" + postInDB.getTitle() + "\"不属于当前用户[" + currentUser.getUsername() + "]");
         }

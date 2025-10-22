@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>如何快速学习Spring Boot全家桶？ - TechForum</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .navbar {
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 15px 0;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .breadcrumb {
+            font-size: 14px;
+            color: #909399;
+        }
+        
+        .breadcrumb a {
+            color: #409eff;
+            text-decoration: none;
+        }
+        
+        .main-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+            display: flex;
+            gap: 20px;
+        }
+        
+        .post-container {
+            flex: 1;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .post-header {
+            padding: 30px;
+            border-bottom: 1px solid #f0f2f5;
+        }
+        
+        .post-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #303133;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+        
+        .post-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .author-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .author-details {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .author-name {
+            font-weight: 600;
+            color: #303133;
+            font-size: 16px;
+        }
+        
+        .post-time {
+            font-size: 13px;
+            color: #909399;
+        }
+        
+        .follow-btn {
+            padding: 8px 20px;
+            background: #409eff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .follow-btn:hover {
+            background: #66b1ff;
+        }
+        
+        .post-stats {
+            display: flex;
+            gap: 20px;
+            padding: 15px 30px;
+            background: #f9fafc;
+            border-bottom: 1px solid #f0f2f5;
+            font-size: 14px;
+            color: #606266;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .post-content {
+            padding: 30px;
+            font-size: 16px;
+            line-height: 1.8;
+            color: #303133;
+        }
+        
+        .post-content h1,
+        .post-content h2,
+        .post-content h3 {
+            margin: 24px 0 16px;
+            font-weight: 600;
+        }
+        
+        .post-content h1 {
+            font-size: 24px;
+        }
+        
+        .post-content h2 {
+            font-size: 20px;
+        }
+        
+        .post-content h3 {
+            font-size: 18px;
+        }
+        
+        .post-content p {
+            margin-bottom: 16px;
+        }
+        
+        .post-content code {
+            background: #f5f7fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            color: #e83e8c;
+        }
+        
+        .post-content pre {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 16px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+        
+        .post-content pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+        
+        .post-content img {
+            max-width: 100%;
+            border-radius: 4px;
+            margin: 16px 0;
+        }
+        
+        .post-actions {
+            padding: 20px 30px;
+            border-top: 1px solid #f0f2f5;
+            display: flex;
+            gap: 15px;
+        }
+        
+        .action-btn {
+            padding: 10px 24px;
+            border: 1px solid #dcdfe6;
+            border-radius: 6px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .action-btn:hover {
+            border-color: #409eff;
+            color: #409eff;
+        }
+        
+        .action-btn.liked {
+            background: #ecf5ff;
+            border-color: #409eff;
+            color: #409eff;
+        }
+        
+        .comment-section {
+            padding: 30px;
+            border-top: 10px solid #f5f7fa;
+        }
+        
+        .comment-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .comment-input-box {
+            background: #f9fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .comment-input-box textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+            resize: vertical;
+            min-height: 100px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        
+        .comment-input-box textarea:focus {
+            outline: none;
+            border-color: #409eff;
+        }
+        
+        .comment-actions {
+            margin-top: 10px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .submit-btn {
+            padding: 8px 24px;
+            background: #409eff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .submit-btn:hover {
+            background: #66b1ff;
+        }
+        
+        .comment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .comment-item {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .comment-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .comment-content {
+            flex: 1;
+        }
+        
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .comment-author {
+            font-weight: 600;
+            color: #303133;
+        }
+        
+        .comment-time {
+            font-size: 13px;
+            color: #909399;
+        }
+        
+        .comment-text {
+            font-size: 14px;
+            color: #606266;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+        
+        .comment-footer {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: #909399;
+        }
+        
+        .comment-action {
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .comment-action:hover {
+            color: #409eff;
+        }
+        
+        .reply-list {
+            margin-top: 15px;
+            padding-left: 30px;
+            border-left: 2px solid #f0f2f5;
+        }
+        
+        .reply-item {
+            padding: 10px 0;
+            font-size: 14px;
+            color: #606266;
+        }
+        
+        .reply-author {
+            color: #409eff;
+            font-weight: 500;
+        }
+        
+        .sidebar {
+            width: 300px;
+            flex-shrink: 0;
+        }
+        
+        .sidebar-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .sidebar-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .author-card {
+            text-align: center;
+        }
+        
+        .author-card .avatar {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 15px;
+            font-size: 32px;
+        }
+        
+        .author-card-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .author-card-bio {
+            font-size: 13px;
+            color: #909399;
+            margin-bottom: 15px;
+        }
+        
+        .author-stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            border-top: 1px solid #f0f2f5;
+            border-bottom: 1px solid #f0f2f5;
+            margin-bottom: 15px;
+        }
+        
+        .author-stat {
+            text-align: center;
+        }
+        
+        .author-stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #303133;
+        }
+        
+        .author-stat-label {
+            font-size: 13px;
+            color: #909399;
+        }
+        
+        .related-post {
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f2f5;
+            cursor: pointer;
+        }
+        
+        .related-post:last-child {
+            border-bottom: none;
+        }
+        
+        .related-post-title {
+            font-size: 14px;
+            color: #303133;
+            margin-bottom: 6px;
+        }
+        
+        .related-post-title:hover {
+            color: #409eff;
+        }
+        
+        .related-post-meta {
+            font-size: 12px;
+            color: #909399;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            .post-title {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="breadcrumb">
+                <a href="6.homepage-prototype.html">首页</a> / 
+                <a href="6.homepage-prototype.html">技术分享</a> / 
+                <span>如何快速学习Spring Boot全家桶？</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <main class="post-container">
+            <!-- 帖子头部 -->
+            <div class="post-header">
+                <h1 class="post-title">📌 如何快速学习Spring Boot全家桶？</h1>
+                <div class="post-meta">
+                    <div class="author-info">
+                        <div class="avatar">张</div>
+                        <div class="author-details">
+                            <div class="author-name">张三</div>
+                            <div class="post-time">
+                                发布于 2024-01-15 10:00 · 最后编辑于 15:30 · 来自北京
+                            </div>
+                        </div>
+                    </div>
+                    <button class="follow-btn">+ 关注</button>
+                </div>
+            </div>
+
+            <!-- 帖子统计 -->
+            <div class="post-stats">
+                <span class="stat-item">👁️ 浏览 892</span>
+                <span class="stat-item">👍 点赞 128</span>
+                <span class="stat-item">💬 评论 45</span>
+                <span class="stat-item">⭐ 收藏 23</span>
+            </div>
+
+            <!-- 帖子内容 -->
+            <article class="post-content">
+                <h2>前言</h2>
+                <p>
+                    最近在学习Spring Boot，发现有很多东西需要掌握。作为一个过来人，我想分享一下我的学习路线和心得体会，希望能帮到正在学习的同学。
+                </p>
+
+                <h2>学习路线</h2>
+                <p>我的学习路线大致分为以下几个阶段：</p>
+                
+                <h3>1. Java基础巩固</h3>
+                <p>
+                    在学习Spring Boot之前，必须先打好Java基础。包括：
+                </p>
+                <ul>
+                    <li>面向对象编程（OOP）</li>
+                    <li>集合框架（List、Set、Map）</li>
+                    <li>多线程与并发</li>
+                    <li>IO流操作</li>
+                </ul>
+
+                <h3>2. Spring框架核心</h3>
+                <p>
+                    理解Spring的核心概念非常重要：
+                </p>
+                <pre><code>// IOC容器示例
+@Component
+public class UserService {
+    @Autowired
+    private UserRepository userRepository;
+    
+    public User findById(Long id) {
+        return userRepository.findById(id);
+    }
+}</code></pre>
+
+                <h3>3. Spring Boot实战</h3>
+                <p>
+                    掌握了基础后，就可以开始Spring Boot的学习了。建议从一个小项目开始，比如做一个简单的博客系统或者TODO应用。
+                </p>
+
+                <h2>学习建议</h2>
+                <p>
+                    <strong>1. 多动手实践</strong> - 看再多视频都不如自己敲一遍代码
+                </p>
+                <p>
+                    <strong>2. 理解原理</strong> - 不要只会用，要知道为什么这样设计
+                </p>
+                <p>
+                    <strong>3. 写技术博客</strong> - 输出是最好的学习方式
+                </p>
+
+                <h2>推荐资源</h2>
+                <p>
+                    这里分享一些我觉得不错的学习资源：
+                </p>
+                <ul>
+                    <li>官方文档：<code>https://spring.io/projects/spring-boot</code></li>
+                    <li>《Spring Boot实战》- 书籍推荐</li>
+                    <li>B站up主"程序员鱼皮"的视频教程</li>
+                </ul>
+
+                <h2>总结</h2>
+                <p>
+                    学习Spring Boot是一个循序渐进的过程，不要急于求成。打好基础，多动手实践，保持耐心，相信你一定能掌握这个强大的框架！
+                </p>
+                <p>
+                    如果你有任何问题，欢迎在评论区留言讨论~ 👇
+                </p>
+            </article>
+
+            <!-- 帖子操作 -->
+            <div class="post-actions">
+                <button class="action-btn liked">👍 已点赞 (128)</button>
+                <button class="action-btn">⭐ 收藏 (23)</button>
+                <button class="action-btn">🔗 分享</button>
+                <button class="action-btn">⚠️ 举报</button>
+            </div>
+
+            <!-- 评论区 -->
+            <div class="comment-section">
+                <div class="comment-title">💬 45条评论</div>
+
+                <!-- 评论输入框 -->
+                <div class="comment-input-box">
+                    <textarea placeholder="写下你的评论..."></textarea>
+                    <div class="comment-actions">
+                        <button class="submit-btn">发表评论</button>
+                    </div>
+                </div>
+
+                <!-- 评论列表 -->
+                <div class="comment-list">
+                    <!-- 评论1 -->
+                    <div class="comment-item">
+                        <div class="comment-avatar">李</div>
+                        <div class="comment-content">
+                            <div class="comment-header">
+                                <span class="comment-author">李四</span>
+                                <span class="comment-time">2小时前 · 上海</span>
+                            </div>
+                            <div class="comment-text">
+                                讲得很清楚！我也是这样学过来的，建议初学者一定要多做项目，光看不练是学不会的。
+                            </div>
+                            <div class="comment-footer">
+                                <span class="comment-action">👍 12</span>
+                                <span class="comment-action">💬 回复</span>
+                            </div>
+
+                            <!-- 回复列表 -->
+                            <div class="reply-list">
+                                <div class="reply-item">
+                                    <span class="reply-author">@王五</span> 回复 
+                                    <span class="reply-author">@李四</span>: 
+                                    同意，做项目是最快的学习方式 👍
+                                </div>
+                                <div class="reply-item">
+                                    <span class="reply-author">@张三</span> 回复 
+                                    <span class="reply-author">@李四</span>: 
+                                    谢谢支持！确实多练才是王道
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 评论2 -->
+                    <div class="comment-item">
+                        <div class="comment-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">王</div>
+                        <div class="comment-content">
+                            <div class="comment-header">
+                                <span class="comment-author">王五</span>
+                                <span class="comment-time">3小时前 · 深圳</span>
+                            </div>
+                            <div class="comment-text">
+                                想问下楼主，Spring Boot和Spring的区别是什么？新手应该直接学Spring Boot吗？
+                            </div>
+                            <div class="comment-footer">
+                                <span class="comment-action">👍 5</span>
+                                <span class="comment-action">💬 回复</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 评论3 -->
+                    <div class="comment-item">
+                        <div class="comment-avatar" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">赵</div>
+                        <div class="comment-content">
+                            <div class="comment-header">
+                                <span class="comment-author">赵六</span>
+                                <span class="comment-time">5小时前 · 杭州</span>
+                            </div>
+                            <div class="comment-text">
+                                总结得很好！已收藏，准备按照这个路线学习。感谢分享！🙏
+                            </div>
+                            <div class="comment-footer">
+                                <span class="comment-action">👍 8</span>
+                                <span class="comment-action">💬 回复</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 右侧边栏 -->
+        <aside class="sidebar">
+            <!-- 作者信息卡片 -->
+            <div class="sidebar-card author-card">
+                <div class="avatar">张</div>
+                <div class="author-card-name">张三</div>
+                <div class="author-card-bio">热爱技术，喜欢分享</div>
+                <div class="author-stats">
+                    <div class="author-stat">
+                        <div class="author-stat-value">234</div>
+                        <div class="author-stat-label">帖子</div>
+                    </div>
+                    <div class="author-stat">
+                        <div class="author-stat-value">1.2K</div>
+                        <div class="author-stat-label">粉丝</div>
+                    </div>
+                    <div class="author-stat">
+                        <div class="author-stat-value">456</div>
+                        <div class="author-stat-label">关注</div>
+                    </div>
+                </div>
+                <button class="follow-btn" style="width: 100%;">+ 关注作者</button>
+            </div>
+
+            <!-- 相关推荐 -->
+            <div class="sidebar-card">
+                <div class="sidebar-title">📚 相关推荐</div>
+                <div class="related-post">
+                    <div class="related-post-title">Spring Boot配置文件详解</div>
+                    <div class="related-post-meta">👁️ 567 · 💬 23</div>
+                </div>
+                <div class="related-post">
+                    <div class="related-post-title">MyBatis Plus快速入门</div>
+                    <div class="related-post-meta">👁️ 432 · 💬 18</div>
+                </div>
+                <div class="related-post">
+                    <div class="related-post-title">Redis缓存实战教程</div>
+                    <div class="related-post-meta">👁️ 789 · 💬 34</div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        // 点赞按钮交互
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (this.textContent.includes('点赞')) {
+                    this.classList.toggle('liked');
+                }
+            });
+        });
+
+        // 评论点赞
+        document.querySelectorAll('.comment-action').forEach(action => {
+            action.addEventListener('click', function() {
+                if (this.textContent.includes('👍')) {
+                    const count = parseInt(this.textContent.match(/\d+/)[0]);
+                    this.textContent = `👍 ${count + 1}`;
+                    this.style.color = '#409eff';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
