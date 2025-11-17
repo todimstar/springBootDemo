@@ -15,4 +15,10 @@ public interface UserService {
     // 获取所有用户
     List<User> getAllUser();
 
+    /**
+     * 管理员硬删除用户
+     * @param id
+     */
+    void deleteHeadByIdForAdmin(Long id);
+
 }
