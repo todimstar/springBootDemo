@@ -1,6 +1,6 @@
 package com.liu.springbootdemo.service;
 
-import com.liu.springbootdemo.entity.Post;
+import com.liu.springbootdemo.POJO.entity.Post;
 
 import java.util.List;
 

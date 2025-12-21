@@ -61,7 +61,7 @@ public class SecurityConfig {
                             HttpServletResponse.SC_UNAUTHORIZED,
                             "未登录，请登录后重试"
                             );
-                    System.out.println(this.getClass() + "的未认证处理");
+                    System.out.println(this.getClass() + "的未认证处理 -> 请求的Method是" + request.getMethod() + " -> RequestURL是" + request.getRequestURI() + " -> 异常信息是" + authException.getMessage());
                 })
                 .accessDeniedHandler(((request, response, accessDeniedException) -> {
                     ResponseUtil.sendErrorResponse(

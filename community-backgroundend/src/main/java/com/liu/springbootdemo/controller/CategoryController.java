@@ -4,13 +4,12 @@ import com.liu.springbootdemo.POJO.dto.request.CreateCategoryDTO;
 import com.liu.springbootdemo.POJO.dto.request.UpdateCategoryDTO;
 import com.liu.springbootdemo.POJO.vo.CategoryAdminVO;
 import com.liu.springbootdemo.POJO.vo.CategoryVO;
-import com.liu.springbootdemo.POJO.vo.Result;
+import com.liu.springbootdemo.POJO.vo.Result.Result;
 import com.liu.springbootdemo.service.CategoryService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -28,7 +27,7 @@ public class CategoryController {
     //===============查询接口==================
 
     /**
-     * 获取所有启用的分区列表
+     * 获取所有启用的分区列表 - TODO:分页查询分区列表
      * @return 分区列表
      * 权限：公开,访客,用户
      * 场景：首页展示分区
@@ -46,7 +45,7 @@ public class CategoryController {
      * 场景：管理员后台展示和操控
      * 检查：鉴权管理员
      */
-    @GetMapping("/admin")
+    @GetMapping("/admin")               //TODO:废弃⚠️
     @PreAuthorize("hasRole('ADMIN')")
     public Result<List<CategoryAdminVO>> ListCategoriesForAdmin(){
         List<CategoryAdminVO> categories = categoryService.ListCategoriesForAdmin();
@@ -61,7 +60,7 @@ public class CategoryController {
     @GetMapping("/{id}")
     public Result<CategoryVO> getCategoryById(@PathVariable
                                                   @NotNull
-                                                  @Min(value = 1,message = "ID必须大于0")
+                                                  @Min(value = 1L,message = "ID必须大于0")
                                                   @Max(value = Long.MAX_VALUE,message = "ID超出有效范围")
                                                   Long id){
 
@@ -75,7 +74,7 @@ public class CategoryController {
      * 场景：管理员修改分区展示详情前的展示
      */
     @GetMapping("/{id}/admin")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")   //TODO:接口废弃⚠️,转至Admin.CategoryController
     public Result<CategoryAdminVO> getCategoryByIdForAdmin(@PathVariable
                                                                @NotNull
                                                                @Min(value = 1,message = "ID必须大于0")
@@ -86,15 +85,7 @@ public class CategoryController {
     }
 
     //===========分区修改-管理员接口===========
-    /**
-     * 分区的增，管理员检验
-     */
-    @PostMapping()
-    @PreAuthorize("hasRole('ADMIN')")
-    public Result<CategoryAdminVO> insertCategory(@RequestBody @Valid CreateCategoryDTO categoryDTO){
-        CategoryAdminVO categoryVO = categoryService.createCategory(categoryDTO);
-        return Result.success("分区创建成功",categoryVO);
-    }
+
 
     /**
      * 分区信息的改，管理员

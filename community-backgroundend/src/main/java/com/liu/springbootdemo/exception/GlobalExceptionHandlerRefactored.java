@@ -1,7 +1,7 @@
 package com.liu.springbootdemo.exception;
 
 import com.liu.springbootdemo.POJO.vo.ErrorResponse;
-import com.liu.springbootdemo.POJO.vo.Result;
+import com.liu.springbootdemo.POJO.vo.Result.Result;
 import com.liu.springbootdemo.common.enums.ErrorCode;
 import com.liu.springbootdemo.common.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +14,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindException;
-import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -225,6 +224,8 @@ public class GlobalExceptionHandlerRefactored {
         String message = String.format("参数 '%s' 类型错误，期望类型: %s",
                 e.getName(),
                 e.getRequiredType() != null ? e.getRequiredType().getSimpleName() : "未知");
+        
+        log.warn("参数类型不匹配 - 路径: {}, 错误: {}", request.getRequestURI(), message);
 
         ErrorResponse error = ErrorResponse.of(
             ErrorCode.PARAM_TYPE_ERROR.getCode(),

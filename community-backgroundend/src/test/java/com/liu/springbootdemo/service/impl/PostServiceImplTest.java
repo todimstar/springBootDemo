@@ -1,7 +1,7 @@
 package com.liu.springbootdemo.service.impl;
 
-import com.liu.springbootdemo.entity.Post;
-import com.liu.springbootdemo.entity.User;
+import com.liu.springbootdemo.POJO.entity.Post;
+import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.mapper.PostMapper;
 import com.liu.springbootdemo.mapper.UserMapper;
 import com.liu.springbootdemo.utils.SecurityUtil;
@@ -10,10 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;

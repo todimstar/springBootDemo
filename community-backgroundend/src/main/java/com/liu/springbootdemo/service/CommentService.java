@@ -1,6 +1,6 @@
 package com.liu.springbootdemo.service;
 
-import com.liu.springbootdemo.entity.Comment;
+import com.liu.springbootdemo.POJO.entity.Comment;
 
 import java.util.List;
 

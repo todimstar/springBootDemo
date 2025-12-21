@@ -17,7 +17,7 @@ import org.springframework.http.HttpStatus;
  * - 50000-59999: 第三方服务错误
  *
  * @author Liu
- * @date 2024
+ * @date 2025
  */
 @Getter
 @AllArgsConstructor

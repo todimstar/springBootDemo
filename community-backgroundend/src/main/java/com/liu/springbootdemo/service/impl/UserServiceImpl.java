@@ -1,7 +1,8 @@
 package com.liu.springbootdemo.service.impl;
 
 import com.liu.springbootdemo.POJO.dto.LoginResponseDTO;
-import com.liu.springbootdemo.entity.User;
+import com.liu.springbootdemo.POJO.entity.User;
+import com.liu.springbootdemo.exception.BusinessException;
 import com.liu.springbootdemo.exception.InvalidInputException;
 import com.liu.springbootdemo.exception.UserAlreadyExistsException;
 import com.liu.springbootdemo.exception.UnauthorizedException;
@@ -11,6 +12,7 @@ import com.liu.springbootdemo.utils.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -70,6 +72,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if((userInDbByUsername == null && userInDbByEmail == null)){
             throw new InvalidInputException("用户名/邮箱未注册，请注册后重试");
         }
+        // 这里已经保证了userInDbByUsername和userInDbByEmail至少有一个不为null
         User userInDb = (userInDbByUsername==null?userInDbByEmail:userInDbByUsername);
         if(!passwordEncoder.matches(password,userInDb.getPassword())){
             throw new UnauthorizedException("密码错误！");   //确实就是密码错误
@@ -96,6 +99,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userMapper.getAll();
     }
 
+    @Override
+    public void deleteHeadByIdForAdmin(Long id) throws UsernameNotFoundException{
+        // 验用户存在性
+        User existUser = userMapper.findById(id);
+
+        if(existUser == null){
+            throw new UsernameNotFoundException("用户 " + existUser.getUsername() + " 不存在");
+        }
+
+        if(userMapper.deleteById(id)!=1){
+            throw new BusinessException("用户删除异常","503", HttpStatus.SERVICE_UNAVAILABLE);
+        }
+    }
+
+
     @Override   //授权用
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // 去数据库查用户在不在
@@ -119,4 +137,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         );
         
     }
+
+
+
 }

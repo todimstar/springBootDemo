@@ -2,22 +2,26 @@ package com.liu.springbootdemo.controller;
 
 import com.liu.springbootdemo.POJO.dto.LoginInControllerDTO;
 import com.liu.springbootdemo.POJO.dto.LoginResponseDTO;
-import com.liu.springbootdemo.POJO.vo.Result;
-import com.liu.springbootdemo.entity.User;
+import com.liu.springbootdemo.POJO.vo.Result.Result;
+import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.exception.InvalidInputException;
 import com.liu.springbootdemo.service.UserService;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController // 关键注解：表明这是一个控制器，且所有方法返回的都是JSON数据
 @RequestMapping("api/auth") //定义这个控制器下所有接口的统一前缀
+@Validated
 public class UserController {
     @Autowired  //自动注入UserService实例
     private UserService userService;
@@ -25,6 +29,8 @@ public class UserController {
     @Autowired  // 注入UserDetailsService，用于加载用户详情
     private UserDetailsService userDetailsService;
 
+    private static final String EMAIL_REGEX =
+            "^[A-Za-z0-9]+([_\\-\\.][A-Za-z0-9]+)*@[A-Za-z0-9]+([\\-\\.][A-Za-z0-9]+)*\\.[A-Za-z]{2,}$";
 
     // DTO - username -password
 
@@ -43,6 +49,9 @@ public class UserController {
         if(!StringUtils.hasText(user.getPassword())){
             throw new InvalidInputException("请输入密码");
         }
+        if (!(user.getEmail().matches(EMAIL_REGEX))) {
+            throw new InvalidInputException("邮箱格式不正确");
+        }
 
         System.out.println(user);
         userService.register(user);
@@ -59,6 +68,7 @@ public class UserController {
         if(!StringUtils.hasText(loginInControllerDTO.getPassword())){
             throw new InvalidInputException("请输入密码");
         }
+        //不需要验证邮箱格式了，因为是用户名或邮箱，直接去查就好了
         // 认证
         LoginResponseDTO loginResponseDTO = userService.login(loginInControllerDTO.getUsernameOrEmail(), loginInControllerDTO.getPassword());    //账密错误走全局异常
 
@@ -97,4 +107,15 @@ public class UserController {
     public Result<List<User>> getAllUser(){
         return Result.success(userService.getAllUser());
     }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Void> deleteHeadByIdForAdmin(@PathVariable
+                                                   @Min(value = 0,message = "用户id下限0")
+                                                   @Max(value = Long.MAX_VALUE,message = "都破Long了这UserId")
+                                                   Long id){
+        userService.deleteHeadByIdForAdmin(id);
+        return Result.success("删除用户成功");
+    }
+
 }

@@ -1,7 +1,7 @@
 package com.liu.springbootdemo.service.impl;
 
-import com.liu.springbootdemo.entity.Post;
-import com.liu.springbootdemo.entity.User;
+import com.liu.springbootdemo.POJO.entity.Post;
+import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.exception.InvalidInputException;
 import com.liu.springbootdemo.exception.NotFindException;
 import com.liu.springbootdemo.exception.NotAuthorException;

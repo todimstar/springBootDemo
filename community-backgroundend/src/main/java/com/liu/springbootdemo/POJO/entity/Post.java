@@ -1,5 +1,6 @@
-package com.liu.springbootdemo.entity;
+package com.liu.springbootdemo.POJO.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ public class Post {
     private Long userId;    //发表用户id 多创个索引优化查询
     private String title;   //外显标题
     private String content; // 内容
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;//创建时间
     private LocalDateTime updateTime;//修改时间
     //新增

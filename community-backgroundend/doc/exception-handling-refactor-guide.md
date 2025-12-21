@@ -186,13 +186,12 @@ public class ErrorResponse {
 package com.liu.springbootdemo.exception;
 
 import com.liu.springbootdemo.POJO.vo.ErrorResponse;
-import com.liu.springbootdemo.POJO.vo.Result;
+import com.liu.springbootdemo.POJO.vo.Result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -212,15 +211,15 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<Result> handleBusinessException(BusinessException e,
-                                                         HttpServletRequest request) {
+                                                          HttpServletRequest request) {
         log.error("业务异常 - 路径: {}, 错误码: {}, 消息: {}",
-                  request.getRequestURI(), e.getCode(), e.getMessage());
+                request.getRequestURI(), e.getCode(), e.getMessage());
 
         ErrorResponse error = ErrorResponse.of(
-            e.getCode(),
-            e.getMessage(),
-            request.getRequestURI(),
-            e.getData()
+                e.getCode(),
+                e.getMessage(),
+                request.getRequestURI(),
+                e.getData()
         );
 
         return ResponseEntity
@@ -233,19 +232,19 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Result> handleValidationException(MethodArgumentNotValidException e,
-                                                           HttpServletRequest request) {
+                                                            HttpServletRequest request) {
         Map<String, String> errors = new HashMap<>();
         e.getBindingResult().getFieldErrors().forEach(error ->
-            errors.put(error.getField(), error.getDefaultMessage())
+                errors.put(error.getField(), error.getDefaultMessage())
         );
 
         log.warn("参数校验失败 - 路径: {}, 错误: {}", request.getRequestURI(), errors);
 
         ErrorResponse error = ErrorResponse.of(
-            ErrorCode.PARAM_ERROR.getCode(),
-            "参数校验失败",
-            request.getRequestURI(),
-            errors  // 具体哪些字段校验失败
+                ErrorCode.PARAM_ERROR.getCode(),
+                "参数校验失败",
+                request.getRequestURI(),
+                errors  // 具体哪些字段校验失败
         );
 
         return ResponseEntity
@@ -258,17 +257,17 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BindException.class)
     public ResponseEntity<Result> handleBindException(BindException e,
-                                                     HttpServletRequest request) {
+                                                      HttpServletRequest request) {
         Map<String, String> errors = new HashMap<>();
         e.getFieldErrors().forEach(error ->
-            errors.put(error.getField(), error.getDefaultMessage())
+                errors.put(error.getField(), error.getDefaultMessage())
         );
 
         ErrorResponse error = ErrorResponse.of(
-            ErrorCode.PARAM_ERROR.getCode(),
-            "参数绑定失败",
-            request.getRequestURI(),
-            errors
+                ErrorCode.PARAM_ERROR.getCode(),
+                "参数绑定失败",
+                request.getRequestURI(),
+                errors
         );
 
         return ResponseEntity
@@ -281,11 +280,11 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Result> handleConstraintViolationException(ConstraintViolationException e,
-                                                                    HttpServletRequest request) {
+                                                                     HttpServletRequest request) {
         ErrorResponse error = ErrorResponse.of(
-            ErrorCode.PARAM_ERROR.getCode(),
-            e.getMessage(),
-            request.getRequestURI()
+                ErrorCode.PARAM_ERROR.getCode(),
+                e.getMessage(),
+                request.getRequestURI()
         );
 
         return ResponseEntity
@@ -298,14 +297,14 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Result> handleTypeMismatchException(MethodArgumentTypeMismatchException e,
-                                                             HttpServletRequest request) {
+                                                              HttpServletRequest request) {
         String message = String.format("参数 '%s' 类型错误，期望类型: %s",
                 e.getName(), e.getRequiredType().getSimpleName());
 
         ErrorResponse error = ErrorResponse.of(
-            ErrorCode.PARAM_TYPE_ERROR.getCode(),
-            message,
-            request.getRequestURI()
+                ErrorCode.PARAM_TYPE_ERROR.getCode(),
+                message,
+                request.getRequestURI()
         );
 
         return ResponseEntity
@@ -318,13 +317,13 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Result> handleAccessDeniedException(AccessDeniedException e,
-                                                             HttpServletRequest request) {
+                                                              HttpServletRequest request) {
         log.warn("权限不足 - 路径: {}, 消息: {}", request.getRequestURI(), e.getMessage());
 
         ErrorResponse error = ErrorResponse.of(
-            ErrorCode.FORBIDDEN.getCode(),
-            "权限不足",
-            request.getRequestURI()
+                ErrorCode.FORBIDDEN.getCode(),
+                "权限不足",
+                request.getRequestURI()
         );
 
         return ResponseEntity
@@ -337,13 +336,13 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Result> handleException(Exception e,
-                                                 HttpServletRequest request) {
+                                                  HttpServletRequest request) {
         log.error("系统异常 - 路径: {}", request.getRequestURI(), e);
 
         ErrorResponse error = ErrorResponse.of(
-            ErrorCode.SYSTEM_ERROR.getCode(),
-            "系统繁忙，请稍后重试",  // 不暴露内部错误信息
-            request.getRequestURI()
+                ErrorCode.SYSTEM_ERROR.getCode(),
+                "系统繁忙，请稍后重试",  // 不暴露内部错误信息
+                request.getRequestURI()
         );
 
         // 生产环境不要返回具体错误信息

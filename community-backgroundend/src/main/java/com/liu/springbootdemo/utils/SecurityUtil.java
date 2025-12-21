@@ -1,6 +1,6 @@
 package com.liu.springbootdemo.utils;
 
-import com.liu.springbootdemo.entity.User;
+import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.mapper.UserMapper;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;

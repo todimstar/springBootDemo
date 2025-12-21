@@ -1,7 +1,7 @@
 package com.liu.springbootdemo.exception;
 
 import com.liu.springbootdemo.POJO.vo.ErrorResponse;
-import com.liu.springbootdemo.POJO.vo.Result;
+import com.liu.springbootdemo.POJO.vo.Result.Result;
 import com.liu.springbootdemo.common.enums.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 // Exception
 
 @Slf4j
-@RestControllerAdvice   //声明是全局异常处理类
+//@RestControllerAdvice   //声明是全局异常处理类
 public class GlobalExceptionHandler {
 
     /**

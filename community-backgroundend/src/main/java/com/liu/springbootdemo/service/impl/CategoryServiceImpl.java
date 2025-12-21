@@ -1,12 +1,16 @@
 package com.liu.springbootdemo.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.liu.springbootdemo.POJO.dto.request.CategoryPageQueryDTO;
 import com.liu.springbootdemo.POJO.dto.request.CreateCategoryDTO;
 import com.liu.springbootdemo.POJO.dto.request.UpdateCategoryDTO;
 import com.liu.springbootdemo.POJO.vo.CategoryAdminVO;
 import com.liu.springbootdemo.POJO.vo.CategoryVO;
+import com.liu.springbootdemo.POJO.vo.Result.PageResult;
 import com.liu.springbootdemo.common.enums.ErrorCode;
-import com.liu.springbootdemo.entity.Category;
-import com.liu.springbootdemo.exception.BusinessException;
+import com.liu.springbootdemo.POJO.entity.Category;
+import com.liu.springbootdemo.common.exception.BusinessException;
 import com.liu.springbootdemo.mapper.CategoryMapper;
 import com.liu.springbootdemo.mapper.PostMapper;
 import com.liu.springbootdemo.service.CategoryService;
@@ -17,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,6 +42,7 @@ public class CategoryServiceImpl implements CategoryService {
         //鉴权✅，验空(Valid✅)，验重，插入
         //验管理员？在Controller层验证了！
         //验重
+        log.debug("创建分区前查询分区名称是否重复");
         Category category = categoryMapper.findByName(dto.getName());
         if(category != null){
             throw new BusinessException(ErrorCode.CATEGORY_NAME_EXISTS);
@@ -47,6 +53,7 @@ public class CategoryServiceImpl implements CategoryService {
         category.setDescription(dto.getDescription());
         category.setIcon(dto.getIcon());
         category.setSortOrder(dto.getSortOrder());
+        category.setCreateTime(LocalDateTime.now());    //精度9位，即2025-12-21T22:11:12.3456789
         category.setIsActive(true);
 
         if(categoryMapper.insert(category)!=1){
@@ -66,7 +73,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryAdminVO> ListCategoriesForAdmin() {
+    public List<CategoryAdminVO> ListCategoriesForAdmin() {     //TODO:废弃⚠️
         List<Category> categories = categoryMapper.findAll();
         log.debug("AdminVO",categories);
 //        System.out.println(categories);
@@ -81,7 +88,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryVO getCategoryById(Long id) {
+    public CategoryVO getCategoryById(Long id) {        //TODO:可升级，暂时不改成动态查询了
         Category category = easyCheckCategoryExistByIdForUser(id,"根据ID找");
         return convertToVO(category);
     }
@@ -138,7 +145,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public void updateSortOrder(Long id, Integer sortOrder) {
         //验数据库空
-        easyCheckCategoryExistByIdNotReturn(id,"修改权重时");
+        easyCheckCategoryExistById(id,"修改权重时");
         categoryMapper.updateSortOrder(id,sortOrder);
 
     }
@@ -146,14 +153,14 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public void enableCategory(Long id) {
-        easyCheckCategoryExistByIdNotReturn(id,"开启分区时");
+        easyCheckCategoryExistById(id,"开启分区时");
         categoryMapper.enable(id);
     }
 
     @Override
     @Transactional
     public void disableCategory(Long id) {
-        easyCheckCategoryExistByIdNotReturn(id,"关闭分区时");
+        easyCheckCategoryExistById(id,"关闭分区时");
         categoryMapper.disable(id);
     }
 
@@ -179,6 +186,32 @@ public class CategoryServiceImpl implements CategoryService {
         if(categoryMapper.deleteById(id)!=1){
             throw new BusinessException(ErrorCode.CATEGORY_DELETE_FAILED);
         }
+    }
+
+    /**
+     * 用PageHelper分页查询分区信息，智能区分isAdmin
+     * @param dto
+     * @return
+     */
+    @Override
+    public PageResult pageQuery(CategoryPageQueryDTO dto) {
+        //先设置PageHelper本次的page和size，立刻跟上Mapper查询，然后组装返回
+
+        //开始分页
+        PageHelper.startPage(dto.getPage(),dto.getPageSize());
+
+        //Mapper查询，可能是AdminVO也可能是VO
+        Page<Category> voPage = categoryMapper.pageQuery(dto);
+
+        //转换类型的List
+        List<?> voList;
+        if(dto.isAdmin()){
+            voList = voPage.getResult().stream().map(this::convertToAdminVO).collect(Collectors.toList());
+        }else{
+            voList = voPage.getResult().stream().map(this::convertToVO).collect(Collectors.toList());
+        }
+
+        return new PageResult(voPage.getTotal(), voList);
     }
 
     // 私有辅助方法
@@ -234,19 +267,5 @@ public class CategoryServiceImpl implements CategoryService {
             log.error("{},id为{}的分区不存在", timeStamp,id);
             throw new BusinessException(timeStamp+"的分区不存在","404", HttpStatus.NOT_FOUND);
         }return category;
-    }
-
-    /**
-     * 带时刻的验空，无返回   - 管理员
-     * @param id
-     * @param timeStamp
-     */
-    private void easyCheckCategoryExistByIdNotReturn(Long id,String timeStamp){
-        //验空
-        Category category = categoryMapper.findById(id);
-        if(category == null){
-            log.error("{},id为{}的分区不存在", timeStamp,id);
-            throw new BusinessException(timeStamp+"的分区不存在","404", HttpStatus.NOT_FOUND);
-        }
     }
 }

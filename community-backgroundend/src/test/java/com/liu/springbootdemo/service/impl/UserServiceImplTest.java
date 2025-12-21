@@ -1,7 +1,6 @@
 package com.liu.springbootdemo.service.impl;
 
-import com.liu.springbootdemo.entity.Post;
-import com.liu.springbootdemo.entity.User;
+import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.exception.UserAlreadyExistsException;
 import com.liu.springbootdemo.mapper.UserMapper;
 import org.junit.jupiter.api.Test;
@@ -11,13 +10,7 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.springframework.security.test.context.support.WithMockUser;
 
 
 import static org.junit.jupiter.api.Assertions.*;

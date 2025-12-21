@@ -1,0 +1,22 @@
+spring:
+  profiles:
+    active: cloud
+  application:
+    name: community-service
+
+mybatis:
+    #mapper配置文件
+    mapper-locations: classpath:mapper/*.xml
+    type-aliases-package: com.liu.springbootdemo.entity
+    configuration:
+        #开启驼峰命名
+        map-underscore-to-camel-case: true
+
+community:
+    jwt:
+        # 设置jwt签名加密时使用的秘钥
+        SECRET_KEY: "YourSuperSecureAndLongSecretKeyForThisCommunityTechForumProject"
+        # 设置jwt过期时间
+        EXPIRATION_TIME: 604800000 # 1000*3600*24*7 (7 天，毫秒)
+        # 设置前端传递过来的令牌名称
+#        admin-token-name: token

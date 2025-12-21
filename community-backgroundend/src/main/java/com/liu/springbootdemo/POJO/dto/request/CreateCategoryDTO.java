@@ -12,10 +12,10 @@ import jakarta.validation.constraints.Size;
 public class CreateCategoryDTO {
 
     @NotBlank(message = "分区名称不能为空")
-    @Size(max = 50, message = "分区名称不能超过50个字符")
+    @Size(max = 50, message = "分区名称不能超过{max}个字符")
     private String name;
 
-    @Size(max = 200, message = "分区描述不能超过200个字符")
+    @Size(max = 200, message = "分区描述不能超过{max}个字符")
     private String description;
 
     private String icon;

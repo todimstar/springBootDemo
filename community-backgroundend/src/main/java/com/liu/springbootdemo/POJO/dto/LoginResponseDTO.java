@@ -3,7 +3,7 @@ package com.liu.springbootdemo.POJO.dto;
 import lombok.Data;
 
 @Data
-public class LoginResponseDTO {
+public class LoginResponseDTO { //TODO:这是VO之后改名字和位置一下
 
     private String username;
     private String jwtToken;

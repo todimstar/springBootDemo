@@ -7,6 +7,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component  //将该过滤器注册为Spring容器中的一个Bean
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
@@ -61,10 +63,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
                 if(userDetails != null){
-                    System.out.println("用户："+userDetails.getUsername());
-                    System.out.println("其权限："+userDetails.getAuthorities());
+                    log.debug("用户：{} Details不为空", userDetails.getUsername());
+                    log.debug("其权限：{}", userDetails.getAuthorities());
                 }else{
-                    System.out.println("wtf?Details==null");
+                    log.error("wtf?Details==null");
                 }
 
                 // b. 验证Token是否有效（用户名匹配且未过期）
@@ -76,12 +78,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             userDetails.getAuthorities() // 用户的权限信息
                     );
 
-                    if(authToken != null){
-                        System.out.println("用户："+authToken.getName());
-                        System.out.println("其权限："+authToken.getAuthorities());
-                    }else{
-                        System.out.println("wtf?authToken==null");
-                    }
+                    log.debug("用户：{} Token有效", authToken.getName());
+                    log.debug("其权限：{}", authToken.getAuthorities());
 
                     // 可选: 保存请求的ip、session等细节信息以便日志审查
                     authToken.setDetails(
@@ -92,7 +90,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     // 这样，Spring Security就知道当前请求的用户是谁，以及他拥有什么权限，其他模块也可以通过SecurityContextHolder获取当前登录用户信息
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }else{
-                    System.out.println("wtf无效token?");
+                    log.error("wtf无效token?");
                     throw new RuntimeException();
                 }
             }
@@ -105,7 +103,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     response,
                     HttpServletResponse.SC_UNAUTHORIZED,
                     "登录过期，请重新登陆");
-            System.out.println(this.getClass() + "的jwt登录过期");
+            log.error("{}的jwt登录过期", this.getClass());
             //无过滤器链后续执行
         }
 

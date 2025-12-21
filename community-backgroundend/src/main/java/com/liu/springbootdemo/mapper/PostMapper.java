@@ -1,6 +1,6 @@
 package com.liu.springbootdemo.mapper;
 
-import com.liu.springbootdemo.entity.Post;
+import com.liu.springbootdemo.POJO.entity.Post;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -79,24 +79,11 @@ public interface PostMapper {
     /**
      * 改
      * 根据帖子id改帖子内容和标题，但需要动态构造title/content更新
+     * xml-具体SQL实现见 resources/mapper/PostMapper.xml
      * @param post
      * @return 影响的行数，1为成功
      */
-    @Update("""
-        <script>
-            UPDATE posts 
-                <set>
-                     <if test="P.title != null and P.title != ''">
-                       title = #{P.title},
-                     </if>
-                     <if test="P.content != null and P.content != ''"> 
-                       content = #{P.content},
-                     </if>
-                </set>
-            WHERE id = #{postId}
-        </script>
-    """)
-    int updatePost(@Param("postId") Long postId, @Param("P") Post post);  //看下这个写Param行不行
+    int updatePost(@Param("postId") Long postId, @Param("P") Post post);
 
     /**
      * 删
@@ -115,15 +102,6 @@ public interface PostMapper {
      */
     @Select("SELECT count(*) FROM posts WHERE category_id = #{categoryId}")
     int countCategoryPostByCategoryId(Long categoryId);
-
-
-
-
-
-
-
-
-
 
 
 

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liu.springbootdemo.mapper.PostMapper">
+
+    <update id="updatePost">
+        UPDATE posts
+        <set>
+            <if test="P.title != null and P.title != ''">
+                title = #{P.title},
+            </if>
+            <if test="P.content != null and P.content != ''">
+                content = #{P.content},
+            </if>
+            update_time = NOW()
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- id: 对应 Mapper 接口中的方法名
+        parameterType: 参数类型（可选）
+        useGeneratedKeys/keyProperty: 如果是 insert 需要回填主键时配置 
+    -->
+
+    <!-- 示例：如果你想把 findPostsByUserId 也搬过来 -->
+    <!-- 
+    <select id="findPostsByUserId" resultType="com.liu.springbootdemo.entity.Post">
+        SELECT * FROM posts WHERE user_id = #{userId}
+    </select> 
+    -->
+
+</mapper>

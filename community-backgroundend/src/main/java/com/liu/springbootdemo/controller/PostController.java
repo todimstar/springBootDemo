@@ -1,18 +1,13 @@
 package com.liu.springbootdemo.controller;
 
-import com.liu.springbootdemo.entity.Comment;
-import com.liu.springbootdemo.entity.Post;
-import com.liu.springbootdemo.POJO.vo.Result;
-import com.liu.springbootdemo.entity.User;
-import com.liu.springbootdemo.service.CommentService;
+import com.liu.springbootdemo.POJO.entity.Post;
+import com.liu.springbootdemo.POJO.vo.Result.Result;
+import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.service.PostService;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,9 +26,6 @@ import java.util.List;
 public class PostController {
     @Autowired
     private PostService postService;
-
-    @Autowired
-    private CommentService commentService;
 
     /**
      * 创建帖子
@@ -108,32 +100,6 @@ public class PostController {
         return Result.success(postService.getAllTitles());
     }
 
-
-
-    //-----------------------------Comment评论API处理-------------------------------
-    @PutMapping("{postId}/comments")
-    public ResponseEntity<Result<Comment>> createComment(@PathVariable("postId") Long postId,@RequestBody Comment comment){
-        Comment returnComment = commentService.createComment(postId,comment);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Result.success(returnComment));
-    }
-
-    /**
-     * 分页获取postId下评论
-     * @param postId
-     * @param page
-     * @param size
-     * @return  200和评论数组
-     */
-    @GetMapping("{postId}/comments")
-    public Result<List<Comment>> getCommentByPostIdByPage(
-            @PathVariable("postId") Long postId,
-            @RequestParam(value = "page",defaultValue = "1",required = false) int page,
-            @RequestParam(value = "size",defaultValue = "10",required = false) int size){
-        if(page<1)page = 1;
-        if(size<1)size = 10;
-        if(size>100)size =100;
-        return Result.success(commentService.findByPostIdByPage(postId,page,size));
-    }
 
 
 }

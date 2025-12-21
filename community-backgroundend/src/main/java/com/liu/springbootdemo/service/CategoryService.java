@@ -1,9 +1,11 @@
 package com.liu.springbootdemo.service;
 
+import com.liu.springbootdemo.POJO.dto.request.CategoryPageQueryDTO;
 import com.liu.springbootdemo.POJO.dto.request.CreateCategoryDTO;
 import com.liu.springbootdemo.POJO.dto.request.UpdateCategoryDTO;
 import com.liu.springbootdemo.POJO.vo.CategoryAdminVO;
 import com.liu.springbootdemo.POJO.vo.CategoryVO;
+import com.liu.springbootdemo.POJO.vo.Result.PageResult;
 
 import java.util.List;
 
@@ -31,6 +33,8 @@ public interface CategoryService {
      * @return CategoryVO
      */
     CategoryVO getCategoryById(Long id);
+
+
 
     /**
      * 管理员找分区 -含禁用，用于给管理员展示分区
@@ -70,4 +74,12 @@ public interface CategoryService {
      * @param id
      */
     void deleteCategory(Long id);
+
+    /**
+     * 分页查分区信息
+     * -DTO中isAdmin区分查询禁用分区
+     * @param categoryPageQueryDTO
+     * @return
+     */
+    PageResult pageQuery(CategoryPageQueryDTO categoryPageQueryDTO);
 }

@@ -1,7 +1,7 @@
 package com.liu.springbootdemo.service.impl;
 
-import com.liu.springbootdemo.entity.Comment;
-import com.liu.springbootdemo.entity.User;
+import com.liu.springbootdemo.POJO.entity.Comment;
+import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.exception.InvalidInputException;
 import com.liu.springbootdemo.exception.NotFindException;
 import com.liu.springbootdemo.exception.NotAuthorException;
@@ -9,7 +9,6 @@ import com.liu.springbootdemo.exception.UnauthorizedException;
 import com.liu.springbootdemo.mapper.CommentMapper;
 import com.liu.springbootdemo.mapper.PostMapper;
 import com.liu.springbootdemo.service.CommentService;
-import com.liu.springbootdemo.service.PostService;
 import com.liu.springbootdemo.utils.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

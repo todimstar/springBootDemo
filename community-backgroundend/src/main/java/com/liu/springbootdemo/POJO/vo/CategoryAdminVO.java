@@ -1,5 +1,6 @@
 package com.liu.springbootdemo.POJO.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import java.time.LocalDateTime;
 
@@ -16,6 +17,8 @@ public class CategoryAdminVO {
     private String icon;
     private Integer postCount;
     private Integer sortOrder;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
 
     private Boolean isActive;   //Boolean和boolean都一样，但由于转换前的category是Boolean，而BeanUntil不会自动封转所以得保持类型一致，否则会出现null

@@ -1,6 +1,7 @@
-package com.liu.springbootdemo.POJO.vo;
+package com.liu.springbootdemo.POJO.vo.Result;
 
 
+import com.liu.springbootdemo.POJO.vo.ErrorResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,10 +16,6 @@ public class Result<T> {
     private T data; //数据
 
     // 静态方法
-    // 带成功数据返回
-    public static <E> Result<E> success(E data){
-        return new Result<>(0,"操作成功",data);
-    }
     // 简要成功信息无数据返回
     public static Result success() {
         return new Result(0,"操作成功",null);
@@ -27,15 +24,21 @@ public class Result<T> {
     public static Result success(String message) {
         return new Result(0,message,null);
     }
+    // 带成功数据返回
+    public static <T> Result<T> success(T data){
+        return new Result<>(0,"操作成功",data);
+    }
     //自定义成功信息带数据返回
-    public static <E> Result<E> success(String message, E data){ return new Result<>(0,message,data);}
+    public static <T> Result<T> success(String message, T data){
+        return new Result<>(0,message,data);
+    }
 
     // 失败信息返回
     public static Result error(String message){
         return new Result(1,message,null);
     }
     //失败自定义状态码返回
-    public static <E> Result<E> error(Integer code,String message){
+    public static <T> Result<T> error(Integer code,String message){
         return new Result<>(code,message,null);
     }
     // ErrorResponse类型失败返回

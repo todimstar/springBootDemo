@@ -46,6 +46,7 @@
     <properties>
         <!-- 指定Java版本为17 -->
         <java.version>17</java.version>
+        <pagehelper>2.1.0</pagehelper><!-- 2.0.0+适配spring Boot 3 -->
     </properties>
 
     <!-- 项目依赖配置 -->
@@ -134,6 +135,14 @@
             <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
             <version>4.3.0</version>
         </dependency>
+
+        <!-- pageHelper -->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>${pagehelper}</version>
+        </dependency>
+
 
     </dependencies>
 

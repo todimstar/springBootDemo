@@ -1,3 +1,15 @@
+# 包含真实密码的环境变量文件
+.env
+.env.local
+
+# 数据库备份文件
+*.sql
+.backup/
+
+# 日志文件
+*.log
+logs/
+
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
