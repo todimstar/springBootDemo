@@ -37,7 +37,7 @@ public class ErrorResponse {
     /**
      * 时间戳
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
 
     /**

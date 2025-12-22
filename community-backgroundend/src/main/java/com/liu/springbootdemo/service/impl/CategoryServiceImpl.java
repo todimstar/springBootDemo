@@ -10,7 +10,7 @@ import com.liu.springbootdemo.POJO.vo.CategoryVO;
 import com.liu.springbootdemo.POJO.vo.Result.PageResult;
 import com.liu.springbootdemo.common.enums.ErrorCode;
 import com.liu.springbootdemo.POJO.entity.Category;
-import com.liu.springbootdemo.common.exception.BusinessException;
+import com.liu.springbootdemo.exception.BusinessException;
 import com.liu.springbootdemo.mapper.CategoryMapper;
 import com.liu.springbootdemo.mapper.PostMapper;
 import com.liu.springbootdemo.service.CategoryService;
