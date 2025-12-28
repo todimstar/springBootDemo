@@ -1,9 +1,8 @@
-package com.liu.springbootdemo.exception;
+package com.liu.springbootdemo.common.exception;
 
-import com.liu.springbootdemo.POJO.vo.ErrorResponse;
-import com.liu.springbootdemo.POJO.vo.Result.Result;
+import com.liu.springbootdemo.POJO.Result.ErrorResponse;
+import com.liu.springbootdemo.POJO.Result.Result;
 import com.liu.springbootdemo.common.enums.ErrorCode;
-import com.liu.springbootdemo.common.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -33,16 +32,18 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+//BussinessException -> ErrorCode(enum) -> handler
+
 /**
  * 全局异常处理器
  * 统一处理所有异常，返回标准化的错误响应
  *
  * @author Liu
- * @date 2024
+ * @date 2025
  */
 @Slf4j
 @RestControllerAdvice
-public class GlobalExceptionHandlerRefactored {
+public class GlobalExceptionHandler {
 
     @Value("${spring.profiles.active:prod}")
     private String activeProfile;
@@ -68,78 +69,6 @@ public class GlobalExceptionHandlerRefactored {
 
         return ResponseEntity
                 .status(e.getHttpStatus())
-                .body(Result.error(error));
-    }
-
-    // ==================== 保留对旧异常的兼容（过渡期） ====================
-
-    @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<Result> handleUnauthorizedException(UnauthorizedException e,
-                                                             HttpServletRequest request) {
-        log.warn("[兼容模式] UnauthorizedException - 建议迁移到 BusinessException");
-        ErrorResponse error = ErrorResponse.of(
-            ErrorCode.UNAUTHORIZED.getCode(),
-            e.getMessage(),
-            request.getRequestURI()
-        );
-        return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(Result.error(error));
-    }
-
-    @ExceptionHandler(NotAuthorException.class)
-    public ResponseEntity<Result> handleNotAuthorException(NotAuthorException e,
-                                                          HttpServletRequest request) {
-        log.warn("[兼容模式] NotAuthorException - 建议迁移到 BusinessException");
-        ErrorResponse error = ErrorResponse.of(
-            ErrorCode.FORBIDDEN.getCode(),
-            e.getMessage(),
-            request.getRequestURI()
-        );
-        return ResponseEntity
-                .status(HttpStatus.FORBIDDEN)
-                .body(Result.error(error));
-    }
-
-    @ExceptionHandler(NotFindException.class)
-    public ResponseEntity<Result> handleNotFindException(NotFindException e,
-                                                        HttpServletRequest request) {
-        log.warn("[兼容模式] NotFindException - 建议迁移到 BusinessException");
-        ErrorResponse error = ErrorResponse.of(
-            ErrorCode.POST_NOT_FOUND.getCode(),  // 默认使用POST_NOT_FOUND
-            e.getMessage(),
-            request.getRequestURI()
-        );
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(Result.error(error));
-    }
-
-    @ExceptionHandler(InvalidInputException.class)
-    public ResponseEntity<Result> handleInvalidInputException(InvalidInputException e,
-                                                             HttpServletRequest request) {
-        log.warn("[兼容模式] InvalidInputException - 建议迁移到 BusinessException");
-        ErrorResponse error = ErrorResponse.of(
-            ErrorCode.PARAM_ERROR.getCode(),
-            e.getMessage(),
-            request.getRequestURI()
-        );
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(Result.error(error));
-    }
-
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<Result> handleUserAlreadyExistsException(UserAlreadyExistsException e,
-                                                                  HttpServletRequest request) {
-        log.warn("[兼容模式] UserAlreadyExistsException - 建议迁移到 BusinessException");
-        ErrorResponse error = ErrorResponse.of(
-            ErrorCode.USER_ALREADY_EXISTS.getCode(),
-            e.getMessage(),
-            request.getRequestURI()
-        );
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)
                 .body(Result.error(error));
     }
 
@@ -195,13 +124,15 @@ public class GlobalExceptionHandlerRefactored {
 
     /**
      * 处理路径参数校验异常
+     * 捕获加工例如，@Min(value = 18, message = "年龄必须大于18岁")
+     * getMessage会得到包含message部分
      */
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Result> handleConstraintViolationException(ConstraintViolationException e,
                                                                     HttpServletRequest request) {
-        Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
+        Set<ConstraintViolation<?>> violations = e.getConstraintViolations();   //获取约束违例结果
         String message = violations.stream()
-                .map(ConstraintViolation::getMessage)
+                .map(ConstraintViolation::getMessage)   //封装违规消息
                 .collect(Collectors.joining(", "));
 
         ErrorResponse error = ErrorResponse.of(

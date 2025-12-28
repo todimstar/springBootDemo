@@ -34,14 +34,27 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> authorize
                 // 白名单：对登录和注册路径的请求，允许所有形式访问
                 .requestMatchers("/api/auth/register","/api/auth/login").permitAll()
-                // 白名单：允许Get方法获取帖子列表，无需验证jwt
-                .requestMatchers(HttpMethod.GET,"/api/posts","/api/posts/allTitles",
-                                                "/api/posts/*", //获取单个帖子，根据帖子id
-                                                "/api/posts/*/comments",    // 允许Get方法获取单个帖子所有评论
-                                                "/api/categories",  // 获取分区列表
-                                                "/api/categories/*" // 获取单个分区信息，根据id
+                // Swagger/Knife4j/静态资源 白名单
+                .requestMatchers(
+                        "/doc.html",
+                        "/webjars/**",
+                        "/v3/api-docs/**",
+                        "/swagger-resources/**",
+                        "/v3/**",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html",
+                        "/favicon.ico"
                 ).permitAll()
-                // 默认全拦截
+                // 白名单：允许Get方法获取帖子列表，无需验证jwt
+                .requestMatchers(HttpMethod.GET,
+                        "/api/posts",
+                        "/api/posts/allTitles",
+                        "/api/posts/*", //获取单个帖子，根据帖子id
+                        "/api/posts/*/comments",    // 允许Get方法获取单个帖子所有评论
+                        "/api/categories",  // 获取分区列表
+                        "/api/categories/*" // 获取单个分区信息，根据id
+                ).permitAll()
+                                // 默认全拦截
                 .anyRequest().authenticated()   // 对于任何其他未匹配的请求，都必须经过身份验证
 
         )

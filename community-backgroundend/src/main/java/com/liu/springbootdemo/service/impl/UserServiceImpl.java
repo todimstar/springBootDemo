@@ -2,17 +2,14 @@ package com.liu.springbootdemo.service.impl;
 
 import com.liu.springbootdemo.POJO.dto.LoginResponseDTO;
 import com.liu.springbootdemo.POJO.entity.User;
-import com.liu.springbootdemo.exception.BusinessException;
-import com.liu.springbootdemo.exception.InvalidInputException;
-import com.liu.springbootdemo.exception.UserAlreadyExistsException;
-import com.liu.springbootdemo.exception.UnauthorizedException;
+import com.liu.springbootdemo.common.enums.ErrorCode;
+import com.liu.springbootdemo.common.exception.BusinessException;
 import com.liu.springbootdemo.mapper.UserMapper;
 import com.liu.springbootdemo.service.UserService;
 import com.liu.springbootdemo.utils.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -46,13 +43,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         // 已有用户
         if(userByUsername != null){
             // 用户已存在，抛出异常（后续全局异常处理）
-            throw new UserAlreadyExistsException("用户名已被占用！");
+            throw new BusinessException(ErrorCode.USERNAME_EXISTS);
         }
        if(userByEmail != null){
-           throw new UserAlreadyExistsException("该邮箱已被使用！");
+           throw new BusinessException(ErrorCode.EMAIL_EXISTS);
        }
-       if(user.getPassword().length()<5 || user.getPassword().length()>20){
-           throw new InvalidInputException("密码长度必须在5到20个字符之间");
+       if(user.getPassword().length()<6 ){
+           throw new BusinessException(ErrorCode.PASSWORD_TOO_SHORT);
        }
 
         // 2. 加密
@@ -70,12 +67,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User userInDbByEmail = userMapper.findByEmail(usernameOrEmail);
         // 1. 用户不存在或密码错误
         if((userInDbByUsername == null && userInDbByEmail == null)){
-            throw new InvalidInputException("用户名/邮箱未注册，请注册后重试");
+            throw new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND,"用户名/邮箱未注册，请注册后重试");
         }
         // 这里已经保证了userInDbByUsername和userInDbByEmail至少有一个不为null
         User userInDb = (userInDbByUsername==null?userInDbByEmail:userInDbByUsername);
         if(!passwordEncoder.matches(password,userInDb.getPassword())){
-            throw new UnauthorizedException("密码错误！");   //确实就是密码错误
+            throw new BusinessException(ErrorCode.WRONG_PASSWORD,"密码错误！");   //确实就是密码错误
         }//TODO:Redis实现尝试登录次数限制和记录
 
         // 捕获数据库更新异常
@@ -105,11 +102,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User existUser = userMapper.findById(id);
 
         if(existUser == null){
-            throw new UsernameNotFoundException("用户 " + existUser.getUsername() + " 不存在");
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND);  //NOTE: 异常升级途中升级了此处原本抛出的专类异常
         }
 
+        // 删除并检查返回值
         if(userMapper.deleteById(id)!=1){
-            throw new BusinessException("用户删除异常","503", HttpStatus.SERVICE_UNAVAILABLE);
+            throw new BusinessException(ErrorCode.USER_DELETE_FAILED);
         }
     }
 

@@ -1,10 +1,13 @@
 package com.liu.springbootdemo.controller;
 
+import com.liu.springbootdemo.POJO.Result.PageResult;
 import com.liu.springbootdemo.POJO.entity.Post;
-import com.liu.springbootdemo.POJO.vo.Result.Result;
+import com.liu.springbootdemo.POJO.Result.Result;
 import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.service.PostService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -33,9 +36,9 @@ public class PostController {
      * @return 成功返回200和帖子内容
      */
     @PostMapping()
-    public ResponseEntity<Result<Post>> createPost(@AuthenticationPrincipal User user, @RequestBody Post post){ //稍显分层的安全获取user，不过本项目之前已经设计用了SecurityUntil.getCurrentUser()获取，这里只用单次实验@AuthenticationPrincipal会用ok
+    public ResponseEntity<Result<Post>> createPost(@RequestBody Post post){ //稍显分层的安全获取user，不过本项目之前已经设计用了SecurityUntil.getCurrentUser()获取，这里只用单次实验@AuthenticationPrincipal会用ok
         // Controller只负责从网络获取用户并将id传参和调用Service
-        Post createPost = postService.createPost(user.getId(),post);
+        Post createPost = postService.createPost(post);
         return ResponseEntity.status(HttpStatus.CREATED).body(Result.success(createPost));
     }
 
@@ -69,6 +72,7 @@ public class PostController {
      * @return  200和当页帖子列表
      */
     @GetMapping()
+    @SecurityRequirements() // 标记此接口不需要鉴权
     public Result getPostsByPage(//TODO:改造为DTO和VO，传出需要<>
             @RequestParam(value = "page", defaultValue = "1", required = false)
 //            @Min(1)
@@ -85,17 +89,29 @@ public class PostController {
         return Result.success(postService.getPostsByPage(page,size));
      }   //默认返回200
 
+    @GetMapping("/{userId}")    //TODO: 12.29 ing
+    public Result<PageResult> pagePostsByUserId(@PathVariable("userId") Long userId, SpringDataWebProperties.Pageable pageable){
+        return Result.success(postService.pagePostsByUserId(userId,pageable));
+    }
+
     /**
      * 获取单个帖子
      *
      * @return
      */
     @GetMapping("/{id}")
-    public Result getPostById(@PathVariable("id") Long postId){
+    @SecurityRequirements() // 标记此接口不需要鉴权
+    public Result getPostById(@PathVariable("id") Long postId){ //TODO:之后管理员后台审核帖子也需要一个鉴权的get去获取被封禁的帖子
         return Result.success(postService.getPostById(postId));
     }
 
+    /**
+     * 获取所有帖子标题列表
+     * TODO:检查一下该帖子标题查询的是否为被禁用的也能被查询，还有是否需要分页，不记得应用场景是什么了，展示在首页的话还需要数据库自动多个，描述展示，存文章前100字之类的
+     * @return
+     */
     @GetMapping("/allTitles")
+    @SecurityRequirements() // 标记此接口不需要鉴权
     public Result<List<Post>> getAllPostsTitle(){
         return Result.success(postService.getAllTitles());
     }

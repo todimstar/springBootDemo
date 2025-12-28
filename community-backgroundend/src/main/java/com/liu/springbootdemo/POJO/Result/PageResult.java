@@ -1,4 +1,4 @@
-package com.liu.springbootdemo.POJO.vo.Result;
+package com.liu.springbootdemo.POJO.Result;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

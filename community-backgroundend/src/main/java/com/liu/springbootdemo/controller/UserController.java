@@ -2,10 +2,12 @@ package com.liu.springbootdemo.controller;
 
 import com.liu.springbootdemo.POJO.dto.LoginInControllerDTO;
 import com.liu.springbootdemo.POJO.dto.LoginResponseDTO;
-import com.liu.springbootdemo.POJO.vo.Result.Result;
+import com.liu.springbootdemo.POJO.Result.Result;
 import com.liu.springbootdemo.POJO.entity.User;
-import com.liu.springbootdemo.exception.InvalidInputException;
+import com.liu.springbootdemo.common.enums.ErrorCode;
+import com.liu.springbootdemo.common.exception.BusinessException;
 import com.liu.springbootdemo.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,22 +37,23 @@ public class UserController {
     // DTO - username -password
 
     @PostMapping("/register")   //定义处理POST请求的接口，路径为 /api/user/register
+    @SecurityRequirements() // 标记此接口不需要鉴权
     public ResponseEntity<Result> register(@RequestBody User user){ //  @RequestBoby：将请求体重JSON数据自动转换成User对象
 
         // decode password  解密还原密码
 
         //0.空检查，检查一下邮箱等传来没有，不然以后不好登录 -->虽然一个是前端保证的，但是不信任先
         if(!StringUtils.hasText(user.getUsername())){
-            throw new InvalidInputException("请输入用户名");
+            throw new BusinessException(ErrorCode.EMPTY_USERNAME);
         }
         if(!StringUtils.hasText(user.getEmail())){
-            throw new InvalidInputException("请输入邮箱?");
+            throw new BusinessException(ErrorCode.EMPTY_EMAIL);
         }
         if(!StringUtils.hasText(user.getPassword())){
-            throw new InvalidInputException("请输入密码");
+            throw new BusinessException(ErrorCode.EMPTY_PASSWORD);
         }
-        if (!(user.getEmail().matches(EMAIL_REGEX))) {
-            throw new InvalidInputException("邮箱格式不正确");
+        if (!(user.getEmail().matches(EMAIL_REGEX))) {  //格式检查
+            throw new BusinessException(ErrorCode.EMAIL_INVALID);
         }
 
         System.out.println(user);
@@ -60,13 +63,14 @@ public class UserController {
     }
 
     @PostMapping("/login")   //登录路径为 /api/user/login
+    @SecurityRequirements() // 标记此接口不需要鉴权
     public ResponseEntity<Result<LoginResponseDTO>> login(@RequestBody LoginInControllerDTO loginInControllerDTO){
         System.out.println(loginInControllerDTO);
         if(!StringUtils.hasText(loginInControllerDTO.getUsernameOrEmail())){
-            throw new InvalidInputException("请输入用户名/邮箱");
+            throw new BusinessException(ErrorCode.EMPTY_USERNAME_OR_EMAIL);
         }
         if(!StringUtils.hasText(loginInControllerDTO.getPassword())){
-            throw new InvalidInputException("请输入密码");
+            throw new BusinessException(ErrorCode.EMPTY_PASSWORD);
         }
         //不需要验证邮箱格式了，因为是用户名或邮箱，直接去查就好了
         // 认证
@@ -110,7 +114,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public Result<Void> deleteHeadByIdForAdmin(@PathVariable
+    public Result deleteHeadByIdForAdmin(@PathVariable
                                                    @Min(value = 0,message = "用户id下限0")
                                                    @Max(value = Long.MAX_VALUE,message = "都破Long了这UserId")
                                                    Long id){

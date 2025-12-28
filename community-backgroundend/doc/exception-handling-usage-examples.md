@@ -475,7 +475,7 @@ public class CategoryServiceImplRefactored implements CategoryService {
 ```java
 package com.liu.springbootdemo.controller;
 
-import com.liu.springbootdemo.POJO.vo.Result.Result;
+import com.liu.springbootdemo.POJO.Result.Result;
 import com.liu.springbootdemo.common.enums.ErrorCode;
 import com.liu.springbootdemo.common.utils.Assert;
 import io.swagger.v3.oas.annotations.Operation;

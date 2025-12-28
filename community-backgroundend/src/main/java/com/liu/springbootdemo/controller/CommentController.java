@@ -1,6 +1,6 @@
 package com.liu.springbootdemo.controller;
 
-import com.liu.springbootdemo.POJO.vo.Result.Result;
+import com.liu.springbootdemo.POJO.Result.Result;
 import com.liu.springbootdemo.POJO.entity.Comment;
 import com.liu.springbootdemo.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;

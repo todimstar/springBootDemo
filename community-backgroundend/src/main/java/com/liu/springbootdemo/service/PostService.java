@@ -5,7 +5,7 @@ import com.liu.springbootdemo.POJO.entity.Post;
 import java.util.List;
 
 public interface PostService {
-    Post createPost(Long userId, Post post);
+    Post createPost(Post post);
 
     Post updatePost(Long postId, Post post);
 

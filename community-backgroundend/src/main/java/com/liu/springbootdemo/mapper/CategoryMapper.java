@@ -35,6 +35,9 @@ public interface CategoryMapper {
     @Select("SELECT * from categories WHERE id = #{id} and is_active = TRUE")
     Category findActiveById(Long id);
 
+    @Select("SELECT EXISTS(SELECT 1 FROM categories WHERE id = #{id} AND is_active = TRUE)")
+    int isActiveById(Long id);
+
     // ======列表、ID、Name查询 - 管理员======
 
     /**

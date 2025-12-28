@@ -7,17 +7,16 @@ import com.liu.springbootdemo.POJO.dto.request.CreateCategoryDTO;
 import com.liu.springbootdemo.POJO.dto.request.UpdateCategoryDTO;
 import com.liu.springbootdemo.POJO.vo.CategoryAdminVO;
 import com.liu.springbootdemo.POJO.vo.CategoryVO;
-import com.liu.springbootdemo.POJO.vo.Result.PageResult;
+import com.liu.springbootdemo.POJO.Result.PageResult;
 import com.liu.springbootdemo.common.enums.ErrorCode;
 import com.liu.springbootdemo.POJO.entity.Category;
-import com.liu.springbootdemo.exception.BusinessException;
+import com.liu.springbootdemo.common.exception.BusinessException;
 import com.liu.springbootdemo.mapper.CategoryMapper;
 import com.liu.springbootdemo.mapper.PostMapper;
 import com.liu.springbootdemo.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -177,10 +176,10 @@ public class CategoryServiceImpl implements CategoryService {
         int countFromPosts = postMapper.countCategoryPostByCategoryId(id);
 
         if(countFromCategories != countFromPosts){
-            throw new BusinessException("该分区帖子数量异常，请稍后重试","40200",HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new BusinessException(ErrorCode.CATEGORY_COUNT_MISMATCH);
         }
         if(countFromPosts > 0){
-            throw new BusinessException("该分区下还有"+countFromPosts+"个帖子，无法删除，请先迁移或删除帖子","40200",HttpStatus.CONFLICT);
+            throw new BusinessException(ErrorCode.CATEGORY_DELETE_FAILED,"该分区下还有"+countFromPosts+"个帖子，无法删除，请先迁移或删除帖子");
         }
         //删除
         if(categoryMapper.deleteById(id)!=1){
@@ -243,15 +242,17 @@ public class CategoryServiceImpl implements CategoryService {
 
     /**
      * 带时刻的验空，返回Category,专供User权限用findActiveById
+     * GOOD:因为其实用户查询才是最常用的，所以专门做了用户函数和管理员函数，而不在一个函数里动态判断
      * @param id
      * @param timeStamp
+     * @return Category
      */
     private Category easyCheckCategoryExistByIdForUser(Long id,String timeStamp){
         //验空
-        Category category = categoryMapper.findActiveById(id);
+        Category category = categoryMapper.findActiveById(id);  //此处调用方法不同
         if(category == null){
             log.error("{},id为{}的分区不存在", timeStamp,id);
-            throw new BusinessException(timeStamp+"的分区不存在","404", HttpStatus.NOT_FOUND);
+            throw new BusinessException(ErrorCode.CATEGORY_NOT_FOUND);
         }return category;
     }
 
@@ -259,13 +260,15 @@ public class CategoryServiceImpl implements CategoryService {
      * 带时刻的验空，返回Category - 管理员
      * @param id
      * @param timeStamp
+     * @return Category
      */
     private Category easyCheckCategoryExistById(Long id,String timeStamp){
         //验空
         Category category = categoryMapper.findById(id);
         if(category == null){
             log.error("{},id为{}的分区不存在", timeStamp,id);
-            throw new BusinessException(timeStamp+"的分区不存在","404", HttpStatus.NOT_FOUND);
+            throw new BusinessException(ErrorCode.CATEGORY_NOT_FOUND);
         }return category;
     }
 }
+

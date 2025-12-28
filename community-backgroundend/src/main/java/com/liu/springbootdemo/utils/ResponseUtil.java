@@ -1,7 +1,7 @@
 package com.liu.springbootdemo.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.liu.springbootdemo.POJO.vo.Result.Result;
+import com.liu.springbootdemo.POJO.Result.Result;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;

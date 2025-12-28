@@ -1,7 +1,8 @@
 package com.liu.springbootdemo.service.impl;
 
 import com.liu.springbootdemo.POJO.entity.User;
-import com.liu.springbootdemo.exception.UserAlreadyExistsException;
+import com.liu.springbootdemo.common.enums.ErrorCode;
+import com.liu.springbootdemo.common.exception.BusinessException;
 import com.liu.springbootdemo.mapper.UserMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,7 +38,7 @@ class UserServiceImplTest {
     @InjectMocks
     private PostServiceImpl postService;
 
-    // @Test: 这是一个测试方法。
+    // @Test: 这是一个测试方法，测试用户已存在的注册场景是否能正确抛出异常
     @Test
     void register_shouldThrowUserAlreadyExistsException_whenUsernameExists() {
         // --- 1. 准备阶段 (Arrange) ---
@@ -58,9 +59,15 @@ class UserServiceImplTest {
         // 我们断言（assert），当执行 userService.register(existingUser) 这行代码时，
         // 它“必须”抛出 UserAlreadyExistsException.class 这个类型的异常。
         // assertThrows 是 JUnit 5 提供的方法，专门用来测试异常情况。
-        assertThrows(UserAlreadyExistsException.class, () -> {
+//        assertThrows(UserAlreadyExistsException.class, () -> {
+
+        //升级为统一异常后，需要先捕获再断言其中ErrorCode属性，如下
+        BusinessException exception = assertThrows(BusinessException.class, () -> {   //不知道这样可不可以
             userService.register(existingUser);
         });
+
+        //捕获后验证错误码类型
+        assertEquals(ErrorCode.USERNAME_EXISTS.getCode(), exception.getCode());
 
         // (可选) 验证模拟对象的方法是否从未被调用：
         // 因为用户名已存在，程序应该在加密和插入之前就抛出异常，

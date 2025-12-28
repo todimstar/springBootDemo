@@ -2,11 +2,10 @@ package com.liu.springbootdemo.service.impl;
 
 import com.liu.springbootdemo.POJO.entity.Post;
 import com.liu.springbootdemo.POJO.entity.User;
-import com.liu.springbootdemo.exception.InvalidInputException;
-import com.liu.springbootdemo.exception.NotFindException;
-import com.liu.springbootdemo.exception.NotAuthorException;
+import com.liu.springbootdemo.common.enums.ErrorCode;
+import com.liu.springbootdemo.common.exception.BusinessException;
+import com.liu.springbootdemo.mapper.CategoryMapper;
 import com.liu.springbootdemo.mapper.PostMapper;
-import com.liu.springbootdemo.mapper.UserMapper;
 import com.liu.springbootdemo.service.PostService;
 import com.liu.springbootdemo.utils.SecurityUtil;
 import org.slf4j.Logger;
@@ -26,7 +25,7 @@ public class PostServiceImpl implements PostService {
     private PostMapper postMapper;
 
     @Autowired
-    private UserMapper userMapper;
+    private CategoryMapper categoryMapper;
 
     /**
      * 新建帖子
@@ -34,19 +33,28 @@ public class PostServiceImpl implements PostService {
      * @return post 数据库中存的帖子
      */
     @Override
-    public Post createPost(Long currentUserId, Post post) {
-        // 1. 从SecurityContext获取当前登录用户的信息
-//        User currentUser = SecurityUtil.getCurrentUser();
+    public Post createPost(Post post) { //NOTE: 更改了方法签名，去掉了User参数，还是选择从SecurityContext获取当前用户
+         //1. 从SecurityContext获取当前登录用户的信息
+        User currentUser = SecurityUtil.getCurrentUser();
 
-        // 2. 将当前用户的ID设置到post对象中
-        post.setUserId(currentUserId);
+        // 2. 将当前用户的ID设置到post对象中    ,不在乎post里的userId，因为不可信
+        if (currentUser != null) {
+            post.setUserId(currentUser.getId());
+        }else{
+            throw new BusinessException(ErrorCode.UNAUTHORIZED,"Unbelievable! 你是怎么进来的，谁让你没登录就进来的!💢 滚出去😡*");
+        }
 
         // 3. 校验帖子内容
         if(!StringUtils.hasText(post.getTitle())){
-            throw new InvalidInputException("帖子标题不能为空");
+            throw new BusinessException(ErrorCode.POST_TITLE_EMPTY);
         }
         if(!StringUtils.hasText(post.getContent())){
-            throw new InvalidInputException("帖子内容不能为空");
+            throw new BusinessException(ErrorCode.POST_CONTENT_EMPTY);
+        }
+
+        //校验分区是否存在，存在才给加帖子，不存在或者锁了的分区不可新增帖子，无论管理员与否
+        if(categoryMapper.isActiveById(post.getCategoryId()) != 1){
+            throw new BusinessException(ErrorCode.CATEGORY_NOT_FOUND,"分区不存在或已被锁定，无法在该分区下创建帖子");
         }
 
         // 4. 调用Mapper插入数据库
@@ -72,25 +80,31 @@ public class PostServiceImpl implements PostService {
 
         // 从Security获取当前登录用户
         User currentUser = SecurityUtil.getCurrentUser();
+        if(currentUser==null){throw new BusinessException(ErrorCode.UNAUTHORIZED,"Unbelievable! 你是怎么进来的，谁让你没登录就进来的!💢 滚出去😡*");}
 
         // 使用前端的postId查帖子后校验帖子是否属于currentUserId
         Post postInDb = postMapper.findById(postId);
         if(postInDb == null){
 //            logger.warn("");
-            throw new NotFindException("帖子不存在，无法修改");
+            throw new BusinessException(ErrorCode.POST_NOT_FOUND,"帖子不存在，无法修改");
         }
 
         //检查修改的帖子是否有要修改的内容
         if (
             (post.getContent()==null || post.getContent().isBlank()) //先插是否为空，再依据肯定是字符串所以查isBlank()，比isEmpty更准确,以防""的出现
             && !StringUtils.hasText(post.getTitle())){              //后续直接用Springboot的StringUtils.hasText也是同理实现
-            throw new InvalidInputException("要修改的内容为空");
+            throw new BusinessException(ErrorCode.INPUT_INVALID,"要修改的内容为空,可以选择删除帖子");
         }
 
-        // 帖子不归属当前用户    --> TODO:可以加管理员校验实现管理员修改帖子
-        if(!postInDb.getUserId().equals(currentUser.getId())){
-//            logger.warn("帖子 \"" + post.getTitle() + "\"不属于当前用户[" + currentUser.getUsername() + "]");
-            throw new NotAuthorException("帖子 \"" + postInDb.getTitle() + "\"不属于当前用户[" + currentUser.getUsername() + "]");
+        // 帖子不归属当前用户    --> TODO:可以加管理员校验实现管理员修改帖子,到时候直接||加上判断currentUser的身份是否是管理员即可
+        if (!postInDb.getUserId().equals(currentUser.getId())) {
+            // 你记忆中“直接加逗号”的用法是 logger.info("{}", arg)，那是 Logger (日志记录器: Log 日志 + er 执行者) 接口特有的功能
+            // 在普通代码中生成 String 时，Java 原生并不支持 {} 占位符，必须借助工具类
+            // MessageFormatter (消息格式化器: Message 消息 + Format 格式 + ter 工具) 是 SLF4J 提供的底层实现
+//            String message = org.slf4j.helpers.MessageFormatter.format("帖子 \"{}\" 不属于当前用户[{}]",
+//            postInDb.getTitle(), currentUser.getUsername()).getMessage();
+            
+            throw new BusinessException(ErrorCode.POST_NOT_AUTHOR, String.format("帖子 %s 不属于当前用户[%s]",postInDb.getTitle(), currentUser.getUsername()));
         }
 
         // 过关才允许修改
@@ -112,12 +126,12 @@ public class PostServiceImpl implements PostService {
         Post postInDB = postMapper.findById(postId);
 
         if(postInDB == null){
-            throw new NotFindException("帖子不存在，无法删除");
+            throw new BusinessException(ErrorCode.POST_NOT_FOUND,"帖子不存在，无法删除");
         }
 
         // 比较帖子是否属于当前用户     -->TODO:同样可以加管理员校验，用Security查看用户身份，那就是currentUser的身份
         if(!postInDB.getUserId().equals(currentUser.getId())){
-            throw new NotAuthorException("帖子\"" + postInDB.getTitle() + "\"不属于当前用户[" + currentUser.getUsername() + "]");
+            throw new BusinessException(ErrorCode.POST_NOT_AUTHOR,"帖子\"" + postInDB.getTitle() + "\"不属于当前用户[" + currentUser.getUsername() + "]");
         }
 
         //允许删除
@@ -129,7 +143,7 @@ public class PostServiceImpl implements PostService {
     public Post getPostById(Long postId) {
         Post postInDb = postMapper.findById(postId);
         if(postInDb == null){
-            throw new NotFindException("寻找的帖子不存在捏");
+            throw new BusinessException(ErrorCode.POST_NOT_FOUND,"寻找的帖子不存在捏");
         }
         return postInDb;
     }

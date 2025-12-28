@@ -185,8 +185,8 @@ public class ErrorResponse {
 // 4. 全局异常处理器
 package com.liu.springbootdemo.exception;
 
-import com.liu.springbootdemo.POJO.vo.ErrorResponse;
-import com.liu.springbootdemo.POJO.vo.Result.Result;
+import com.liu.springbootdemo.POJO.Result.ErrorResponse;
+import com.liu.springbootdemo.POJO.Result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -209,7 +209,7 @@ public class GlobalExceptionHandler {
     /**
      * 处理业务异常
      */
-    @ExceptionHandler(BusinessException.class)
+//    @ExceptionHandler(BusinessException.class)
     public ResponseEntity<Result> handleBusinessException(BusinessException e,
                                                           HttpServletRequest request) {
         log.error("业务异常 - 路径: {}, 错误码: {}, 消息: {}",

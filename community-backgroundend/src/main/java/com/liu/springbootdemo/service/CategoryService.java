@@ -5,7 +5,7 @@ import com.liu.springbootdemo.POJO.dto.request.CreateCategoryDTO;
 import com.liu.springbootdemo.POJO.dto.request.UpdateCategoryDTO;
 import com.liu.springbootdemo.POJO.vo.CategoryAdminVO;
 import com.liu.springbootdemo.POJO.vo.CategoryVO;
-import com.liu.springbootdemo.POJO.vo.Result.PageResult;
+import com.liu.springbootdemo.POJO.Result.PageResult;
 
 import java.util.List;
 

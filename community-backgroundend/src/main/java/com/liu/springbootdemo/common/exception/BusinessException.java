@@ -1,59 +1,31 @@
 package com.liu.springbootdemo.common.exception;
 
 import com.liu.springbootdemo.common.enums.ErrorCode;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-/**
- * 统一业务异常类
- * 所有业务异常都应该使用这个类或其子类
- *
- * @author Liu
- * @date 2024
- */
 @Getter
+@AllArgsConstructor
 public class BusinessException extends RuntimeException {
 
-    /**
-     * 错误码
-     */
-    private final String code;
+    private String code;
+    private String message;
+    private HttpStatus httpStatus;
+    private Object data;    //可选数据包
 
-    /**
-     * 错误消息
-     */
-    private final String message;
 
-    /**
-     * HTTP状态码
-     */
-    private final HttpStatus httpStatus;
+    //单ErrorCode构造
+    public BusinessException(ErrorCode errorCode){
 
-    /**
-     * 附加数据（可选）
-     */
-    private final Object data;
-
-    /**
-     * 构造函数 - 使用错误码枚举
-     *
-     * @param errorCode 错误码枚举
-     */
-    public BusinessException(ErrorCode errorCode) {
         super(errorCode.getMessage());
         this.code = errorCode.getCode();
         this.message = errorCode.getMessage();
         this.httpStatus = errorCode.getHttpStatus();
         this.data = null;
     }
-
-    /**
-     * 构造函数 - 使用错误码枚举和自定义消息
-     *
-     * @param errorCode 错误码枚举
-     * @param message   自定义错误消息
-     */
-    public BusinessException(ErrorCode errorCode, String message) {
+    //Errorcode构造加自定义报错消息
+    public BusinessException(ErrorCode errorCode, String message){
         super(message);
         this.code = errorCode.getCode();
         this.message = message;
@@ -61,63 +33,43 @@ public class BusinessException extends RuntimeException {
         this.data = null;
     }
 
-    /**
-     * 构造函数 - 使用错误码枚举和附加数据
-     *
-     * @param errorCode 错误码枚举
-     * @param data      附加数据
-     */
-    public BusinessException(ErrorCode errorCode, Object data) {
+    //ErrorCode加data
+    public BusinessException(ErrorCode errorCode, Object data){
         super(errorCode.getMessage());
-        this.code = errorCode.getCode();
-        this.message = errorCode.getMessage();
+        this.code = errorCode.getCode();;
+        this.message = errorCode.getMessage();;
         this.httpStatus = errorCode.getHttpStatus();
         this.data = data;
     }
 
-    /**
-     * 构造函数 - 使用错误码枚举、自定义消息和附加数据
-     *
-     * @param errorCode 错误码枚举
-     * @param message   自定义错误消息
-     * @param data      附加数据
-     */
-    public BusinessException(ErrorCode errorCode, String message, Object data) {
+    //ErrorCode加data加自定义消息
+    public BusinessException(ErrorCode errorCode, String message, Object data){
         super(message);
-        this.code = errorCode.getCode();
-        this.message = message;
+        this.code = errorCode.getCode();;
+        this.message = message;;
         this.httpStatus = errorCode.getHttpStatus();
         this.data = data;
     }
 
-    /**
-     * 构造函数 - 支持异常链
-     *
-     * @param errorCode 错误码枚举
-     * @param cause     原始异常
-     */
-    public BusinessException(ErrorCode errorCode, Throwable cause) {
-        super(errorCode.getMessage(), cause);
-        this.code = errorCode.getCode();
-        this.message = errorCode.getMessage();
+    //异常链，不知道是什么场景会调用
+    public BusinessException(ErrorCode errorCode, Throwable cause){
+        super(errorCode.getMessage(),cause);
+        this.code = errorCode.getCode();;
+        this.message = errorCode.getMessage();;
         this.httpStatus = errorCode.getHttpStatus();
-        this.data = null;
+        this.data = data;
     }
 
-    /**
-     * 构造函数 - 支持异常链和自定义消息
-     *
-     * @param errorCode 错误码枚举
-     * @param message   自定义错误消息
-     * @param cause     原始异常
-     */
-    public BusinessException(ErrorCode errorCode, String message, Throwable cause) {
-        super(message, cause);
-        this.code = errorCode.getCode();
-        this.message = message;
+    //异常链，不知道是什么场景会调用
+    public BusinessException(ErrorCode errorCode, String message, Throwable cause){
+        super(message,cause);
+        this.code = errorCode.getCode();;
+        this.message = errorCode.getMessage();;
         this.httpStatus = errorCode.getHttpStatus();
-        this.data = null;
+        this.data = data;
     }
+
+    //TODO:静态工厂方法，AI给的，不理解，没用到
 
     /**
      * 静态工厂方法 - 创建带格式化消息的异常
@@ -126,9 +78,9 @@ public class BusinessException extends RuntimeException {
      * @param args      格式化参数
      * @return BusinessException
      */
-    public static BusinessException of(ErrorCode errorCode, Object... args) {
+    public static com.liu.springbootdemo.common.exception.BusinessException of(ErrorCode errorCode, Object... args) {
         String message = String.format(errorCode.getMessage(), args);
-        return new BusinessException(errorCode, message);
+        return new com.liu.springbootdemo.common.exception.BusinessException(errorCode, message);
     }
 
     /**
@@ -139,8 +91,10 @@ public class BusinessException extends RuntimeException {
      * @param args          格式化参数
      * @return BusinessException
      */
-    public static BusinessException format(ErrorCode errorCode, String messageFormat, Object... args) {
+    public static com.liu.springbootdemo.common.exception.BusinessException format(ErrorCode errorCode, String messageFormat, Object... args) {
         String message = String.format(messageFormat, args);
-        return new BusinessException(errorCode, message);
+        return new com.liu.springbootdemo.common.exception.BusinessException(errorCode, message);
     }
+
+
 }

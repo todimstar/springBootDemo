@@ -2,10 +2,8 @@ package com.liu.springbootdemo.service.impl;
 
 import com.liu.springbootdemo.POJO.entity.Comment;
 import com.liu.springbootdemo.POJO.entity.User;
-import com.liu.springbootdemo.exception.InvalidInputException;
-import com.liu.springbootdemo.exception.NotFindException;
-import com.liu.springbootdemo.exception.NotAuthorException;
-import com.liu.springbootdemo.exception.UnauthorizedException;
+import com.liu.springbootdemo.common.enums.ErrorCode;
+import com.liu.springbootdemo.common.exception.BusinessException;
 import com.liu.springbootdemo.mapper.CommentMapper;
 import com.liu.springbootdemo.mapper.PostMapper;
 import com.liu.springbootdemo.service.CommentService;
@@ -36,15 +34,15 @@ public class CommentServiceImpl implements CommentService {
         //空检查
         User currentUser = SecurityUtil.getCurrentUser();
         if(currentUser == null){
-            throw new UnauthorizedException("未登录，请登录后评论");
+            throw new BusinessException(ErrorCode.UNAUTHORIZED,"未登录，请登录后评论");
         }
 
         if(postMapper.findById(postId) == null){
-            throw new NotFindException("评论的帖子消失啦！~");
+            throw new BusinessException(ErrorCode.POST_NOT_FOUND,"评论的帖子消失啦！~");
         }
 
         if(comment == null || !StringUtils.hasText(comment.getContent())){
-            throw new InvalidInputException("评论/评论内容不能为空！");
+            throw new BusinessException(ErrorCode.COMMENT_CONTENT_EMPTY);
         }
 
         //属性检查
@@ -68,7 +66,7 @@ public class CommentServiceImpl implements CommentService {
         // 2.查合法
         // 3.调用
         if(postMapper.findById(postId) == null){
-            throw new NotFindException("查看的帖子不存在了？？！");//应该进不到这步吧，应该帖子页面都进不去调用不了这个评论,不过确实可以用url访问所以还是有必要的拦截
+            throw new BusinessException(ErrorCode.POST_NOT_FOUND,"查看的帖子不存在了？？！ 你，不应该来这✈️");//应该进不到这步吧，应该帖子页面都进不去调用不了这个评论,不过确实可以用url访问所以还是有必要的拦截
         }
 
         int index = (page-1)*size;
@@ -82,16 +80,16 @@ public class CommentServiceImpl implements CommentService {
         //2.评论存在，开始删除
         User currentUser = SecurityUtil.getCurrentUser();
         if(currentUser == null){
-            throw new UnauthorizedException("未登录，请先登录再删除评论~");
+            throw new BusinessException(ErrorCode.UNAUTHORIZED,"未登录，请先登录再删除评论~");
         }
 
         Comment currentComment = commentMapper.findById(commentId);
         if(currentComment == null){
-            throw new NotFindException("评论消失了~ 请确认评论id["+commentId+"]是否存在");
+            throw new BusinessException(ErrorCode.COMMENT_NOT_FOUND,"评论消失了~ 请确认评论id["+commentId+"]是否存在");
         }
 
         if(!currentComment.getUserId().equals(currentUser.getId())){
-            throw new NotAuthorException("您不是该评论的作者，不能删除该评论！");
+            throw new BusinessException(ErrorCode.COMMENT_NOT_AUTHOR,"您不是该评论的作者，不能删除该评论！");
         }
 
         //你！过关                              ？

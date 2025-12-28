@@ -16,8 +16,8 @@ public interface PostMapper {
      * @param post 新帖子
      * @return 影响的行数，1为成功
      */
-    @Insert("INSERT INTO posts(user_id,title,content,create_time,update_time)"+
-            "VALUES(#{userId},#{title},#{content}, NOW(), NOW())")
+    @Insert("INSERT INTO posts(user_id,title,content,create_time,update_time,category_id)"+     //NOTE:12.28 使category_id为必填字段
+            "VALUES(#{userId},#{title},#{content}, NOW(), NOW(), #{categoryId})")
     @Options(useGeneratedKeys = true, keyProperty = "id")   //获取数据库主键，并赋给id
     int insert(Post post);
 

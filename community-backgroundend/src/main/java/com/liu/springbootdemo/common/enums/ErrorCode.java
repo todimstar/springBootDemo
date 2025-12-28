@@ -38,6 +38,8 @@ public enum ErrorCode {
     USER_ALREADY_EXISTS("10002", "用户已存在", HttpStatus.CONFLICT),
     USER_STATUS_ABNORMAL("10003", "用户状态异常", HttpStatus.FORBIDDEN),
     USER_BANNED("10004", "用户已被封禁", HttpStatus.FORBIDDEN),
+    USER_UPDATE_FAILED("10005", "用户信息更新失败", HttpStatus.INTERNAL_SERVER_ERROR),
+    USER_DELETE_FAILED("10006", "用户删除失败", HttpStatus.INTERNAL_SERVER_ERROR),
 
     // 用户注册错误 10100-10199
     USERNAME_EXISTS("10101", "用户名已被占用", HttpStatus.CONFLICT),
@@ -47,6 +49,14 @@ public enum ErrorCode {
     PASSWORD_TOO_SIMPLE("10105", "密码过于简单", HttpStatus.BAD_REQUEST),
     USERNAME_INVALID("10106", "用户名格式不正确", HttpStatus.BAD_REQUEST),
     EMAIL_INVALID("10107", "邮箱格式不正确", HttpStatus.BAD_REQUEST),
+
+    //用户端输入错误 10200-10299
+    EMPTY_USERNAME("10201", "用户名不能为空", HttpStatus.BAD_REQUEST),
+    EMPTY_EMAIL("10202","邮箱不能为空", HttpStatus.BAD_REQUEST),
+    EMPTY_PASSWORD("10203", "密码不能为空", HttpStatus.BAD_REQUEST),
+    EMPTY_USERNAME_OR_EMAIL("10204", "用户名或邮箱不能为空", HttpStatus.BAD_REQUEST),
+    INPUT_INVALID("10205", "输入不合法", HttpStatus.BAD_REQUEST),
+
 
     // ==================== 认证授权错误 20000-29999 ====================
     // 认证错误 20001-20099
@@ -98,9 +108,10 @@ public enum ErrorCode {
     CATEGORY_NOT_FOUND("40201", "分区不存在", HttpStatus.NOT_FOUND),
     CATEGORY_NAME_EXISTS("40202", "分区名称已存在", HttpStatus.CONFLICT),
     CATEGORY_HAS_POSTS("40203", "分区下还有帖子，无法删除", HttpStatus.CONFLICT),
-    CATEGORY_CREATE_FAILED("40204", "创建分区失败", HttpStatus.INTERNAL_SERVER_ERROR),
-    CATEGORY_UPDATE_FAILED("40205", "更新分区失败", HttpStatus.INTERNAL_SERVER_ERROR),
-    CATEGORY_DELETE_FAILED("40206", "删除分区失败", HttpStatus.INTERNAL_SERVER_ERROR),
+    CATEGORY_COUNT_MISMATCH("40204", "分区帖子数量异常,请稍后重试", HttpStatus.INTERNAL_SERVER_ERROR),
+    CATEGORY_CREATE_FAILED("40205", "创建分区失败", HttpStatus.INTERNAL_SERVER_ERROR),
+    CATEGORY_UPDATE_FAILED("40206", "更新分区失败", HttpStatus.INTERNAL_SERVER_ERROR),
+    CATEGORY_DELETE_FAILED("40207", "删除分区失败", HttpStatus.INTERNAL_SERVER_ERROR),
 
     // 点赞收藏 40300-40399
     ALREADY_LIKED("40301", "您已经点过赞了", HttpStatus.CONFLICT),

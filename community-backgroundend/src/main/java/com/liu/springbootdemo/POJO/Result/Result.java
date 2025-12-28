@@ -1,7 +1,6 @@
-package com.liu.springbootdemo.POJO.vo.Result;
+package com.liu.springbootdemo.POJO.Result;
 
 
-import com.liu.springbootdemo.POJO.vo.ErrorResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
