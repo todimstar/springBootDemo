@@ -73,13 +73,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User userInDb = (userInDbByUsername==null?userInDbByEmail:userInDbByUsername);
         if(!passwordEncoder.matches(password,userInDb.getPassword())){
             throw new BusinessException(ErrorCode.WRONG_PASSWORD,"密码错误！");   //确实就是密码错误
-        }//TODO:Redis实现尝试登录次数限制和记录
+        }
+        //账密正确，如果被封禁则遣返
+        if(userInDb.isBanned()){
+            throw new BusinessException(ErrorCode.USER_BANNED,String.format("用户已被封禁,因%s",userInDb.getBanReason())); //FIXME:加一个用户登录时校验是否被封禁的逻辑，并人性化返回被封禁原因
+        }
+
+        //TODO:Redis实现尝试登录次数限制和记录
 
         // 捕获数据库更新异常
         if (userMapper.updateLogintimeByUsername(userInDb.getUsername()) != 1) {
             // 如果还能走这里，那就是数据库更新失败
             logger.warn("为用户 {} 更新登录时间失败", usernameOrEmail);
-            throw new RuntimeException("用户 " + usernameOrEmail+ "更新最新登录时间失败，数据库无报错但返回行数不为1");
+            throw new BusinessException(ErrorCode.USER_UPDATE_FAILED,"用户 " + usernameOrEmail+ "更新最新登录时间失败，数据库无报错但返回行数不为1");
         }
         // 构造Spring Security的UserDetails对象
         UserDetails userDetails = loadUserByUsername(userInDb.getUsername());
@@ -94,6 +100,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public List<User> getAllUser(){
         return userMapper.getAll();
+    }
+
+    /**
+     * 给Service层其他类调用的，根据id获取用户，找不到抛异常
+     * @param id
+     * @return User
+     */
+    @Override
+    public User getUserById(Long id){
+        User user = userMapper.findById(id);
+        if(user == null){
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND);
+        }
+        return user;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.liu.springbootdemo.mapper;
 
+import com.github.pagehelper.Page;
 import com.liu.springbootdemo.POJO.entity.Post;
 import org.apache.ibatis.annotations.*;
 
@@ -47,7 +48,7 @@ public interface PostMapper {
      * @return posts 帖子对象列表
      */
     @Select("SELECT * FROM posts WHERE user_id = #{userId}")
-    List<Post> findPostsByUserId(@Param("userId")Long userId);
+    Page<Post> findPostsByUserId(@Param("userId")Long userId);
 
     /**
      * 查

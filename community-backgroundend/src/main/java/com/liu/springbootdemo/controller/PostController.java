@@ -5,12 +5,21 @@ import com.liu.springbootdemo.POJO.entity.Post;
 import com.liu.springbootdemo.POJO.Result.Result;
 import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.service.PostService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,7 +34,9 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("api/posts")
-//@Validated
+@Validated
+@Slf4j
+@Tag(name = "PostController", description = "帖子相关接口")
 public class PostController {
     @Autowired
     private PostService postService;
@@ -36,28 +47,36 @@ public class PostController {
      * @return 成功返回200和帖子内容
      */
     @PostMapping()
-    public ResponseEntity<Result<Post>> createPost(@RequestBody Post post){ //稍显分层的安全获取user，不过本项目之前已经设计用了SecurityUntil.getCurrentUser()获取，这里只用单次实验@AuthenticationPrincipal会用ok
+    @Operation(summary = "创建帖子", description = "创建一个新的帖子，返回创建成功的帖子内容,分区Id必传")
+    public ResponseEntity<Result<Post>> createPost(@Validated @RequestBody Post post){ //NOTE:12.28 升级了分区在post里必传
         // Controller只负责从网络获取用户并将id传参和调用Service
         Post createPost = postService.createPost(post);
         return ResponseEntity.status(HttpStatus.CREATED).body(Result.success(createPost));
     }
 
     /**
-     * 更新帖子，会检查当前登录用户
+     * 更新帖子，会检查当前登录用户权限是否属于帖子,只能更新自己的帖子,管理端有新接口但是Service层共用
      * @param postId
      * @param post
      * @return  成功返回200和更新后帖子
      */
-    @PatchMapping("/{id}")
+    @PatchMapping("/{id}")  //Patch可能会受到内网限制，不过本项目先实验使用此RESTFUL标准
+    @Operation(summary = "更新帖子", description = "更新一个已有的帖子，返回更新成功的帖子内容\n会检查当前登录用户权限是否属于帖子,只能更新自己的帖子")
     public Result updatePost(@PathVariable("id") Long postId, @RequestBody Post post){
         //结果是一样的，还是Patch更完善
         post.setId(postId); //必须改不然后续Service或者其他代码使用了post里的id就会改错帖子
         return Result.success(postService.updatePost(postId,post));    //默认返回则是200
     }
 
+    /**
+     * 删除帖子，会检查当前登录用户权限是否属于帖子,只能删除自己的帖子，管理员会有新接口但是Service层共用
+     * @param postId
+     * @return  成功返回204无内容
+     */
     @DeleteMapping("/{id}")
+    @Operation(summary = "删除帖子", description = "删除一个已有的帖子，会检查当前登录用户权限是否属于帖子,只能删除自己的帖子")
     public ResponseEntity<Void> deletePost(@PathVariable("id") Long postId){
-        System.out.println("要删除的postId="+postId);
+        log.debug("要删除的postId={}", postId);
 
         postService.deletePost(postId);
         return ResponseEntity.noContent().build();
@@ -89,9 +108,20 @@ public class PostController {
         return Result.success(postService.getPostsByPage(page,size));
      }   //默认返回200
 
-    @GetMapping("/{userId}")    //TODO: 12.29 ing
-    public Result<PageResult> pagePostsByUserId(@PathVariable("userId") Long userId, SpringDataWebProperties.Pageable pageable){
-        return Result.success(postService.pagePostsByUserId(userId,pageable));
+    /**
+     * 通过{userId}分页获取某用户的帖子,尝试Pageable
+     * -正常用户和管理员都能获取
+     * @param userId
+     * @param pageable
+     * @return
+     */
+    @GetMapping("user/{userId}")    //TODO: 12.29 ing 发现和上面getPostsByPage冲突了，需要改路径
+    public Result<PageResult> pagePostsByUserId(@Min(value = 1,message = "userId不能小于1")
+                                                @NotNull
+                                                @PathVariable Long userId,
+                                                @PageableDefault(page = 0,size = 20) Pageable pageable){
+
+        return Result.success(postService.pagePostsByUserId(userId, pageable));
     }
 
     /**

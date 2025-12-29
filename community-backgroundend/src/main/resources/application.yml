@@ -3,6 +3,13 @@ spring:
     active: cloud
   application:
     name: community-service
+  #springData配置，分页相关
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true # 让 page=1 代表第一页
+        default-page-size: 10        # 默认每页 10 条
+        max-page-size: 100           # 限制每页最多 100 条（防止恶意查询）
 
 mybatis:
     #mapper配置文件
