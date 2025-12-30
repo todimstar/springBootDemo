@@ -86,6 +86,7 @@ public class PostController {
 
     /**
      * 获取帖子，过滤器不设检查，会自动修正分页，默认1页,10行，最大100行
+     * v1.2.0 升级VO
      * @param page
      * @param size
      * @return  200和当页帖子列表
@@ -93,12 +94,8 @@ public class PostController {
     @GetMapping()
     @SecurityRequirements() // 标记此接口不需要鉴权
     public Result getPostsByPage(//TODO:改造为DTO和VO，传出需要<>
-            @RequestParam(value = "page", defaultValue = "1", required = false)
-//            @Min(1)
-            int page,
-            @RequestParam(value = "size", defaultValue = "20", required = false)
-//                                     @Min(10) @Max(100)
-                                     int size
+            @RequestParam(value = "page", defaultValue = "1", required = false) int page,   //保留早期型，之后可以用于测试接口速度
+            @RequestParam(value = "size", defaultValue = "20", required = false) int size
     ){
 
        if(page<1)page = 1;     //修正请求为默认页

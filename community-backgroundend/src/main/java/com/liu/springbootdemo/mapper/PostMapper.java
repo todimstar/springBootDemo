@@ -84,7 +84,7 @@ public interface PostMapper {
      * @param post
      * @return 影响的行数，1为成功
      */
-    int updatePost(@Param("postId") Long postId, @Param("P") Post post);
+    int updatePost(@Param("id") Long postId, @Param("P") Post post);
 
     /**
      * 删

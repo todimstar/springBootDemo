@@ -11,6 +11,7 @@ import com.liu.springbootdemo.common.exception.BusinessException;
 import com.liu.springbootdemo.mapper.CategoryMapper;
 import com.liu.springbootdemo.mapper.PostMapper;
 import com.liu.springbootdemo.mapper.UserMapper;
+import com.liu.springbootdemo.service.CategoryService;
 import com.liu.springbootdemo.service.PostService;
 import com.liu.springbootdemo.service.UserService;
 import com.liu.springbootdemo.utils.SecurityUtil;
@@ -36,6 +37,8 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private CategoryService categoryService;
 
     /**
      * 新建帖子
@@ -103,12 +106,24 @@ public class PostServiceImpl implements PostService {
             throw new BusinessException(ErrorCode.POST_NOT_AUTHOR, String.format("帖子 %s 不属于当前用户[%s]",postInDb.getTitle(), currentUser.getUsername()));
         }
 
-        //检查修改的帖子是否有要修改的内容
+        //校验修改内容格式
+        //1.验空，检查要修改的post里的Content、Title和CategoryId是否都为空，即没有要修改的内容
         if (
             (post.getContent()==null || post.getContent().isBlank()) //先插是否为空，再依据肯定是字符串所以查isBlank()，比isEmpty更准确,以防""的出现
-            && !StringUtils.hasText(post.getTitle())){              //后续直接用Springboot的StringUtils.hasText也是同理实现
+            && !StringUtils.hasText(post.getTitle())     //标题
+            && !StringUtils.hasText(post.getCoverImage())//封面图片
+            && post.getCategoryId()==null                //分类ID
+        ){
             throw new BusinessException(ErrorCode.INPUT_INVALID,"要修改的内容为空,可以选择删除帖子");
         }
+        //2.检查CategoryId是否存在和可用
+        if(post.getCategoryId() != null) { //前端传了才检查
+            if(!currentUser.getRole().equals(UserRole.ADMIN.getRoleName())) {
+                categoryService.easyCheckCategoryExistByIdForUser(post.getCategoryId(), "修改帖子时");
+            }else{
+                categoryService.easyCheckCategoryExistById(post.getCategoryId(), "管理员修改帖子时");
+            }
+        }//TODO:3.上传图片如果需要检查的话这里也要检查
 
         // 过关才允许修改
         if( postMapper.updatePost(postId,post) != 1){

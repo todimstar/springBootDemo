@@ -1,4 +1,4 @@
-package com.liu.springbootdemo.POJO.entity;
+package com.liu.springbootdemo.POJO.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -9,25 +9,24 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@Schema(description = "帖子实体类")
-public class Post {
+@Schema(description = "帖子视图对象 VO")
+public class PostVO {
     @NotNull
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "帖子ID")
     private Long id;        //帖子id 主键
     private Long userId;    //发表用户id 多创个索引优化查询
-//    @NotNull
-//    @NotBlank
+    @NotNull
+    @NotBlank
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "帖子标题")
     private String title;   //外显标题
-//    @NotNull
-//    @NotBlank
+    @NotNull
+    @NotBlank
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "帖子内容")
     private String content; // 内容
     @NotNull
     @NotBlank
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "帖子摘要/简介")
     private String summary; // 帖子摘要/简介
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime createTime;//创建时间
     private LocalDateTime updateTime;//修改时间
     //新增
@@ -43,5 +42,4 @@ public class Post {
     private boolean isPinned;  //是否置顶
     private boolean isEssence; //是否精华
     private String ipAddress; //发布者IP
-
 }

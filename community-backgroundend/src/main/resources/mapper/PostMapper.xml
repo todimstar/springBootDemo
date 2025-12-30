@@ -13,6 +13,12 @@
             <if test="P.content != null and P.content != ''">
                 content = #{P.content},
             </if>
+            <if test="P.categoryId != null">
+                category_id = #{P.categoryId},
+            </if>
+            <if test="P.coverImage != null">
+                cover_image = #{P.coverImage},
+            </if>
             update_time = NOW()
         </set>
         WHERE id = #{id}

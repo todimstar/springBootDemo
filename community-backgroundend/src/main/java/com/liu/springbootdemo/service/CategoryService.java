@@ -3,11 +3,14 @@ package com.liu.springbootdemo.service;
 import com.liu.springbootdemo.POJO.dto.request.CategoryPageQueryDTO;
 import com.liu.springbootdemo.POJO.dto.request.CreateCategoryDTO;
 import com.liu.springbootdemo.POJO.dto.request.UpdateCategoryDTO;
+import com.liu.springbootdemo.POJO.entity.Category;
 import com.liu.springbootdemo.POJO.vo.CategoryAdminVO;
 import com.liu.springbootdemo.POJO.vo.CategoryVO;
 import com.liu.springbootdemo.POJO.Result.PageResult;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 public interface CategoryService {
     /**
@@ -82,4 +85,15 @@ public interface CategoryService {
      * @return
      */
     PageResult pageQuery(CategoryPageQueryDTO categoryPageQueryDTO);
+
+    /**
+     * 根据id简单检查分类存在性，找不到抛异常
+     * Service层其他类调用
+     * @param categoryId
+     * @param timeStamp 时间戳，标记调用时机，便于日志跟踪
+     * @param
+     */
+    Category easyCheckCategoryExistByIdForUser(@NotNull(message = "分类不能为空") Long categoryId, String timeStamp);
+
+    Category easyCheckCategoryExistById(@NotNull(message = "分类不能为空") Long categoryId, String timeStamp);
 }

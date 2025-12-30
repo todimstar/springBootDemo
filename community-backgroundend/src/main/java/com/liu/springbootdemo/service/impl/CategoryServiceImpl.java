@@ -247,7 +247,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @param timeStamp
      * @return Category
      */
-    private Category easyCheckCategoryExistByIdForUser(Long id,String timeStamp){
+    public Category easyCheckCategoryExistByIdForUser(Long id, String timeStamp){
         //验空
         Category category = categoryMapper.findActiveById(id);  //此处调用方法不同
         if(category == null){
@@ -262,7 +262,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @param timeStamp
      * @return Category
      */
-    private Category easyCheckCategoryExistById(Long id,String timeStamp){
+    public Category easyCheckCategoryExistById(Long id,String timeStamp){
         //验空
         Category category = categoryMapper.findById(id);
         if(category == null){
