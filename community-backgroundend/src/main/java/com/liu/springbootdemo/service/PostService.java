@@ -1,6 +1,7 @@
 package com.liu.springbootdemo.service;
 
 import com.liu.springbootdemo.POJO.Result.PageResult;
+import com.liu.springbootdemo.POJO.dto.CreatePostDTO;
 import com.liu.springbootdemo.POJO.entity.Post;
 import org.springframework.data.domain.Pageable;
 
@@ -8,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface PostService {
-    Post createPost(Post post);
+    Post createPost(CreatePostDTO createPostDTO);
 
     Post updatePost(Long postId, Post post);
 

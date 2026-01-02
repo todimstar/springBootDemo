@@ -1,24 +1,22 @@
 package com.liu.springbootdemo.controller;
 
 import com.liu.springbootdemo.POJO.Result.PageResult;
+import com.liu.springbootdemo.POJO.dto.CreatePostDTO;
 import com.liu.springbootdemo.POJO.entity.Post;
 import com.liu.springbootdemo.POJO.Result.Result;
-import com.liu.springbootdemo.POJO.entity.User;
+import com.liu.springbootdemo.POJO.vo.PostVO;
 import com.liu.springbootdemo.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,14 +41,15 @@ public class PostController {
 
     /**
      * 创建帖子
-     * @param post
+     *
+     * @param createPostDTO
      * @return 成功返回200和帖子内容
      */
     @PostMapping()
     @Operation(summary = "创建帖子", description = "创建一个新的帖子，返回创建成功的帖子内容,分区Id必传")
-    public ResponseEntity<Result<Post>> createPost(@Validated @RequestBody Post post){ //NOTE:12.28 升级了分区在post里必传
+    public ResponseEntity<Result<Post>> createPost(@Validated @RequestBody CreatePostDTO createPostDTO){ //NOTE:12.31升级DTO但不用VO     //NOTE:12.28 升级了分区在post里必传
         // Controller只负责从网络获取用户并将id传参和调用Service
-        Post createPost = postService.createPost(post);
+        Post createPost = postService.createPost(createPostDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(Result.success(createPost));
     }
 

@@ -1,6 +1,6 @@
 package com.liu.springbootdemo.service.impl;
 
-import com.liu.springbootdemo.POJO.dto.LoginResponseDTO;
+import com.liu.springbootdemo.POJO.vo.LoginResponseVO;
 import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.common.enums.ErrorCode;
 import com.liu.springbootdemo.common.exception.BusinessException;
@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public LoginResponseDTO login(String usernameOrEmail, String password) {
+    public LoginResponseVO login(String usernameOrEmail, String password) {
         // 登录后逻辑
         User userInDbByUsername = userMapper.findByUsername(usernameOrEmail);
         User userInDbByEmail = userMapper.findByEmail(usernameOrEmail);
@@ -94,7 +94,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         // 创建返回体
 
-        return new LoginResponseDTO(userInDb.getUsername(),token);
+        return new LoginResponseVO(userInDb.getUsername(),token);
     }
 
     @Override

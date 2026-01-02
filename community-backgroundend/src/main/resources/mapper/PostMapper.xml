@@ -16,7 +16,13 @@
             <if test="P.categoryId != null">
                 category_id = #{P.categoryId},
             </if>
-            <if test="P.coverImage != null">
+            <if test="P.categoryName != null and P.categoryName != ''">
+                category_name = #{P.categoryName},
+            </if>
+            <if test="P.summary != null and P.summary != ''">
+                summary = #{P.summary},
+            </if>
+            <if test="P.coverImage != null and P.coverImage != ''">
                 cover_image = #{P.coverImage},
             </if>
             update_time = NOW()

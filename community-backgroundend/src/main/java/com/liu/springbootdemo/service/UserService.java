@@ -1,6 +1,6 @@
 package com.liu.springbootdemo.service;
 
-import com.liu.springbootdemo.POJO.dto.LoginResponseDTO;
+import com.liu.springbootdemo.POJO.vo.LoginResponseVO;
 import com.liu.springbootdemo.POJO.entity.User;
 
 import java.util.List;
@@ -10,7 +10,7 @@ public interface UserService {
     void register(User user);
 
     // 定义登录用户的业务方法
-    LoginResponseDTO login(String username, String password);
+    LoginResponseVO login(String username, String password);
 
     // 获取所有用户
     List<User> getAllUser();

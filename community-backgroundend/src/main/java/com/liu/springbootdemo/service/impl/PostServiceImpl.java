@@ -3,8 +3,10 @@ package com.liu.springbootdemo.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.liu.springbootdemo.POJO.Result.PageResult;
+import com.liu.springbootdemo.POJO.dto.CreatePostDTO;
 import com.liu.springbootdemo.POJO.entity.Post;
 import com.liu.springbootdemo.POJO.entity.User;
+import com.liu.springbootdemo.POJO.vo.PostVO;
 import com.liu.springbootdemo.common.enums.ErrorCode;
 import com.liu.springbootdemo.common.enums.UserRole;
 import com.liu.springbootdemo.common.exception.BusinessException;
@@ -17,6 +19,7 @@ import com.liu.springbootdemo.service.UserService;
 import com.liu.springbootdemo.utils.SecurityUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -40,38 +43,42 @@ public class PostServiceImpl implements PostService {
     @Autowired
     private CategoryService categoryService;
 
+
     /**
-     * 新建帖子
-     * @param post  前端来的帖子
-     * @return post 数据库中存的帖子
+     * 新建帖子 DTO版
+     * @param createPostDTO
+     * @return
      */
     @Override
-    public Post createPost(Post post) { //NOTE: 更改了方法签名，去掉了User参数，还是选择从SecurityContext获取当前用户
-         //1. 从SecurityContext获取当前登录用户的信息
+    public Post createPost(CreatePostDTO createPostDTO) {
+        //1. 从SecurityContext获取当前登录用户的信息
         User currentUser = SecurityUtil.getCurrentUser();
+
+        //post占位待填充进数据库
+        Post post = new Post();
 
         // 2. 将当前用户的ID设置到post对象中    ,不在乎post里的userId，因为不可信
         if (currentUser != null) {
             post.setUserId(currentUser.getId());
+            // 填充帖子内容
+            BeanUtils.copyProperties(createPostDTO, post);
         }else{
             throw new BusinessException(ErrorCode.UNAUTHORIZED,"Unbelievable! 你是怎么进来的，谁让你没登录就进来的!💢 滚出去😡*");
         }
 
-        // 3. 校验帖子内容
-        if(!StringUtils.hasText(post.getTitle())){
-            throw new BusinessException(ErrorCode.POST_TITLE_EMPTY);
-        }
-        if(!StringUtils.hasText(post.getContent())){
-            throw new BusinessException(ErrorCode.POST_CONTENT_EMPTY);
-        }
-
+        // 3. 校验帖子内容时效性，为空已在Controller的@Validated里校验
         //校验分区是否存在，存在才给加帖子，不存在或者锁了的分区不可新增帖子，无论管理员与否
         if(categoryMapper.isActiveById(post.getCategoryId()) != 1){
             throw new BusinessException(ErrorCode.CATEGORY_NOT_FOUND,"分区不存在或已被锁定，无法在该分区下创建帖子");
+        }else{
+            //分区存在，设置分区名称
+            post.setCategoryName(categoryMapper.findNameById(post.getCategoryId()));
         }
 
         // 4. 调用Mapper插入数据库
-        postMapper.insert(post);
+        if(postMapper.insert(post) != 1){
+            throw new BusinessException(ErrorCode.SQL_ERROR,"帖子\"" + post.getTitle() + "\"创建失败，数据库插入行数不为1");
+        }
 
         return postMapper.findById(post.getId());
     }
@@ -116,13 +123,12 @@ public class PostServiceImpl implements PostService {
         ){
             throw new BusinessException(ErrorCode.INPUT_INVALID,"要修改的内容为空,可以选择删除帖子");
         }
-        //2.检查CategoryId是否存在和可用
-        if(post.getCategoryId() != null) { //前端传了才检查
-            if(!currentUser.getRole().equals(UserRole.ADMIN.getRoleName())) {
-                categoryService.easyCheckCategoryExistByIdForUser(post.getCategoryId(), "修改帖子时");
-            }else{
-                categoryService.easyCheckCategoryExistById(post.getCategoryId(), "管理员修改帖子时");
-            }
+        //2.检查CategoryId是否存在和可用 //OK:修改categroyID后要修改categoryName
+        if(post.getCategoryId() != null) { //前端传了才检查并同步修改分区名
+            //只用ForUser，因为管理员修改帖子也不能修改到禁用的分区
+            categoryService.easyCheckCategoryExistByIdForUser(post.getCategoryId(), "修改帖子时");
+            post.setCategoryName(categoryMapper.findNameById(post.getCategoryId()));
+
         }//TODO:3.上传图片如果需要检查的话这里也要检查
 
         // 过关才允许修改

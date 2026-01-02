@@ -1,7 +1,7 @@
 package com.liu.springbootdemo.controller;
 
 import com.liu.springbootdemo.POJO.dto.LoginInControllerDTO;
-import com.liu.springbootdemo.POJO.dto.LoginResponseDTO;
+import com.liu.springbootdemo.POJO.vo.LoginResponseVO;
 import com.liu.springbootdemo.POJO.Result.Result;
 import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.common.enums.ErrorCode;
@@ -64,7 +64,7 @@ public class UserController {
 
     @PostMapping("/login")   //登录路径为 /api/user/login
     @SecurityRequirements() // 标记此接口不需要鉴权
-    public ResponseEntity<Result<LoginResponseDTO>> login(@RequestBody LoginInControllerDTO loginInControllerDTO){
+    public ResponseEntity<Result<LoginResponseVO>> login(@RequestBody LoginInControllerDTO loginInControllerDTO){
         System.out.println(loginInControllerDTO);
         if(!StringUtils.hasText(loginInControllerDTO.getUsernameOrEmail())){
             throw new BusinessException(ErrorCode.EMPTY_USERNAME_OR_EMAIL);
@@ -74,9 +74,9 @@ public class UserController {
         }
         //不需要验证邮箱格式了，因为是用户名或邮箱，直接去查就好了
         // 认证
-        LoginResponseDTO loginResponseDTO = userService.login(loginInControllerDTO.getUsernameOrEmail(), loginInControllerDTO.getPassword());    //账密错误走全局异常
+        LoginResponseVO loginResponseVO = userService.login(loginInControllerDTO.getUsernameOrEmail(), loginInControllerDTO.getPassword());    //账密错误走全局异常
 
-        return ResponseEntity.status(HttpStatus.OK).body(Result.success(loginResponseDTO));
+        return ResponseEntity.status(HttpStatus.OK).body(Result.success(loginResponseVO));
     }
 
     // @PostMapping("/login")   //登录路径为 /api/user/login

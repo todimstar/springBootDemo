@@ -1,9 +1,9 @@
 package com.liu.springbootdemo.service.impl;
 
+import com.liu.springbootdemo.POJO.dto.CreatePostDTO;
 import com.liu.springbootdemo.POJO.entity.Post;
 import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.mapper.PostMapper;
-import com.liu.springbootdemo.mapper.UserMapper;
 import com.liu.springbootdemo.utils.SecurityUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,8 +20,6 @@ class PostServiceImplTest {
     @Mock
     private PostMapper postMapper;
 
-    @Mock
-    private UserMapper userMapper;
 
 //    // @Mock: 我们需要模拟 SecurityContext 和 Authentication
 //    @Mock
@@ -52,11 +50,17 @@ class PostServiceImplTest {
         // --- 1. 准备阶段 (Arrange) ---
 
         // a. 准备要创建的帖子数据 (来自客户端)
-        Post postFromClient = new Post();
+        CreatePostDTO postFromClient = new CreatePostDTO();
         postFromClient.setTitle("Test Title");
         postFromClient.setContent("Test Content");
 
-        // b. 准备模拟的UserDetails和User对象，代表当前登录的用户
+        // b. 准备一个PostVO对象，模拟从数据库返回的帖子数据
+        Post postVO = new Post();
+        postVO.setId(1L);
+        postVO.setTitle("Test Title");
+        postVO.setContent("Test Content");
+
+        // c. 准备模拟的UserDetails和User对象，代表当前登录的用户
         User currentUser = new User();
         currentUser.setId(123L); // 设定一个明确的用户ID
         currentUser.setUsername("testuser");
@@ -68,7 +72,7 @@ class PostServiceImplTest {
         //在任何代码调用SecurityUtil.getCurrentUser()时，返回我们Mock的currentUser
         mockSecurityUtil.when(SecurityUtil::getCurrentUser).thenReturn(currentUser);
         //在任何代码调用postMapper.findById()时，返回我们Mock的postFromClient
-        when(postMapper.findById(any())).thenReturn(postFromClient);
+        when(postMapper.findById(any())).thenReturn(postVO);
 
         /*更改了用户获取方法，所以改成以上模拟静态SecurityUtil方法*/
 //        UserDetails userDetails = mock(UserDetails.class); //直接用mock()方法创建一个UserDetails的模拟对象

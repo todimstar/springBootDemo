@@ -50,7 +50,7 @@ public class SecurityConfig {
                         "/api/posts",
                         "/api/posts/allTitles",
                         "/api/posts/*", //获取单个帖子，根据帖子id
-                        "/api/posts/*/comments",    // 允许Get方法获取单个帖子所有评论
+                        "/api/comments/*/comments",    // 允许Get方法获取单个帖子所有评论
                         "/api/categories",  // 获取分区列表
                         "/api/categories/*" // 获取单个分区信息，根据id
                 ).permitAll()

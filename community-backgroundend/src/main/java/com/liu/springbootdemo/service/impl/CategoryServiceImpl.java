@@ -251,7 +251,7 @@ public class CategoryServiceImpl implements CategoryService {
         //验空
         Category category = categoryMapper.findActiveById(id);  //此处调用方法不同
         if(category == null){
-            log.error("{},id为{}的分区不存在", timeStamp,id);
+            log.error("{},id为{}的分区不存在或被禁用", timeStamp,id);
             throw new BusinessException(ErrorCode.CATEGORY_NOT_FOUND);
         }return category;
     }

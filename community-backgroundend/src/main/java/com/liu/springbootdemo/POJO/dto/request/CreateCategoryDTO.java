@@ -22,6 +22,7 @@ public class CreateCategoryDTO {
     @Schema(description = "请求的分区描述", example = "讨论各种技术相关的话题")
     private String description;
 
+    @Size(max = 255, message = "链接不能超过{max}字符长度")
     @Schema(description = "等文件上传接口做好就知道怎么做了", example = "/images/icons/tech.png")
     private String icon;
 

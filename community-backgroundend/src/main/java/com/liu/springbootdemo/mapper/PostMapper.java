@@ -2,6 +2,7 @@ package com.liu.springbootdemo.mapper;
 
 import com.github.pagehelper.Page;
 import com.liu.springbootdemo.POJO.entity.Post;
+import com.liu.springbootdemo.POJO.vo.PostVO;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -17,8 +18,8 @@ public interface PostMapper {
      * @param post 新帖子
      * @return 影响的行数，1为成功
      */
-    @Insert("INSERT INTO posts(user_id,title,content,create_time,update_time,category_id)"+     //NOTE:12.28 使category_id为必填字段
-            "VALUES(#{userId},#{title},#{content}, NOW(), NOW(), #{categoryId})")
+    @Insert("INSERT INTO posts(user_id,title,content,summary,create_time,update_time,category_id,category_name)"+  //NOTE:12.31 加上分区名  NOTE:12.28 使category_id为必填字段
+            "VALUES(#{userId},#{title},#{content},#{summary}, NOW(), NOW(), #{categoryId},#{categoryName})")
     @Options(useGeneratedKeys = true, keyProperty = "id")   //获取数据库主键，并赋给id
     int insert(Post post);
 
@@ -30,6 +31,18 @@ public interface PostMapper {
      */
     @Select("SELECT * FROM posts WHERE id = #{id}")
     Post findById(Long id);
+
+    /**
+     * 查
+     * 根据id查帖子视图对象，包含分区名称
+     * @Param id 帖子id
+     * @return postVO 帖子视图对象
+     */
+    @Deprecated(since = "25/12/31,将分区名也加入post中，不再需要单独查categoryName")
+    @Select("SELECT p.*, c.name as name FROM posts p "+
+            "LEFT JOIN categories c ON p.category_id = c.id "+
+            "WHERE p.id = #{id}")
+    PostVO findByIdWithCatrgory(Long id);
 
     /**
      * 查

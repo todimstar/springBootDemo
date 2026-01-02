@@ -31,6 +31,7 @@ public enum ErrorCode {
     SYSTEM_BUSY("A0002", "系统繁忙，请稍后重试", HttpStatus.SERVICE_UNAVAILABLE),
     SYSTEM_TIMEOUT("A0003", "系统执行超时", HttpStatus.REQUEST_TIMEOUT),
     SYSTEM_RESOURCE_ERROR("A0004", "系统资源异常", HttpStatus.INTERNAL_SERVER_ERROR),
+    SQL_ERROR("A0005", "数据库操作异常", HttpStatus.INTERNAL_SERVER_ERROR),
 
     // ==================== 用户相关错误 10000-19999 ====================
     // 用户基本错误 10001-10099
