@@ -4,7 +4,7 @@ import com.liu.springbootdemo.POJO.Result.PageResult;
 import com.liu.springbootdemo.POJO.dto.CreatePostDTO;
 import com.liu.springbootdemo.POJO.entity.Post;
 import com.liu.springbootdemo.POJO.Result.Result;
-import com.liu.springbootdemo.POJO.vo.PostVO;
+import com.liu.springbootdemo.POJO.vo.PostDetailVO;
 import com.liu.springbootdemo.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
@@ -47,9 +47,9 @@ public class PostController {
      */
     @PostMapping()
     @Operation(summary = "创建帖子", description = "创建一个新的帖子，返回创建成功的帖子内容,分区Id必传")
-    public ResponseEntity<Result<Post>> createPost(@Validated @RequestBody CreatePostDTO createPostDTO){ //NOTE:12.31升级DTO但不用VO     //NOTE:12.28 升级了分区在post里必传
+    public ResponseEntity<Result<PostDetailVO>> createPost(@Validated @RequestBody CreatePostDTO createPostDTO){ //NOTE:12.31升级DTO但不用VO     //NOTE:12.28 升级了分区在post里必传
         // Controller只负责从网络获取用户并将id传参和调用Service
-        Post createPost = postService.createPost(createPostDTO);
+        PostDetailVO createPost = postService.createPost(createPostDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(Result.success(createPost));
     }
 
@@ -61,7 +61,7 @@ public class PostController {
      */
     @PatchMapping("/{id}")  //Patch可能会受到内网限制，不过本项目先实验使用此RESTFUL标准
     @Operation(summary = "更新帖子", description = "更新一个已有的帖子，返回更新成功的帖子内容\n会检查当前登录用户权限是否属于帖子,只能更新自己的帖子")
-    public Result updatePost(@PathVariable("id") Long postId, @RequestBody Post post){
+    public Result<PostDetailVO> updatePost(@PathVariable("id") Long postId, @RequestBody Post post){
         //结果是一样的，还是Patch更完善
         post.setId(postId); //必须改不然后续Service或者其他代码使用了post里的id就会改错帖子
         return Result.success(postService.updatePost(postId,post));    //默认返回则是200
@@ -74,44 +74,37 @@ public class PostController {
      */
     @DeleteMapping("/{id}")
     @Operation(summary = "删除帖子", description = "删除一个已有的帖子，会检查当前登录用户权限是否属于帖子,只能删除自己的帖子")
-    public ResponseEntity<Void> deletePost(@PathVariable("id") Long postId){
+    public Result deletePost(@PathVariable("id") Long postId){
         log.debug("要删除的postId={}", postId);
 
         postService.deletePost(postId);
-        return ResponseEntity.noContent().build();
-        //return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);// 204状态码，
+        return Result.success();
     }
 
 
     /**
-     * 获取帖子，过滤器不设检查，会自动修正分页，默认1页,10行，最大100行
-     * v1.2.0 升级VO
-     * @param page
-     * @param size
-     * @return  200和当页帖子列表
+     * 获取帖子，过滤器不设检查，会自动修正分页，默认1页,20行
+     * 只返回公开帖子，用于首页展示
+     * v1.2.0 升级VO和用Pageable分页
+     * @return  200和当页帖子简要列表
      */
     @GetMapping()
     @SecurityRequirements() // 标记此接口不需要鉴权
-    public Result getPostsByPage(//TODO:改造为DTO和VO，传出需要<>
-            @RequestParam(value = "page", defaultValue = "1", required = false) int page,   //保留早期型，之后可以用于测试接口速度
-            @RequestParam(value = "size", defaultValue = "20", required = false) int size
-    ){
-
-       if(page<1)page = 1;     //修正请求为默认页
-       if(size<1)size = 10;    //默认值10
-       if(size>100)size = 100;
-
-        return Result.success(postService.getPostsByPage(page,size));
+    public Result<PageResult> pagePostSummary(@PageableDefault(page = 0,size = 20) Pageable pageable){
+        return Result.success(postService.pagePostSummary(pageable));
      }   //默认返回200
 
     /**
-     * 通过{userId}分页获取某用户的帖子,尝试Pageable
+     * 通过{userId}分页获取某用户的帖子
      * -正常用户和管理员都能获取
+     * v1.2.0 修改VO为SummaryVO
+     * v1.2.1 修复用户还能查询到被删除的帖子的问题，并完善根据beartoken判断是否为管理员的逻辑，同时允许游客按照非作者身份查看
+     * 一共三种状态，游客和普通用户只能看已发布的，作者能看除已删除外的所有自己的帖子，管理员能看所有帖
      * @param userId
      * @param pageable
      * @return
-     */
-    @GetMapping("user/{userId}")    //TODO: 12.29 ing 发现和上面getPostsByPage冲突了，需要改路径
+     */ //OK:三种状态已经实现本接口正常功能完工
+    @GetMapping("user/{userId}")
     public Result<PageResult> pagePostsByUserId(@Min(value = 1,message = "userId不能小于1")
                                                 @NotNull
                                                 @PathVariable Long userId,
@@ -122,26 +115,16 @@ public class PostController {
 
     /**
      * 获取单个帖子
-     *
+     * 接口会根据bearToken动态判断用户身份返回值，游客和普通用户只能看已发布，作者能多看见自身未发布的帖子，管理员能看所有状态的帖子
+     * v1.2.0:升级为DetailVO
+     * v1.2.1:完善根据beartoken判断身份的逻辑，允许游客查看已发布帖子
      * @return
      */
     @GetMapping("/{id}")
-    @SecurityRequirements() // 标记此接口不需要鉴权
-    public Result getPostById(@PathVariable("id") Long postId){ //TODO:之后管理员后台审核帖子也需要一个鉴权的get去获取被封禁的帖子
+    @SecurityRequirements() // 此接口不强制需要鉴权，但会根据有无token和token身份返回不同结果
+    public Result<PostDetailVO> getPostById(@PathVariable("id") Long postId){ //TODO:之后管理员后台审核帖子也需要一个鉴权的get去获取被封禁的帖子，再说现在还没有这个状态，状态太多了，先不搞
         return Result.success(postService.getPostById(postId));
     }
-
-    /**
-     * 获取所有帖子标题列表
-     * TODO:检查一下该帖子标题查询的是否为被禁用的也能被查询，还有是否需要分页，不记得应用场景是什么了，展示在首页的话还需要数据库自动多个，描述展示，存文章前100字之类的
-     * @return
-     */
-    @GetMapping("/allTitles")
-    @SecurityRequirements() // 标记此接口不需要鉴权
-    public Result<List<Post>> getAllPostsTitle(){
-        return Result.success(postService.getAllTitles());
-    }
-
 
 
 }

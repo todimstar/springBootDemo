@@ -36,7 +36,9 @@ public class CreatePostDTO {
     @Size(max = 255, message = "链接不能超过{max}字符长度")
     private String coverImage; //封面图URL
 
-//    private boolean isPinned;  //是否置顶
-//    private boolean isEssence; //是否精华
+    private boolean isPinned;  //是否置顶
+    private boolean isEssence; //是否精华
+
+    private int status; //状态：0草稿draft，1待审核pending_review，2已发布published,3已拒绝，4已删除
     private String ipAddress; //发布者IP
 }

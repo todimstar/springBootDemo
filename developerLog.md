@@ -143,4 +143,26 @@ springDoc内核版本需要于springboot的spring框架版本匹配
 
 5.想把业务实现和技术点分开呀，业务参考ai问答和别人项目，技术点参考别人视频demo
 
-6.实现两个VO和对应接口查询和数据库语句
+6.**实现两个VO**和对应接口查询--数据库语句 - 需要leftJoin或者
+
+7.数据库语法+无视风险直接文件上传接口开发
+
+> [pom里的5种scope](learingKnowledge.md##26.1.3 22:22 pom里的5种scope)
+>
+> 原本的BeanUntils.copyProperties浅拷贝且用反射性能低，升级为mapstuct的转换器@mapper(componentModel = "spring")用spring代理实现可注入/@mapper() -> INSTANCE单例调用
+
+8.TODO:哎呀，这个Post模块有点麻烦的，还有要区分作者和普通用户，作者要多返回不同状态的帖子，普通用户只返回发布的帖子，对于Page和getById都需要多个判断在Service
+
+2026.1.4
+
+更新了两个VO返回值，getById、createPost返回DetailVO，PageByUserId、pagePostSummary列表升级为SummaryVO
+
+删除帖子有分用户软删除和管理员硬删除
+
+获取帖子都要排除status为4的，对于Mapper的status都在Service当参数传进去好了，这样就好状态控制
+
+正在测试以上四个接口，并加了一个管理员改状态接口，不小心又实现一个PageByUserId三状态过滤查询，但是建议单个帖子在Service层过滤，列表查询才在数据库过滤。
+
+2026.1.5
+
+四个接口和新功能：三状态过滤、软硬删除、单帖和列表过滤都已完成并测试通过，进入文件上传开发

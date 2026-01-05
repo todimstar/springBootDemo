@@ -30,6 +30,23 @@
         WHERE id = #{id}
     </update>
 
+
+    <select id="findPostsByUserId" resultType="com.liu.springbootdemo.POJO.vo.PostSummaryVO">
+        SELECT p.id,p.title,p.summary,p.cover_image,p.create_time,p.update_time,
+               p.category_name,p.view_count,p.like_count,p.collect_count,p.comment_count,p.is_pinned,p.is_essence,p.status
+        FROM posts p
+        <where>
+            p.user_id = #{userId}
+            <if test="isAuthor"><!-- 如果是用户自身，只查询未删除的帖子 -->
+                AND p.status != ${@com.liu.springbootdemo.common.enums.PostStatus@DELETED.getStatus()}
+            </if>
+            <if test="!isAuthor and !isAdmin"><!-- 如果是游客身份，只查询已发布的帖子(也可能是b站的以他人视角查看...再说) -->
+                AND p.status = ${@com.liu.springbootdemo.common.enums.PostStatus@PUBLISHED.getStatus()}
+            </if>
+        </where>
+        ORDER BY p.update_time DESC
+    </select>
+
     <!-- id: 对应 Mapper 接口中的方法名
         parameterType: 参数类型（可选）
         useGeneratedKeys/keyProperty: 如果是 insert 需要回填主键时配置 

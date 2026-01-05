@@ -1,6 +1,7 @@
 package com.liu.springbootdemo.POJO.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 public class User {
     private Long id;        //用户id
     private String username;    //用户名
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;    //密码
     private String email;   //邮箱
     private LocalDateTime createTime;   //用户创建时间

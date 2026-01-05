@@ -44,7 +44,7 @@ public interface CategoryMapper {
     String findNameById(Long id);
 
     @Select("SELECT EXISTS(SELECT 1 FROM categories WHERE id = #{id} AND is_active = TRUE)")
-    int isActiveById(Long id);
+    boolean isActiveById(Long id);
 
     // ======列表、ID、Name查询 - 管理员======
 
