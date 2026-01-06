@@ -18,6 +18,7 @@ public class PostDetailVO {
     private LocalDateTime createTime;//创建时间
     private LocalDateTime updateTime;//修改时间
 
+    private Long categoryId;    //分区id
     private String categoryName;//分区名称，Mapping用left去category表查
     private String coverImage; //封面图URL
     private int viewCount; //浏览量

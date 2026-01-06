@@ -19,6 +19,7 @@ import com.liu.springbootdemo.service.CategoryService;
 import com.liu.springbootdemo.service.PostService;
 import com.liu.springbootdemo.service.UserService;
 import com.liu.springbootdemo.utils.SecurityUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +29,7 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 @Service
+@Slf4j
 public class PostServiceImpl implements PostService {
 
     @Autowired
@@ -79,6 +81,8 @@ public class PostServiceImpl implements PostService {
         if(postMapper.insert(post) != 1){
             throw new BusinessException(ErrorCode.SQL_ERROR,"帖子\"" + post.getTitle() + "\"创建失败，数据库插入行数不为1");
         }
+        
+        log.info("用户[{}]发布了新帖子: [{}], ID: {}", currentUser.getUsername(), post.getTitle(), post.getId());
 
         return postConverter.toDetailVO(postMapper.findById(post.getId()));
     }
@@ -108,9 +112,17 @@ public class PostServiceImpl implements PostService {
             throw new BusinessException(ErrorCode.POST_NOT_FOUND,"帖子不存在，无法修改");
         }
 
-        // 帖子不归属当前用户    --> TODO:可以加管理员校验实现管理员修改帖子,到时候直接||加上判断currentUser的身份是否是管理员即可
-        if (!postInDb.getUserId().equals(currentUser.getId()) && !currentUser.getRole().equals(UserRole.ADMIN.getRoleName())) {
+        boolean isAdmin = UserRole.ADMIN.getRoleName().equals(currentUser.getRole());
+        boolean isAuthor = postInDb.getUserId().equals(currentUser.getId());
+        // 帖子不归属当前用户且不是管理员
+        if (!isAuthor && !isAdmin) {
             throw new BusinessException(ErrorCode.POST_NOT_AUTHOR, String.format("帖子 %s 不属于当前用户[%s]",postInDb.getTitle(), currentUser.getUsername()));
+        }
+        //加验证不能对已删除的帖子修改
+        if(postInDb.getStatus() == PostStatus.DELETED.getStatus()){
+            if(isAdmin) {throw new BusinessException(ErrorCode.POST_ALREADY_DELETED,"帖子已删除，无法修改");}
+            //非管理员直接报不存在
+            throw new BusinessException(ErrorCode.POST_NOT_FOUND,"帖子不存在，无法修改");
         }
 
         //校验修改内容格式
@@ -135,6 +147,9 @@ public class PostServiceImpl implements PostService {
         if( postMapper.updatePost(postId,post) != 1){
             throw new RuntimeException("帖子 \"" + postInDb.getTitle() + "\" 修改失败，数据库修改行数不为1");
         }
+        
+        log.info("用户[{}]修改了帖子: [{}], ID: {}", currentUser.getUsername(), postInDb.getTitle(), postId);
+
         // 直接返回现在的post引用（X）
         // 返回该id从posts里查出来的原文
         return postConverter.toDetailVO(postMapper.findById(postId));
@@ -172,11 +187,13 @@ public class PostServiceImpl implements PostService {
             if(postMapper.deleteById(postId) != 1){
                 throw new BusinessException(ErrorCode.SQL_ERROR,"帖子\"" + postInDB.getTitle() + "\"删除失败，数据库删除行数不为1");
             }
+            log.warn("管理员[{}]物理删除了帖子: [{}], ID: {}", currentUser.getUsername(), postInDB.getTitle(), postId);
         }else{
             //作者软删除
             if(postMapper.updateStatus(postInDB.getId(),PostStatus.DELETED.getStatus()) != 1){
                 throw new BusinessException(ErrorCode.SQL_ERROR,"帖子\"" + postInDB.getTitle() + "\"删除失败，数据库更新行数不为1");
             }
+            log.info("用户[{}]软删除了帖子: [{}], ID: {}", currentUser.getUsername(), postInDB.getTitle(), postId);
         }
 
     }
@@ -190,6 +207,8 @@ public class PostServiceImpl implements PostService {
     public void setPostStatus(Long postId, int status) {
         if(postMapper.isExistById(postId)){
             postMapper.updateStatus(postId,status);
+            // 虽然这里拿不到当前操作用户，但这种管理操作通常建议记录
+            log.info("帖子ID:[{}] 状态变更为: {}", postId, status);
         }else{
             throw new BusinessException(ErrorCode.POST_NOT_FOUND,"帖子不存在，无法修改状态");
         }
@@ -287,4 +306,16 @@ public class PostServiceImpl implements PostService {
         return new PageResult(page.getTotal(),page.getResult());
     }
 
+    /**
+     * 游标分页获取帖子列表
+     * @param cursor 上一页最后一条ID
+     * @param size 每页条数
+     * @return 列表
+     */
+    @Override
+    public List<PostSummaryVO> getPostsByCursor(Long cursor, int size) {
+        // 限制每页最大数量，防止恶意请求
+        if(size > 100) size = 100;
+        return postMapper.getPostsByCursor(cursor, size);
+    }
 }

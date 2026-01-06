@@ -4,6 +4,7 @@ import com.liu.springbootdemo.POJO.Result.PageResult;
 import com.liu.springbootdemo.POJO.dto.CreatePostDTO;
 import com.liu.springbootdemo.POJO.entity.Post;
 import com.liu.springbootdemo.POJO.vo.PostDetailVO;
+import com.liu.springbootdemo.POJO.vo.PostSummaryVO;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -51,4 +52,12 @@ public interface PostService {
      * @param status 状态码 0草稿，1待审核，2已发布，3已拒绝，4已删除
      */
     void setPostStatus(Long postId, @Max(value = 4) @Min(value = 0) @NotNull int status);
+
+    /**
+     * 游标分页获取帖子列表（高性能版）
+     * @param cursor 上一页最后一条ID
+     * @param size 每页条数
+     * @return 列表
+     */
+    List<PostSummaryVO> getPostsByCursor(Long cursor, int size);
 }

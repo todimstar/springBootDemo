@@ -5,6 +5,7 @@ import com.liu.springbootdemo.POJO.dto.CreatePostDTO;
 import com.liu.springbootdemo.POJO.entity.Post;
 import com.liu.springbootdemo.POJO.Result.Result;
 import com.liu.springbootdemo.POJO.vo.PostDetailVO;
+import com.liu.springbootdemo.POJO.vo.PostSummaryVO;
 import com.liu.springbootdemo.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
@@ -127,4 +128,21 @@ public class PostController {
     }
 
 
+    /**
+     * 游标分页获取帖子列表（无限滚动高性能版）
+     * 只返回已发布的帖子List，用于首页展示
+     * 没有页码，只有上一页最后一条的ID作为游标cursor传入
+     * 前端若收到列表.size < size则代表没有下一页了
+     * @param cursor 上一页最后一条ID
+     * @param size 每页条数
+     * @return 列表
+     */
+    @GetMapping("/feed")
+    @SecurityRequirements()
+    public Result<List<PostSummaryVO>> getPostsByCursor(
+            @RequestParam(required = false) Long cursor,    //null,<=0都可以，null不查，<=0数据库返回空
+            @RequestParam(defaultValue = "10") @Min(1) int size
+    ){
+        return Result.success(postService.getPostsByCursor(cursor, size));
+    }
 }

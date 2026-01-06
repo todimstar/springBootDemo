@@ -162,6 +162,12 @@
             <artifactId>spring-data-commons</artifactId>
         </dependency>
 
+        <!-- aop切面-为了AspectJ切面注入日志 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
     </dependencies>
 
     <!-- 构建配置 -->

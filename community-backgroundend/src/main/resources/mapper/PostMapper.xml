@@ -47,16 +47,16 @@
         ORDER BY p.update_time DESC
     </select>
 
-    <!-- id: 对应 Mapper 接口中的方法名
-        parameterType: 参数类型（可选）
-        useGeneratedKeys/keyProperty: 如果是 insert 需要回填主键时配置 
-    -->
-
-    <!-- 示例：如果你想把 findPostsByUserId 也搬过来 -->
-    <!-- 
-    <select id="findPostsByUserId" resultType="com.liu.springbootdemo.entity.Post">
-        SELECT * FROM posts WHERE user_id = #{userId}
-    </select> 
-    -->
+    <select id="getPostsByCursor" resultType = "com.liu.springbootdemo.POJO.vo.PostSummaryVO">
+        SELECT p.*,u.username,u.avatar_url as userAvatarUrl
+        FROM posts p
+        LEFT JOIN users u ON p.user_id = u.id 
+        WHERE p.status = ${@com.liu.springbootdemo.common.enums.PostStatus@PUBLISHED.getStatus()}
+        <if test="cursor != null">
+            AND p.id &lt; #{cursor}
+        </if>
+        ORDER BY p.id DESC
+        LIMIT #{size}
+    </select>
 
 </mapper>

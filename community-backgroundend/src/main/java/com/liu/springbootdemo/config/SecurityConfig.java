@@ -48,7 +48,6 @@ public class SecurityConfig {
                 // 白名单：允许Get方法获取帖子列表，无需验证jwt
                 .requestMatchers(HttpMethod.GET,
                         "/api/posts",
-                        "/api/posts/allTitles",
                         "/api/posts/*", //获取单个帖子，根据帖子id
                         "/api/comments/*/comments",    // 允许Get方法获取单个帖子所有评论
                         "/api/categories",  // 获取分区列表

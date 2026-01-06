@@ -78,7 +78,7 @@ public interface PostMapper {
     List<Post> findPostsByCategoryId(@Param("categoryId")Long categoryId);
 
     /**
-     * 分页查已发布的帖子
+     * 分页查指定状态的帖子
      * 返回index下size数量的帖子，用于分页
      * 自动有pageable拦截器处理分页
      * @return List<Post>
@@ -89,6 +89,14 @@ public interface PostMapper {
             "WHERE p.status = #{status} " +
             "ORDER BY p.update_time DESC")// DESC降序，越新越前面
     Page<PostSummaryVO> getPostsByPage(@Param("status") int status);
+
+    /**
+     * 游标分页查询
+     * 场景：首页瀑布流，按发布时间倒序(ID倒序或有单向趋势才可用)
+     * 优点：无论多深速度都一样快，解决pageHelper的offset {index};limit {size}的深度查询慢问题
+     *  
+     */
+    List<PostSummaryVO> getPostsByCursor(@Param("cursor")Long cursor ,@Param("size") int size);
 
     /**
      * 改
