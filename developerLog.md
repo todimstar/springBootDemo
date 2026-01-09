@@ -172,3 +172,7 @@ springDoc内核版本需要于springboot的spring框架版本匹配
 3.通过Aspect注解配置类加配置文件xml实现AOP切面慢查询日志
 
 4.直接开始文件上传功能
+
+2026.1.9
+
+redis引入：1.依赖；2.配置数据源yml；3.Commen配置类以序列化输入输出字符编码；4.使用

@@ -1,0 +1,10 @@
+local:
+  jwt:
+    # 设置jwt签名加密时使用的秘钥
+    SECRET_KEY: "YourSuperSecureAndLongSecretKeyForThisCommunityTechForumProject"
+    # 设置jwt过期时间
+    EXPIRATION_TIME: 604800000 # 1000*3600*24*7 (7 天，毫秒)
+  redis:
+    host: localhost
+    port: 6379
+    database: 0

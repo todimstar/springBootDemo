@@ -66,6 +66,7 @@ public enum ErrorCode {
     ACCOUNT_NOT_FOUND("20003", "账号不存在", HttpStatus.UNAUTHORIZED),
     ACCOUNT_DISABLED("20004", "账号已被禁用", HttpStatus.UNAUTHORIZED),
     ACCOUNT_EXPIRED("20005", "账号已过期", HttpStatus.UNAUTHORIZED),
+    FAILED_LOGIN_ATTEMPTS_EXCEEDED("20006", "登录失败次数过多，账号已被锁定", HttpStatus.LOCKED),
 
     // Token相关 20100-20199
     TOKEN_EXPIRED("20101", "登录已过期，请重新登录", HttpStatus.UNAUTHORIZED),

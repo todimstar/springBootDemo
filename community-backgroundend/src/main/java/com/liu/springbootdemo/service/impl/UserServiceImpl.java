@@ -10,6 +10,7 @@ import com.liu.springbootdemo.utils.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
@@ -32,6 +34,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private JwtUtil jwtUtil;
+    @Autowired
+    private RedisTemplate<String,Object> redisTemplate;
 
     // 现在注册时检查邮箱，但是登录时不检查邮箱哦，可能是因为不以邮箱登录吧，邮箱只是作为用户信息吧，之后注册应该也不用邮箱，这个接口是为了用户填写邮箱信息的吧，也可以换成手机号验证
     @Override
@@ -71,17 +75,31 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
         // 这里已经保证了userInDbByUsername和userInDbByEmail至少有一个不为null
         User userInDb = (userInDbByUsername==null?userInDbByEmail:userInDbByUsername);
-        if(!passwordEncoder.matches(password,userInDb.getPassword())){
-            throw new BusinessException(ErrorCode.WRONG_PASSWORD,"密码错误！");   //确实就是密码错误
-        }
-        //账密正确，如果被封禁则遣返
+        
+        //user存在，如果被封禁则遣返
         if(userInDb.isBanned()){
             throw new BusinessException(ErrorCode.USER_BANNED,String.format("用户已被封禁,因%s",userInDb.getBanReason())); //FIXME:加一个用户登录时校验是否被封禁的逻辑，并人性化返回被封禁原因
         }
 
-        //TODO:Redis实现尝试登录次数限制和记录
+        //Redis实现尝试登录次数限制和记录
+        String failKey = "login:fail:"+userInDb.getId().toString();
+        //先查是否已经锁定
+        Integer failCount = (Integer) redisTemplate.opsForValue().get(failKey);
+        if(failCount != null && failCount >= 5){
+            long expire = redisTemplate.getExpire(failKey, TimeUnit.MINUTES);
+            throw new BusinessException(ErrorCode.FAILED_LOGIN_ATTEMPTS_EXCEEDED,"账号锁定，请等待"+(expire+1)+"分钟");
+        }
+        //再验证密码正确性
+        if(!passwordEncoder.matches(password,userInDb.getPassword())){
+            long count = redisTemplate.opsForValue().increment(failKey);
+            if(count == 1){
+                redisTemplate.expire(failKey, 15, TimeUnit.MINUTES);//首次输错才开始计时15分钟，防止隔天多记
+            }
+            throw new BusinessException(ErrorCode.WRONG_PASSWORD, "密码错误，还剩 " + (5 - count)+ " 次机会");
+        }
 
-        // 捕获数据库更新异常
+
+        // 更新登录数据，同时捕获数据库更新异常
         if (userMapper.updateLogintimeByUsername(userInDb.getUsername()) != 1) {
             // 如果还能走这里，那就是数据库更新失败
             logger.warn("为用户 {} 更新登录时间失败", usernameOrEmail);
@@ -92,8 +110,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         // 生成Token：将UserDetails传给JwtUtil实现
         String token = jwtUtil.generateToken(userDetails);
 
-        // 创建返回体
+        //登录成功洗白Redis记录
+        redisTemplate.delete(failKey);
 
+        // 创建返回体
         return new LoginResponseVO(userInDb.getUsername(),token);
     }
 

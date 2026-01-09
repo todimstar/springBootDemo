@@ -1,15 +1,49 @@
 spring:
   profiles:
-    active: cloud
+    active:
+      - cloud
+      - local
   application:
     name: community-service
-  #springData配置，分页相关
+  #springData配置
   data:
     web:
+      #分页相关
       pageable:
         one-indexed-parameters: true # 让 page=1 代表第一页
         default-page-size: 10        # 默认每页 10 条
         max-page-size: 100           # 限制每页最多 100 条（防止恶意查询）
+    # redis数据源配置
+    redis:
+      host: ${local.redis.host}
+      port: ${local.redis.port}
+      database: ${local.redis.database}
+  # mysql数据库配置
+  datasource:
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  # Mail邮件发送配置
+  mail:
+    host: smtp.139.com
+    port: 465
+    username: 15177943783@139.com
+    password: bccbde45ca067610bd00
+    protocol: smtp
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+            trust: "*"
+            # required: true
+          # socketFactory: #SSL必要配置但是jdk8
+          #   class: jakarta.net.ssl.SSLSocketFactory
+          #   fallback: false
+          #   port: 465
 
 mybatis:
     #mapper配置文件
@@ -22,8 +56,8 @@ mybatis:
 community:
     jwt:
         # 设置jwt签名加密时使用的秘钥
-        SECRET_KEY: "YourSuperSecureAndLongSecretKeyForThisCommunityTechForumProject"
+        SECRET_KEY: ${local.jwt.SECRET_KEY}
         # 设置jwt过期时间
-        EXPIRATION_TIME: 604800000 # 1000*3600*24*7 (7 天，毫秒)
+        EXPIRATION_TIME: ${local.jwt.EXPIRATION_TIME}
         # 设置前端传递过来的令牌名称
 #        admin-token-name: token

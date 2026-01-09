@@ -1,10 +1,5 @@
 spring:
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
     # HikariCP 连接池配置
     hikari:
       maximum-pool-size: 20 # 最大连接数
@@ -14,12 +9,12 @@ spring:
       max-lifetime: 1800000 # 连接最大存活时间
       connection-test-query: SELECT 1 # 连接测试查询语句
 
-# MyBatis 配置
-mybatis:
-  mapper-locations: classpath:mapper/*.xml  # mapper配置文件
-  type-aliases-package: com.liu.springbootdemo.POJO
-  configuration:
-      map-underscore-to-camel-case: true  # 开启驼峰命名
+# mysql数据库配置
+DB_HOST: 113.45.27.27
+DB_PORT: 3306
+DB_NAME: springboot_db
+DB_USERNAME: springboot_dev
+DB_PASSWORD: Dev@springboot_114514!!!
 
 # 日志配置
 logging:
