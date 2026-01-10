@@ -1,13 +1,17 @@
 package com.liu.springbootdemo.controller;
 
 import com.liu.springbootdemo.POJO.dto.LoginInControllerDTO;
+import com.liu.springbootdemo.POJO.dto.RegisterDTO;
 import com.liu.springbootdemo.POJO.vo.LoginResponseVO;
 import com.liu.springbootdemo.POJO.Result.Result;
 import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.common.enums.ErrorCode;
+import com.liu.springbootdemo.common.enums.VERCODE;
 import com.liu.springbootdemo.common.exception.BusinessException;
 import com.liu.springbootdemo.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,28 +42,13 @@ public class UserController {
 
     @PostMapping("/register")   //定义处理POST请求的接口，路径为 /api/user/register
     @SecurityRequirements() // 标记此接口不需要鉴权
-    public ResponseEntity<Result> register(@RequestBody User user){ //  @RequestBoby：将请求体重JSON数据自动转换成User对象
+    public Result register(@RequestBody @Valid RegisterDTO registerDTO){ //  @RequestBoby：将请求体重JSON数据自动转换成User对象
 
         // decode password  解密还原密码
 
-        //0.空检查，检查一下邮箱等传来没有，不然以后不好登录 -->虽然一个是前端保证的，但是不信任先
-        if(!StringUtils.hasText(user.getUsername())){
-            throw new BusinessException(ErrorCode.EMPTY_USERNAME);
-        }
-        if(!StringUtils.hasText(user.getEmail())){
-            throw new BusinessException(ErrorCode.EMPTY_EMAIL);
-        }
-        if(!StringUtils.hasText(user.getPassword())){
-            throw new BusinessException(ErrorCode.EMPTY_PASSWORD);
-        }
-        if (!(user.getEmail().matches(EMAIL_REGEX))) {  //格式检查
-            throw new BusinessException(ErrorCode.EMAIL_INVALID);
-        }
+        userService.register(registerDTO); //2.调用业务层注册方法
 
-        System.out.println(user);
-        userService.register(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Result.success());    //升级使用ResponseEntity返回自定义201响应头
-        //TODO:还可以转.created(local_url).bady(Result.succes())，这种提供新url的地方，之后再说吧，不会url构建
+        return Result.success();    //升级使用ResponseEntity返回自定义201响应头
     }
 
     @PostMapping("/login")   //登录路径为 /api/user/login
@@ -79,32 +68,16 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(Result.success(loginResponseVO));
     }
 
-    // @PostMapping("/login")   //登录路径为 /api/user/login
-    // public String login(@RequestBody User loginUser){
-        
-    //     try{
-    //         User user = userService.login(loginUser.getUsername(),loginUser.getPassword());    //账密错误走catch
-    //         //其实除非多线程，不然这里包返回不是null的，null会被userService里就报错退出
-            
-    //         if(user != null){   
-    //             System.out.println("有账号"+ user +",登录成功");
-    //             // return "用户:"+ user.getUsername() +"登录成功";  //返回简单的成功欢迎信息
-    //             return JwtUtil.generateToken(user.getUsername()); //返回token
-    //         }
-    //         //不在登录端口返回用户名错误信息，可以降低被暴力获取网站用户名列表风险
-    //         // 可以在注册端口返回，因为注册端口可以实施验证码卡恶意脚本
-    //         // 且注册只用一次，登录是很频繁的，所以可以卡注册，不好卡登录，提升用户体感
-            
-    //         //else{  //活到这里的是null，没有账号，除非多线程才能导致未预料的错误
-    //         //     return "账号未注册，请注册后再试";  //劝退信息
-    //         // }
-    //         return "未预料的错误";
-            
-    //     }catch(RuntimeException e){
-    //         System.out.println("登录失败，未有账号？"+e);
-    //         return e.getMessage();  //返回userService报上来的账密错误信息
-    //     }
-    // }
+    /**
+     * 发送注册验证码到邮箱,选参为"注册"
+     * @param email
+     * @return
+     */
+    @PostMapping("/send-code")
+    public Result sendVerificationCode(@RequestParam @Email String email){
+        userService.sendVerificationCode(email, VERCODE.REGISTER.getCodeType());
+        return Result.success();
+    }
 
     @GetMapping("/all")
     @PreAuthorize("hasRole('ADMIN')")

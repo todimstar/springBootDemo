@@ -12,6 +12,6 @@ public class MailTest {
 
     @Test
     public void testSendSimpleEmail() {
-        emailService.sendCode("todimstar@outlook.com", emailService.generateVerficationCode());
+        emailService.sendCode("todimstar@qq.com", emailService.generateVerificationCode(),null);
     }
 }

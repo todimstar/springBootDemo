@@ -1,10 +1,14 @@
 package com.liu.springbootdemo.service.impl;
 
+import com.liu.springbootdemo.POJO.dto.RegisterDTO;
 import com.liu.springbootdemo.POJO.vo.LoginResponseVO;
 import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.common.enums.ErrorCode;
+import com.liu.springbootdemo.common.enums.VERCODE;
 import com.liu.springbootdemo.common.exception.BusinessException;
+import com.liu.springbootdemo.converter.UserConverter;
 import com.liu.springbootdemo.mapper.UserMapper;
+import com.liu.springbootdemo.service.EmailService;
 import com.liu.springbootdemo.service.UserService;
 import com.liu.springbootdemo.utils.JwtUtil;
 import org.slf4j.Logger;
@@ -36,32 +40,47 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private JwtUtil jwtUtil;
     @Autowired
     private RedisTemplate<String,Object> redisTemplate;
+    @Autowired
+    private EmailService emailService;
+    @Autowired
+    private UserConverter userConverter;
 
-    // 现在注册时检查邮箱，但是登录时不检查邮箱哦，可能是因为不以邮箱登录吧，邮箱只是作为用户信息吧，之后注册应该也不用邮箱，这个接口是为了用户填写邮箱信息的吧，也可以换成手机号验证
+    // 现在注册时检查邮邮箱登录吧，邮箱只是作为用户信息吧，之后注册应该也不用邮箱，这个接口是为了用户填写邮箱信息的吧，也可以换成手机号验证
     @Override
-    public void register(User user) {
+    public void register(RegisterDTO registerDTO) {
 
         // 1. 业务逻辑：检查用户名是否已经存在，返回null即为没有该用户，允许注册
-        User userByUsername = userMapper.findByUsername(user.getUsername());
-        User userByEmail = userMapper.findByEmail(user.getEmail());
+        User userByUsername = userMapper.findByUsername(registerDTO.getUsername());
+        User userByEmail = userMapper.findByEmail(registerDTO.getEmail());
         // 已有用户
         if(userByUsername != null){
             // 用户已存在，抛出异常（后续全局异常处理）
             throw new BusinessException(ErrorCode.USERNAME_EXISTS);
         }
-       if(userByEmail != null){
+        if(userByEmail != null){
            throw new BusinessException(ErrorCode.EMAIL_EXISTS);
-       }
-       if(user.getPassword().length()<6 ){
+        }
+        if(registerDTO.getPassword().length()<6 ){
            throw new BusinessException(ErrorCode.PASSWORD_TOO_SHORT);
-       }
+        }
+
+        //2. 验证码是否在redis中存在且正确，验证通过后删除验证码,GOOD:使用Redis存储验证码，避免了数据库的读写压力，同时设置过期时间提高安全性
+        String redisKey = VERCODE.REGISTER.getRedisKey() + registerDTO.getEmail();
+        Object redisCode = redisTemplate.opsForValue().get(redisKey);
+        if(redisCode == null){// 验证码过期
+            throw new BusinessException(ErrorCode.VERIFICATION_CODE_EXPIRED);
+        }else if(!redisCode.equals(registerDTO.getVerCode())){// 验证码错误
+            throw new BusinessException(ErrorCode.VERIFICATION_CODE_ERROR);
+        }else{// 验证码正确，删除验证码
+            redisTemplate.delete(redisKey);
+        }
 
         // 2. 加密
         // user.setPassword(encode(user.getPassword()));
         // 将密码加密并存入user对象
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        registerDTO.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
         // 3. 调用Mapper层，将数据写入数据库
-        userMapper.insert(user);
+        userMapper.insert(userConverter.registerDtoToUser(registerDTO));
     }
 
     @Override
@@ -81,7 +100,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             throw new BusinessException(ErrorCode.USER_BANNED,String.format("用户已被封禁,因%s",userInDb.getBanReason())); //FIXME:加一个用户登录时校验是否被封禁的逻辑，并人性化返回被封禁原因
         }
 
-        //Redis实现尝试登录次数限制和记录
+        //GOOD:Redis实现尝试登录次数限制和记录
         String failKey = "login:fail:"+userInDb.getId().toString();
         //先查是否已经锁定
         Integer failCount = (Integer) redisTemplate.opsForValue().get(failKey);
@@ -117,6 +136,38 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return new LoginResponseVO(userInDb.getUsername(),token);
     }
 
+    private static final String EMAIL_REGEX =
+            "^[A-Za-z0-9]+([_\\-\\.][A-Za-z0-9]+)*@[A-Za-z0-9]+([\\-\\.][A-Za-z0-9]+)*\\.[A-Za-z]{2,}$";
+    /**
+     * 发送邮箱验证码，通用带参版
+     * @param email
+     * @param mailType 可选验证码信息标注，可为空
+     */
+    @Override
+    public void sendVerificationCode(String email, String mailType) {
+        //检查redis中是否存在未过期的验证码
+        String redisKey = VERCODE.REGISTER.getRedisKey() + email;
+        if(redisTemplate.opsForValue().get(redisKey) != null){
+            //获取验证码剩余过期时间
+            Long expire = redisTemplate.getExpire(redisKey, TimeUnit.SECONDS);
+            logger.warn("邮箱 {} 的验证码未过期，剩余 {} 秒", email, expire);
+            throw new BusinessException(ErrorCode.INPUT_INVALID, "验证码已发送，请稍后再试");
+        }
+        // 校验邮箱格式->也可以限制邮箱类型，禁掉临时邮箱等
+        if(!email.matches(EMAIL_REGEX)){
+            throw new BusinessException(ErrorCode.EMAIL_INVALID);
+        }
+        // 生成验证码并发送
+        String code = emailService.generateVerificationCode();
+        emailService.sendCode(email,code,mailType);
+        // 将验证码存入Redis，设置10分钟过期时间
+        redisTemplate.opsForValue().set(redisKey, code, VERCODE.REGISTER.getTimeoutMinutes(), TimeUnit.MINUTES);
+    }
+
+    /**
+     * 获取所有用户，给管理员接口调用,之后可能分页
+     * @return List<User>
+     */
     @Override
     public List<User> getAllUser(){
         return userMapper.getAll();

@@ -137,10 +137,16 @@ public enum ErrorCode {
     SMS_SEND_ERROR("50101", "短信发送失败", HttpStatus.INTERNAL_SERVER_ERROR),
     EMAIL_SEND_ERROR("50102", "邮件发送失败", HttpStatus.INTERNAL_SERVER_ERROR),
     NOTIFICATION_SEND_ERROR("50103", "通知发送失败", HttpStatus.INTERNAL_SERVER_ERROR),
+    VERIFICATION_CODE_SEND_ERROR("50104", "验证码发送失败", HttpStatus.INTERNAL_SERVER_ERROR),
 
-    // 外部API 50200-50299
-    EXTERNAL_API_ERROR("50201", "外部服务调用失败", HttpStatus.BAD_GATEWAY),
-    EXTERNAL_API_TIMEOUT("50202", "外部服务超时", HttpStatus.GATEWAY_TIMEOUT);
+    // 验证码相关 50200-50299
+    VERIFICATION_CODE_ERROR("50101", "验证码错误", HttpStatus.BAD_REQUEST),
+    VERIFICATION_CODE_EXPIRED("50202", "验证码已过期，请重新获取", HttpStatus.BAD_REQUEST),
+    VERIFICATION_CODE_SEND_FREQUENT("50203", "验证码请求过于频繁，请稍后再试", HttpStatus.TOO_MANY_REQUESTS),
+
+    // 外部API 50300-50399
+    EXTERNAL_API_ERROR("50301", "外部服务调用失败", HttpStatus.BAD_GATEWAY),
+    EXTERNAL_API_TIMEOUT("50302", "外部服务超时", HttpStatus.GATEWAY_TIMEOUT);
 
     /**
      * 错误码

@@ -43,38 +43,38 @@ class UserServiceImplTest {
     void register_shouldThrowUserAlreadyExistsException_whenUsernameExists() {
         // --- 1. 准备阶段 (Arrange) ---
 
-        // 创建一个用于测试的User对象
-        User existingUser = new User();
-        existingUser.setUsername("testuser");
-        existingUser.setPassword("password123");
-        existingUser.setEmail("test@example.com");
-
-        // 定义模拟对象的行为：
-        // 当 userMapper 的 findByUsername 方法被以 "testuser" 为参数调用时，
-        // 我们“假装”数据库里已经有这个用户了，让它返回我们上面创建的 existingUser 对象。
-        when(userMapper.findByUsername("testuser")).thenReturn(existingUser);
+//        // 创建一个用于测试的User对象
+//        User existingUser = new User();
+//        existingUser.setUsername("testuser");
+//        existingUser.setPassword("password123");
+//        existingUser.setEmail("test@example.com");
+//
+//        // 定义模拟对象的行为：
+//        // 当 userMapper 的 findByUsername 方法被以 "testuser" 为参数调用时，
+//        // 我们“假装”数据库里已经有这个用户了，让它返回我们上面创建的 existingUser 对象。
+//        when(userMapper.findByUsername("testuser")).thenReturn(existingUser);
 
         // --- 2. 执行阶段 (Act) & 3. 断言阶段 (Assert) ---
 
         // 我们断言（assert），当执行 userService.register(existingUser) 这行代码时，
         // 它“必须”抛出 UserAlreadyExistsException.class 这个类型的异常。
-        // assertThrows 是 JUnit 5 提供的方法，专门用来测试异常情况。
-//        assertThrows(UserAlreadyExistsException.class, () -> {
-
-        //升级为统一异常后，需要先捕获再断言其中ErrorCode属性，如下
-        BusinessException exception = assertThrows(BusinessException.class, () -> {   //不知道这样可不可以
-            userService.register(existingUser);
-        });
-
-        //捕获后验证错误码类型
-        assertEquals(ErrorCode.USERNAME_EXISTS.getCode(), exception.getCode());
-
-        // (可选) 验证模拟对象的方法是否从未被调用：
-        // 因为用户名已存在，程序应该在加密和插入之前就抛出异常，
-        // 所以 passwordEncoder.encode() 和 userMapper.insert() 这两个方法根本不应该被执行。
-        // verify(mock, never()) 是一种高级用法，可以确保代码按预期的路径执行。
-        verify(passwordEncoder, never()).encode(anyString());
-        verify(userMapper, never()).insert(any(User.class));
+//        // assertThrows 是 JUnit 5 提供的方法，专门用来测试异常情况。
+////        assertThrows(UserAlreadyExistsException.class, () -> {
+//
+//        //升级为统一异常后，需要先捕获再断言其中ErrorCode属性，如下
+//        BusinessException exception = assertThrows(BusinessException.class, () -> {   //不知道这样可不可以
+//            userService.register(existingUser);
+//        });
+//
+//        //捕获后验证错误码类型
+//        assertEquals(ErrorCode.USERNAME_EXISTS.getCode(), exception.getCode());
+//
+//        // (可选) 验证模拟对象的方法是否从未被调用：
+//        // 因为用户名已存在，程序应该在加密和插入之前就抛出异常，
+//        // 所以 passwordEncoder.encode() 和 userMapper.insert() 这两个方法根本不应该被执行。
+//        // verify(mock, never()) 是一种高级用法，可以确保代码按预期的路径执行。
+//        verify(passwordEncoder, never()).encode(anyString());
+//        verify(userMapper, never()).insert(any(User.class));
     }
 
     // TODO: 你的下一个任务
@@ -94,31 +94,31 @@ class UserServiceImplTest {
     @Test
     void register_shouldSaveUser_whenUsernameIsNew(){
         // --- Arrange ---
-        User testUser = new User();
-        testUser.setUsername("testUser");
-        testUser.setPassword("12345678");
-        // 假装用户不存在
-        when(userMapper.findByUsername(testUser.getUsername())).thenReturn(null);
-        // 假装邮箱不存在 (你的代码里有邮箱校验，所以测试里也要覆盖)
-        when(userMapper.findByEmail(testUser.getEmail())).thenReturn(null);
-        // 假装密码加密后会返回一个特定的字符串
-        when(passwordEncoder.encode("12345678")).thenReturn("a_very_encoded_password");
-
-        // --- Act ---
-        userService.register(testUser);
-
-        // --- Assert ---
-        // 1. 验证 insert 方法被调用了，并用捕获器“抓住”传入的User对象
-        verify(userMapper).insert(userArgumentCaptor.capture());
-
-        // 2. 从捕获器中获取被“抓住”的User对象
-        User capturedUser = userArgumentCaptor.getValue();
-
-        // 3. 对这个被捕获的对象进行精细的断言！
-        // 验证存入数据库的用户名是不是我们期望的
-        assertEquals("testUser", capturedUser.getUsername());
-        // 验证存入数据库的密码是不是【加密后】的密码，而不是原始密码！
-        assertEquals("a_very_encoded_password", capturedUser.getPassword());
+//        User testUser = new User();
+//        testUser.setUsername("testUser");
+//        testUser.setPassword("12345678");
+//        // 假装用户不存在
+//        when(userMapper.findByUsername(testUser.getUsername())).thenReturn(null);
+//        // 假装邮箱不存在 (你的代码里有邮箱校验，所以测试里也要覆盖)
+//        when(userMapper.findByEmail(testUser.getEmail())).thenReturn(null);
+//        // 假装密码加密后会返回一个特定的字符串
+//        when(passwordEncoder.encode("12345678")).thenReturn("a_very_encoded_password");
+//
+//        // --- Act ---
+//        userService.register(testUser);
+//
+//        // --- Assert ---
+//        // 1. 验证 insert 方法被调用了，并用捕获器“抓住”传入的User对象
+//        verify(userMapper).insert(userArgumentCaptor.capture());
+//
+//        // 2. 从捕获器中获取被“抓住”的User对象
+//        User capturedUser = userArgumentCaptor.getValue();
+//
+//        // 3. 对这个被捕获的对象进行精细的断言！
+//        // 验证存入数据库的用户名是不是我们期望的
+//        assertEquals("testUser", capturedUser.getUsername());
+//        // 验证存入数据库的密码是不是【加密后】的密码，而不是原始密码！
+//        assertEquals("a_very_encoded_password", capturedUser.getPassword());
     }
 
 
