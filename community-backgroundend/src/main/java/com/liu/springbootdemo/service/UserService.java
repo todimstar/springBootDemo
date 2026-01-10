@@ -3,6 +3,7 @@ package com.liu.springbootdemo.service;
 import com.liu.springbootdemo.POJO.dto.RegisterDTO;
 import com.liu.springbootdemo.POJO.vo.LoginResponseVO;
 import com.liu.springbootdemo.POJO.entity.User;
+import jakarta.validation.constraints.Email;
 
 import java.util.List;
 
@@ -26,4 +27,5 @@ public interface UserService {
      */
     void deleteHeadByIdForAdmin(Long id);
 
+    void sendRegisterCode(@Email String email);
 }

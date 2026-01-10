@@ -73,9 +73,9 @@ public class UserController {
      * @param email
      * @return
      */
-    @PostMapping("/send-code")
-    public Result sendVerificationCode(@RequestParam @Email String email){
-        userService.sendVerificationCode(email, VERCODE.REGISTER.getCodeType());
+    @PostMapping("/sendRegisterCode")
+    public Result sendRegisterCode(@RequestParam @Email String email){
+        userService.sendRegisterCode(email);
         return Result.success();
     }
 

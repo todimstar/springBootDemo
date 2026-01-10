@@ -136,6 +136,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return new LoginResponseVO(userInDb.getUsername(),token);
     }
 
+    /**
+     * 发送注册验证码到邮箱,选参为"注册"
+     * 校验邮箱是否已被注册
+     * 调用通用发送验证码接口
+     * @param email
+     */
+    @Override
+    public void sendRegisterCode(String email) {
+        User userByEmail = userMapper.findByEmail(email);
+        if(userByEmail != null){
+            throw new BusinessException(ErrorCode.EMAIL_EXISTS);
+        }
+        sendVerificationCode(email, VERCODE.REGISTER.getCodeType());
+    }
+
     private static final String EMAIL_REGEX =
             "^[A-Za-z0-9]+([_\\-\\.][A-Za-z0-9]+)*@[A-Za-z0-9]+([\\-\\.][A-Za-z0-9]+)*\\.[A-Za-z]{2,}$";
     /**
