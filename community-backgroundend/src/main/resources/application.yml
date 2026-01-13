@@ -44,6 +44,18 @@ spring:
           #   class: jakarta.net.ssl.SSLSocketFactory
           #   fallback: false
           #   port: 465
+  # 文件上传限制
+  servlet:
+    multipart:
+      max-file-size: 5MB #单文件最大限制，springboot默认是1MB
+      max-request-size: 10MB  #整个请求最大限制，默认10MB
+
+# MinIO 配置
+minio:
+  endpoint: http://localhost:9000  # 端点,9000端口，给代码用的
+  access-key: minio-root           # docker-compose 里配置的那个账号
+  secret-key: 123456789            
+  bucket: forum-images
 
 mybatis:
     #mapper配置文件
@@ -61,3 +73,13 @@ community:
         EXPIRATION_TIME: ${local.jwt.EXPIRATION_TIME}
         # 设置前端传递过来的令牌名称
 #        admin-token-name: token
+
+# 日志配置
+logging:
+  level:
+    com:
+      liu:
+        springbootdemo:
+          mapper: debug
+          service: info
+          controller: info

@@ -132,7 +132,10 @@ public enum ErrorCode {
     FILE_TOO_LARGE("50002", "文件过大", HttpStatus.PAYLOAD_TOO_LARGE),
     FILE_TYPE_NOT_ALLOWED("50003", "不支持的文件类型", HttpStatus.BAD_REQUEST),
     FILE_NOT_FOUND("50004", "文件不存在", HttpStatus.NOT_FOUND),
-
+    FILE_URL_GET_BAD("50005","文件URL获取失败",HttpStatus.INTERNAL_SERVER_ERROR),
+    FILE_NAME_INVALID("50006","文件名格式错误或丢失后缀",HttpStatus.BAD_REQUEST),
+    FILE_DEL_FAIL("50007", "文件删除失败", HttpStatus.INTERNAL_SERVER_ERROR),
+    
     // 消息发送 50100-50199
     SMS_SEND_ERROR("50101", "短信发送失败", HttpStatus.INTERNAL_SERVER_ERROR),
     EMAIL_SEND_ERROR("50102", "邮件发送失败", HttpStatus.INTERNAL_SERVER_ERROR),

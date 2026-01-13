@@ -16,12 +16,3 @@ DB_NAME: springboot_db
 DB_USERNAME: springboot_dev
 DB_PASSWORD: Dev@springboot_114514!!!
 
-# 日志配置
-logging:
-  level:
-    com:
-      liu:
-        springbootdemo:
-          mapper: debug
-          service: info
-          controller: info

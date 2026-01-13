@@ -51,7 +51,8 @@ public class SecurityConfig {
                         "/api/posts/*", //获取单个帖子，根据帖子id
                         "/api/comments/*/comments",    // 允许Get方法获取单个帖子所有评论
                         "/api/categories",  // 获取分区列表
-                        "/api/categories/*" // 获取单个分区信息，根据id
+                        "/api/categories/*", // 获取单个分区信息，根据id
+                        "/upload/getUrl"   //获取文件资源url
                 ).permitAll()
                                 // 默认全拦截
                 .anyRequest().authenticated()   // 对于任何其他未匹配的请求，都必须经过身份验证
