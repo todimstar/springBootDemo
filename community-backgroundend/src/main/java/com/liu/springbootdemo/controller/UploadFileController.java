@@ -32,7 +32,7 @@ public class UploadFileController {
     @GetMapping("/getUrl")
     public Result<String> getFileUrl(@RequestParam String objectName){
         try {
-            String url = minioService.getFileUrl(objectName,3600);//60*60=3600=60小时=2.5天
+            String url = minioService.getFileUrl(objectName);//,3600);//60*60=3600=60小时=2.5天
             return Result.success(url);
         } catch (Exception e) {
             throw new BusinessException(ErrorCode.FILE_URL_GET_BAD);

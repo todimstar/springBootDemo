@@ -1,21 +1,17 @@
-package com.liu.springbootdemo.POJO.entity;
+package com.liu.springbootdemo.POJO.vo;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
-
 /**
- * Users表的实体类
+ * 用户更新后返回的视图对象
  */
 @Data
-public class User {
+public class UpdateUserVO {
     private Long id;        //用户id
     private String username;    //用户名
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String password;    //密码
     private String email;   //邮箱
     private LocalDateTime createTime;   //用户创建时间
     private LocalDateTime lastLoginTime;   //用户最后登录时间
@@ -29,6 +25,4 @@ public class User {
     private boolean isBanned;  //是否被封禁
     private String banReason;   //封禁原因
     private LocalDateTime banUntil;    //封禁截止时间
-
-
 }

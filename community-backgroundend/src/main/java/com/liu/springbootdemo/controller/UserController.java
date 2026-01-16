@@ -1,44 +1,46 @@
 package com.liu.springbootdemo.controller;
 
-import com.liu.springbootdemo.POJO.dto.LoginInControllerDTO;
-import com.liu.springbootdemo.POJO.dto.RegisterDTO;
+import com.liu.springbootdemo.POJO.dto.user.LoginInControllerDTO;
+import com.liu.springbootdemo.POJO.dto.user.RegisterDTO;
+import com.liu.springbootdemo.POJO.dto.user.UpdateUserDTO;
 import com.liu.springbootdemo.POJO.vo.LoginResponseVO;
 import com.liu.springbootdemo.POJO.Result.Result;
 import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.common.enums.ErrorCode;
-import com.liu.springbootdemo.common.enums.VERCODE;
 import com.liu.springbootdemo.common.exception.BusinessException;
+import com.liu.springbootdemo.service.MinioService;
 import com.liu.springbootdemo.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @RestController // 关键注解：表明这是一个控制器，且所有方法返回的都是JSON数据
 @RequestMapping("api/auth") //定义这个控制器下所有接口的统一前缀
 @Validated
+@Slf4j
 public class UserController {
     @Autowired  //自动注入UserService实例
     private UserService userService;
 
-    @Autowired  // 注入UserDetailsService，用于加载用户详情
-    private UserDetailsService userDetailsService;
+    @Autowired  // 用于上传用户头像
+    private MinioService minioService;
 
     private static final String EMAIL_REGEX =
             "^[A-Za-z0-9]+([_\\-\\.][A-Za-z0-9]+)*@[A-Za-z0-9]+([\\-\\.][A-Za-z0-9]+)*\\.[A-Za-z]{2,}$";
 
-    // DTO - username -password
 
     @PostMapping("/register")   //定义处理POST请求的接口，路径为 /api/user/register
     @SecurityRequirements() // 标记此接口不需要鉴权
@@ -54,7 +56,7 @@ public class UserController {
     @PostMapping("/login")   //登录路径为 /api/user/login
     @SecurityRequirements() // 标记此接口不需要鉴权
     public ResponseEntity<Result<LoginResponseVO>> login(@RequestBody LoginInControllerDTO loginInControllerDTO){
-        System.out.println(loginInControllerDTO);
+        log.info(String.valueOf(loginInControllerDTO));
         if(!StringUtils.hasText(loginInControllerDTO.getUsernameOrEmail())){
             throw new BusinessException(ErrorCode.EMPTY_USERNAME_OR_EMAIL);
         }
@@ -66,6 +68,27 @@ public class UserController {
         LoginResponseVO loginResponseVO = userService.login(loginInControllerDTO.getUsernameOrEmail(), loginInControllerDTO.getPassword());    //账密错误走全局异常
 
         return ResponseEntity.status(HttpStatus.OK).body(Result.success(loginResponseVO));
+    }
+
+    /**
+     * 头像上传接口，用于用户已注册更新时的头像上传
+     * 要鉴权，不让游客来爆破
+     * @param file 头像
+     * @return url 头像可访问url: 服务器ip+唯一标识名
+     */
+    @PostMapping("/upload/userAvatar")
+    public Result<String> uploadUserAvatar(@RequestParam("file") MultipartFile file) throws Exception {
+        //1.上传文件拿到objectName
+        //2.用objectName获取url
+        //3.存到user里更新avatarUrl字段
+        String objectName = minioService.uploadFile(file);
+        String url = minioService.getFileUrl(objectName);
+
+        UpdateUserDTO updateUserDTO = new UpdateUserDTO();
+        updateUserDTO.setAvatarUrl(url);
+        userService.updateUser(updateUserDTO);
+
+        return Result.success(url);
     }
 
     /**

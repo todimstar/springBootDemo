@@ -1,6 +1,7 @@
 package com.liu.springbootdemo.converter;
 
-import com.liu.springbootdemo.POJO.dto.RegisterDTO;
+import com.liu.springbootdemo.POJO.dto.user.RegisterDTO;
+import com.liu.springbootdemo.POJO.dto.user.UpdateUserDTO;
 import com.liu.springbootdemo.POJO.entity.User;
 import org.mapstruct.Mapper;
 
@@ -11,5 +12,10 @@ public interface UserConverter {
      * 自动忽略掉DTO中的验证码字段
      */
     User registerDtoToUser(RegisterDTO registerDTO);
+
+    /**
+     * UpdateDTO转User实体
+     */
+    User UpdateDtoTOUser(UpdateUserDTO updateUserDTO);
 
 }

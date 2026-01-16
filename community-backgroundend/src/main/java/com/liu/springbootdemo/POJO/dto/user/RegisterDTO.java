@@ -1,4 +1,4 @@
-package com.liu.springbootdemo.POJO.dto;
+package com.liu.springbootdemo.POJO.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;

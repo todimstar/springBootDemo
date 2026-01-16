@@ -1,8 +1,10 @@
 package com.liu.springbootdemo.service;
 
-import com.liu.springbootdemo.POJO.dto.RegisterDTO;
+import com.liu.springbootdemo.POJO.dto.user.RegisterDTO;
+import com.liu.springbootdemo.POJO.dto.user.UpdateUserDTO;
 import com.liu.springbootdemo.POJO.vo.LoginResponseVO;
 import com.liu.springbootdemo.POJO.entity.User;
+import com.liu.springbootdemo.POJO.vo.UpdateUserVO;
 import jakarta.validation.constraints.Email;
 
 import java.util.List;
@@ -20,6 +22,13 @@ public interface UserService {
     List<User> getAllUser();
 
     User getUserById(Long id);
+
+    /**
+     * 更新用户信息
+     * @param updateUserDTO
+     * @return UpdateUserVO
+     */
+    UpdateUserVO updateUser(UpdateUserDTO updateUserDTO);
 
     /**
      * 管理员硬删除用户

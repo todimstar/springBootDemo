@@ -1,8 +1,10 @@
 package com.liu.springbootdemo.service.impl;
 
-import com.liu.springbootdemo.POJO.dto.RegisterDTO;
+import com.liu.springbootdemo.POJO.dto.user.RegisterDTO;
+import com.liu.springbootdemo.POJO.dto.user.UpdateUserDTO;
 import com.liu.springbootdemo.POJO.vo.LoginResponseVO;
 import com.liu.springbootdemo.POJO.entity.User;
+import com.liu.springbootdemo.POJO.vo.UpdateUserVO;
 import com.liu.springbootdemo.common.enums.ErrorCode;
 import com.liu.springbootdemo.common.enums.VERCODE;
 import com.liu.springbootdemo.common.exception.BusinessException;
@@ -11,6 +13,7 @@ import com.liu.springbootdemo.mapper.UserMapper;
 import com.liu.springbootdemo.service.EmailService;
 import com.liu.springbootdemo.service.UserService;
 import com.liu.springbootdemo.utils.JwtUtil;
+import com.liu.springbootdemo.utils.SecurityUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -200,6 +203,26 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             throw new BusinessException(ErrorCode.USER_NOT_FOUND);
         }
         return user;
+    }
+
+    /**
+     * 给接口和其他Service用的，自获取当前登录的用户id去更新数据库
+     * @param updateUserDTO
+     * @return 用户级别的VO
+     */
+    @Override
+    public UpdateUserVO updateUser(UpdateUserDTO updateUserDTO) {
+        //获取当前用户
+        User currentUser = SecurityUtil.getCurrentUser();
+        if(currentUser == null){//未登录或登录已过期
+            throw new BusinessException(ErrorCode.UNAUTHORIZED,"Unbelievable! 你是怎么进来的，谁让你没登录就进来的!💢 滚出去😡*");
+        }
+        //内容校验？目前都在DTO@Vailded完了
+        User user = userConverter.UpdateDtoTOUser(updateUserDTO);
+        user.setId(currentUser.getId());
+        //更新去Mapper
+        userMapper.updateUser(user);
+        return null;
     }
 
     @Override

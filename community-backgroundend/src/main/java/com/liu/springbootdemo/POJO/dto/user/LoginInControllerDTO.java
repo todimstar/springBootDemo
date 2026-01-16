@@ -1,4 +1,4 @@
-package com.liu.springbootdemo.POJO.dto;
+package com.liu.springbootdemo.POJO.dto.user;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
