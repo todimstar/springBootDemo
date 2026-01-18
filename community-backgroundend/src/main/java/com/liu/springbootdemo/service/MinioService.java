@@ -3,6 +3,7 @@ package com.liu.springbootdemo.service;
 import com.liu.springbootdemo.common.enums.ErrorCode;
 import com.liu.springbootdemo.common.enums.FileType;
 import com.liu.springbootdemo.common.exception.BusinessException;
+import com.liu.springbootdemo.common.utils.ImageCompressUtil;
 import com.liu.springbootdemo.config.MinioConfig;
 import io.minio.*;
 import io.minio.http.Method;
@@ -86,7 +87,7 @@ public class MinioService {
     }
 
     /**
-     * 上传文件到MinIO服务器-头像版 //TODO:之后可能有不同的文件类型限制，有枚举类TYPE对应不同的校验列表
+     * 上传文件到MinIO服务器-带压缩版
      * @param file 要上传的文件(Spring MultipartFile)
      * @return 文件在MinIO中的唯一存储名称
      */
@@ -105,7 +106,11 @@ public class MinioService {
         }
         String objectName = fileType.getFolder() + "/" + datePath + "/" + UUID.randomUUID().toString() + fileExtension;   //folder+datePath+uuid+extension
                                                                                                                          // avatar/yy/MM/dd/uuid.jpg
-        //3.上传文件到MinIO
+        //3.按照各Type压缩一下 //GOOD:按枚举类自动压缩
+        MultipartFile mf = ImageCompressUtil.compressIfNeeded(file,fileType);
+        file = mf.getSize()<file.getSize()?mf:file; //要求Size变小了才更新，有些压缩挺好的就不压缩了
+
+        //4.上传文件到MinIO
         minioClient.putObject(
             PutObjectArgs.builder()
                     .bucket(minioConfig.getBucket())    //指定桶名称

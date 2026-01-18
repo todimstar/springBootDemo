@@ -187,6 +187,13 @@
             <artifactId>minio</artifactId>
             <version>8.5.7</version>
         </dependency>
+
+        <!-- 图像压缩: Thumbnailator (thumbnail + -ator 生成缩略图的库) -->
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.20</version>
+        </dependency>
         
     </dependencies>
 
