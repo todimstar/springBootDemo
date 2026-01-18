@@ -4,7 +4,7 @@ import com.liu.springbootdemo.POJO.dto.CreatePostDTO;
 import com.liu.springbootdemo.POJO.entity.Post;
 import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.mapper.PostMapper;
-import com.liu.springbootdemo.utils.SecurityUtil;
+import com.liu.springbootdemo.common.utils.SecurityUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -6,6 +6,7 @@ import com.liu.springbootdemo.POJO.vo.LoginResponseVO;
 import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.POJO.vo.UpdateUserVO;
 import jakarta.validation.constraints.Email;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -31,10 +32,19 @@ public interface UserService {
     UpdateUserVO updateUser(UpdateUserDTO updateUserDTO);
 
     /**
+     * 更新用户头像
+     * @param file
+     * @return
+     */
+    String uploadUserAvatar(MultipartFile file) throws Exception;
+
+    /**
      * 管理员硬删除用户
      * @param id
      */
     void deleteHeadByIdForAdmin(Long id);
 
     void sendRegisterCode(@Email String email);
+
+
 }

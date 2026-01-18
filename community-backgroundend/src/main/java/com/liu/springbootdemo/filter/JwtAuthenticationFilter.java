@@ -1,7 +1,7 @@
 package com.liu.springbootdemo.filter;
 
-import com.liu.springbootdemo.utils.JwtUtil;
-import com.liu.springbootdemo.utils.ResponseUtil;
+import com.liu.springbootdemo.common.utils.JwtUtil;
+import com.liu.springbootdemo.common.utils.ResponseUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

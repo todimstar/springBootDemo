@@ -1,4 +1,4 @@
-package com.liu.springbootdemo.utils;
+package com.liu.springbootdemo.common.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

@@ -1,6 +1,7 @@
 package com.liu.springbootdemo.service;
 
 import com.liu.springbootdemo.common.enums.ErrorCode;
+import com.liu.springbootdemo.common.enums.FileType;
 import com.liu.springbootdemo.common.exception.BusinessException;
 import com.liu.springbootdemo.config.MinioConfig;
 import io.minio.*;
@@ -28,7 +29,7 @@ public class MinioService {
 
     // 允许的图片类型列表
     private static final List<String> ALLOWED_IMAGE_TYPES = Arrays.asList(
-        "image/jpeg",   
+        "image/jpeg",
         "image/png",
         "image/gif",
         "image/webp"
@@ -89,22 +90,12 @@ public class MinioService {
      * @param file 要上传的文件(Spring MultipartFile)
      * @return 文件在MinIO中的唯一存储名称
      */
-    public String uploadFile(MultipartFile file) throws Exception{
+    public String uploadFile(MultipartFile file, FileType fileType) throws Exception{
         // 1.文件校验
-        //文件为空检查
-        if(file == null || file.isEmpty()){
-            throw new BusinessException(ErrorCode.INPUT_INVALID, "请选择要上传的文件");
-        }//文件大小检查
-        if(file.getSize() > MAX_FILE_SIZE){
-            throw new BusinessException(ErrorCode.FILE_TOO_LARGE,"文件大小不能超过"+MAX_FILE_SIZE/1024/1024+"MB");
-        }
-        // 文件类型校验
-        String contentType = file.getContentType();
-        if(contentType == null || !ALLOWED_IMAGE_TYPES.contains(contentType)){
-            throw new BusinessException(ErrorCode.FILE_TYPE_NOT_ALLOWED);
-        }
+        validateFile(file, fileType);
 
         //2.生成唯一文件名，避免重名
+        String datePath = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
         String originalFilename = file.getOriginalFilename();
         String fileExtension = null;
         try {
@@ -112,9 +103,8 @@ public class MinioService {
         }catch(Exception e){
             throw new BusinessException(ErrorCode.FILE_TYPE_NOT_ALLOWED);//可能是文件名为空，丢失后缀的情况
         }
-        String datePath = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
-        String objectName = datePath + "/" + UUID.randomUUID().toString() + fileExtension;   //手动加前缀路径以便区分，防止大量文件平铺在一层
-
+        String objectName = fileType.getFolder() + "/" + datePath + "/" + UUID.randomUUID().toString() + fileExtension;   //folder+datePath+uuid+extension
+                                                                                                                         // avatar/yy/MM/dd/uuid.jpg
         //3.上传文件到MinIO
         minioClient.putObject(
             PutObjectArgs.builder()
@@ -165,6 +155,27 @@ public class MinioService {
                         .object(objectName)
                         .build()
         );
+    }
+
+    /**
+     * 校验文件
+     */
+    private void validateFile(MultipartFile file,FileType fileType){
+        //文件为空检查
+        if(file == null || file.isEmpty()){
+            throw new BusinessException(ErrorCode.INPUT_INVALID, "请选择要上传的文件");
+        }//文件大小检查
+        if(file.getSize() > fileType.getMaxSize()){
+            throw new BusinessException(ErrorCode.FILE_TOO_LARGE,
+                    String.format("%s文件大小不能超过$dMB",
+                            fileType.getDescription(),
+                            fileType.getMaxSize()/1024/1024));
+        }
+        // 文件类型校验（依赖于 ALLOWED_IMAGE_TYPES 列表）
+        String contentType = file.getContentType();
+        if(contentType == null || !ALLOWED_IMAGE_TYPES.contains(contentType)){
+            throw new BusinessException(ErrorCode.FILE_TYPE_NOT_ALLOWED);
+        }
     }
 
 }

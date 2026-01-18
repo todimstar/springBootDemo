@@ -1,4 +1,4 @@
-package com.liu.springbootdemo.utils;
+package com.liu.springbootdemo.common.utils;
 
 import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.mapper.UserMapper;
@@ -27,8 +27,7 @@ public class SecurityUtil {
     public static User getCurrentUser(){
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if(principal instanceof UserDetails){
-            UserDetails userDetails = (UserDetails) principal;
+        if(principal instanceof UserDetails userDetails){
             return staticUserMapper.findByUsername(userDetails.getUsername());
         }
         return null;

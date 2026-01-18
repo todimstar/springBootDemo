@@ -18,7 +18,7 @@ import com.liu.springbootdemo.mapper.PostMapper;
 import com.liu.springbootdemo.service.CategoryService;
 import com.liu.springbootdemo.service.PostService;
 import com.liu.springbootdemo.service.UserService;
-import com.liu.springbootdemo.utils.SecurityUtil;
+import com.liu.springbootdemo.common.utils.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

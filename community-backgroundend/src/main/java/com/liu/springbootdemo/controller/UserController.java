@@ -78,15 +78,7 @@ public class UserController {
      */
     @PostMapping("/upload/userAvatar")
     public Result<String> uploadUserAvatar(@RequestParam("file") MultipartFile file) throws Exception {
-        //1.上传文件拿到objectName
-        //2.用objectName获取url
-        //3.存到user里更新avatarUrl字段
-        String objectName = minioService.uploadFile(file);
-        String url = minioService.getFileUrl(objectName);
-
-        UpdateUserDTO updateUserDTO = new UpdateUserDTO();
-        updateUserDTO.setAvatarUrl(url);
-        userService.updateUser(updateUserDTO);
+        String url = userService.uploadUserAvatar(file);
 
         return Result.success(url);
     }

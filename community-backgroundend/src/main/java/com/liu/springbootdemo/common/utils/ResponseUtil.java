@@ -1,4 +1,4 @@
-package com.liu.springbootdemo.utils;
+package com.liu.springbootdemo.common.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.liu.springbootdemo.POJO.Result.Result;

@@ -6,14 +6,19 @@ import com.liu.springbootdemo.POJO.vo.LoginResponseVO;
 import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.POJO.vo.UpdateUserVO;
 import com.liu.springbootdemo.common.enums.ErrorCode;
+import com.liu.springbootdemo.common.enums.FileType;
 import com.liu.springbootdemo.common.enums.VERCODE;
 import com.liu.springbootdemo.common.exception.BusinessException;
+import com.liu.springbootdemo.common.utils.FileUtil;
+import com.liu.springbootdemo.config.MinioConfig;
 import com.liu.springbootdemo.converter.UserConverter;
 import com.liu.springbootdemo.mapper.UserMapper;
 import com.liu.springbootdemo.service.EmailService;
+import com.liu.springbootdemo.service.MinioService;
 import com.liu.springbootdemo.service.UserService;
-import com.liu.springbootdemo.utils.JwtUtil;
-import com.liu.springbootdemo.utils.SecurityUtil;
+import com.liu.springbootdemo.common.utils.JwtUtil;
+import com.liu.springbootdemo.common.utils.SecurityUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +30,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
 
@@ -45,6 +52,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private RedisTemplate<String,Object> redisTemplate;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private MinioService minioService;
+    @Autowired
+    private MinioConfig minioConfig;
     @Autowired
     private UserConverter userConverter;
 
@@ -222,7 +233,44 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setId(currentUser.getId());
         //更新去Mapper
         userMapper.updateUser(user);
-        return null;
+        return userConverter.ToUpdateVO(userMapper.findById(currentUser.getId()));
+    }
+
+    /**
+     * 更新用户头像
+     * @param file
+     * @return
+     */
+    @Override
+    public String uploadUserAvatar(MultipartFile file) throws Exception {
+        //0.删除旧头像
+        //1.上传文件拿到objectName
+        //2.用objectName获取url
+        //3.存到user里更新avatarUrl字段
+        User currentUser = SecurityUtil.getCurrentUser();
+        if(currentUser == null){//未登录或登录已过期
+            throw new BusinessException(ErrorCode.UNAUTHORIZED,"Unbelievable! 你是怎么进来的，谁让你没登录就进来的!💢 滚出去😡*");
+        }
+        String oldAvatarUrl = currentUser.getAvatarUrl();
+        if(oldAvatarUrl != null && !oldAvatarUrl.isEmpty()){
+            try{
+                String oldObjectName = FileUtil.extractObjectName(oldAvatarUrl,minioConfig.getBucket());
+                if(oldObjectName != null){
+                    minioService.deleteFile(oldObjectName);
+                    log.info("旧头像已删除：{}",oldObjectName);
+                }
+            } catch (Exception e) {
+                log.warn("头像更新失败，错误：{}",e.getMessage());
+            }
+        }
+
+        String objectName = minioService.uploadFile(file, FileType.AVATAR);
+        String url = minioService.getFileUrl(objectName);
+
+        UpdateUserDTO updateUserDTO = new UpdateUserDTO();
+        updateUserDTO.setAvatarUrl(url);
+        updateUser(updateUserDTO);
+        return url;
     }
 
     @Override

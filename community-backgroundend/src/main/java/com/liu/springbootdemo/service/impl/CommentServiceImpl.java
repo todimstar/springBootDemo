@@ -7,7 +7,7 @@ import com.liu.springbootdemo.common.exception.BusinessException;
 import com.liu.springbootdemo.mapper.CommentMapper;
 import com.liu.springbootdemo.mapper.PostMapper;
 import com.liu.springbootdemo.service.CommentService;
-import com.liu.springbootdemo.utils.SecurityUtil;
+import com.liu.springbootdemo.common.utils.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;

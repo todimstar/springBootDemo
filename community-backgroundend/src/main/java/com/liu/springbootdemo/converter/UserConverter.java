@@ -3,6 +3,7 @@ package com.liu.springbootdemo.converter;
 import com.liu.springbootdemo.POJO.dto.user.RegisterDTO;
 import com.liu.springbootdemo.POJO.dto.user.UpdateUserDTO;
 import com.liu.springbootdemo.POJO.entity.User;
+import com.liu.springbootdemo.POJO.vo.UpdateUserVO;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
@@ -17,5 +18,11 @@ public interface UserConverter {
      * UpdateDTO转User实体
      */
     User UpdateDtoTOUser(UpdateUserDTO updateUserDTO);
+
+    /**
+     * user转UpdateVO
+     * 数据库查出来转更新VO
+     */
+    UpdateUserVO ToUpdateVO(User user);
 
 }
