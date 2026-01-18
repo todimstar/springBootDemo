@@ -222,7 +222,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      * @return 用户级别的VO
      */
     @Override
-    public UpdateUserVO updateUser(UpdateUserDTO updateUserDTO) {
+    public UpdateUserVO updateUser(UpdateUserDTO updateUserDTO) {//TODO:之后的更新用户信息时注意contorller层不给传入avatar，因为正常流程这个avatar是由专门的更新头像接口更新的，得拦截
         //获取当前用户
         User currentUser = SecurityUtil.getCurrentUser();
         if(currentUser == null){//未登录或登录已过期

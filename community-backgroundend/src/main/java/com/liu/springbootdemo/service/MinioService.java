@@ -167,7 +167,7 @@ public class MinioService {
         }//文件大小检查
         if(file.getSize() > fileType.getMaxSize()){
             throw new BusinessException(ErrorCode.FILE_TOO_LARGE,
-                    String.format("%s文件大小不能超过$dMB",
+                    String.format("%s文件大小不能超%dMB",
                             fileType.getDescription(),
                             fileType.getMaxSize()/1024/1024));
         }
