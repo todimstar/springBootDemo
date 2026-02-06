@@ -1,0 +1,17 @@
+{
+  "name": "springboot-demo-tools",
+  "version": "1.0.0",
+  "description": "项目开发工具：用于连接远程数据库的 dbhub 工具",
+  "private": true,
+  "scripts": {
+    "dbhub": "dbhub",
+    "install-tools": "npm install"
+  },
+  "dependencies": {
+    "@bytebase/dbhub": "^0.11.6"
+  },
+  "devDependencies": {},
+  "keywords": ["database", "tools"],
+  "author": "",
+  "license": "ISC"
+}

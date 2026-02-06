@@ -2,3 +2,10 @@
 .github
 .specify
 background_details_doc/后续对话
+
+# Node.js 依赖（根目录的开发工具）
+node_modules/
+
+# IDE 配置
+.vscode/
+.idea/
