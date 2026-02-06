@@ -1,18 +1,28 @@
 package com.liu.springbootdemo.service.impl;
 
-import com.liu.springbootdemo.POJO.dto.LoginResponseDTO;
-import com.liu.springbootdemo.entity.User;
-import com.liu.springbootdemo.exception.BusinessException;
-import com.liu.springbootdemo.exception.InvalidInputException;
-import com.liu.springbootdemo.exception.UserAlreadyExistsException;
-import com.liu.springbootdemo.exception.UnauthorizedException;
+import com.liu.springbootdemo.POJO.dto.user.RegisterDTO;
+import com.liu.springbootdemo.POJO.dto.user.UpdateUserDTO;
+import com.liu.springbootdemo.POJO.vo.LoginResponseVO;
+import com.liu.springbootdemo.POJO.entity.User;
+import com.liu.springbootdemo.POJO.vo.UpdateUserVO;
+import com.liu.springbootdemo.common.enums.ErrorCode;
+import com.liu.springbootdemo.common.enums.FileType;
+import com.liu.springbootdemo.common.enums.VERCODE;
+import com.liu.springbootdemo.common.exception.BusinessException;
+import com.liu.springbootdemo.common.utils.FileUtil;
+import com.liu.springbootdemo.config.MinioConfig;
+import com.liu.springbootdemo.converter.UserConverter;
 import com.liu.springbootdemo.mapper.UserMapper;
+import com.liu.springbootdemo.service.EmailService;
+import com.liu.springbootdemo.service.MinioService;
 import com.liu.springbootdemo.service.UserService;
-import com.liu.springbootdemo.utils.JwtUtil;
+import com.liu.springbootdemo.common.utils.JwtUtil;
+import com.liu.springbootdemo.common.utils.SecurityUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,10 +30,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
 
@@ -35,67 +48,229 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private JwtUtil jwtUtil;
+    @Autowired
+    private RedisTemplate<String,Object> redisTemplate;
+    @Autowired
+    private EmailService emailService;
+    @Autowired
+    private MinioService minioService;
+    @Autowired
+    private MinioConfig minioConfig;
+    @Autowired
+    private UserConverter userConverter;
 
-    // 现在注册时检查邮箱，但是登录时不检查邮箱哦，可能是因为不以邮箱登录吧，邮箱只是作为用户信息吧，之后注册应该也不用邮箱，这个接口是为了用户填写邮箱信息的吧，也可以换成手机号验证
+    // 现在注册时检查邮邮箱登录吧，邮箱只是作为用户信息吧，之后注册应该也不用邮箱，这个接口是为了用户填写邮箱信息的吧，也可以换成手机号验证
     @Override
-    public void register(User user) {
+    public void register(RegisterDTO registerDTO) {
 
         // 1. 业务逻辑：检查用户名是否已经存在，返回null即为没有该用户，允许注册
-        User userByUsername = userMapper.findByUsername(user.getUsername());
-        User userByEmail = userMapper.findByEmail(user.getEmail());
+        User userByUsername = userMapper.findByUsername(registerDTO.getUsername());
+        User userByEmail = userMapper.findByEmail(registerDTO.getEmail());
         // 已有用户
         if(userByUsername != null){
             // 用户已存在，抛出异常（后续全局异常处理）
-            throw new UserAlreadyExistsException("用户名已被占用！");
+            throw new BusinessException(ErrorCode.USERNAME_EXISTS);
         }
-       if(userByEmail != null){
-           throw new UserAlreadyExistsException("该邮箱已被使用！");
-       }
-       if(user.getPassword().length()<5 || user.getPassword().length()>20){
-           throw new InvalidInputException("密码长度必须在5到20个字符之间");
-       }
+        if(userByEmail != null){
+           throw new BusinessException(ErrorCode.EMAIL_EXISTS);
+        }
+        if(registerDTO.getPassword().length()<6 ){
+           throw new BusinessException(ErrorCode.PASSWORD_TOO_SHORT);
+        }
+
+        //2. 验证码是否在redis中存在且正确，验证通过后删除验证码,GOOD:使用Redis存储验证码，避免了数据库的读写压力，同时设置过期时间提高安全性
+        String redisKey = VERCODE.REGISTER.getRedisKey() + registerDTO.getEmail();
+        Object redisCode = redisTemplate.opsForValue().get(redisKey);
+        if(redisCode == null){// 验证码过期
+            throw new BusinessException(ErrorCode.VERIFICATION_CODE_EXPIRED);
+        }else if(!redisCode.equals(registerDTO.getVerCode())){// 验证码错误
+            throw new BusinessException(ErrorCode.VERIFICATION_CODE_ERROR);
+        }else{// 验证码正确，删除验证码
+            redisTemplate.delete(redisKey);
+        }
 
         // 2. 加密
         // user.setPassword(encode(user.getPassword()));
         // 将密码加密并存入user对象
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        registerDTO.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
         // 3. 调用Mapper层，将数据写入数据库
-        userMapper.insert(user);
+        userMapper.insert(userConverter.registerDtoToUser(registerDTO));
     }
 
     @Override
-    public LoginResponseDTO login(String usernameOrEmail, String password) {
+    public LoginResponseVO login(String usernameOrEmail, String password) {
         // 登录后逻辑
         User userInDbByUsername = userMapper.findByUsername(usernameOrEmail);
         User userInDbByEmail = userMapper.findByEmail(usernameOrEmail);
         // 1. 用户不存在或密码错误
         if((userInDbByUsername == null && userInDbByEmail == null)){
-            throw new InvalidInputException("用户名/邮箱未注册，请注册后重试");
+            throw new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND,"用户名/邮箱未注册，请注册后重试");
         }
+        // 这里已经保证了userInDbByUsername和userInDbByEmail至少有一个不为null
         User userInDb = (userInDbByUsername==null?userInDbByEmail:userInDbByUsername);
-        if(!passwordEncoder.matches(password,userInDb.getPassword())){
-            throw new UnauthorizedException("密码错误！");   //确实就是密码错误
-        }//TODO:Redis实现尝试登录次数限制和记录
+        
+        //user存在，如果被封禁则遣返
+        if(userInDb.isBanned()){
+            throw new BusinessException(ErrorCode.USER_BANNED,String.format("用户已被封禁,因%s",userInDb.getBanReason())); //FIXME:加一个用户登录时校验是否被封禁的逻辑，并人性化返回被封禁原因
+        }
 
-        // 捕获数据库更新异常
+        //GOOD:Redis实现尝试登录次数限制和记录
+        String failKey = "login:fail:"+userInDb.getId().toString();
+        //先查是否已经锁定
+        Integer failCount = (Integer) redisTemplate.opsForValue().get(failKey);
+        if(failCount != null && failCount >= 5){
+            long expire = redisTemplate.getExpire(failKey, TimeUnit.MINUTES);
+            throw new BusinessException(ErrorCode.FAILED_LOGIN_ATTEMPTS_EXCEEDED,"账号锁定，请等待"+(expire+1)+"分钟");
+        }
+        //再验证密码正确性
+        if(!passwordEncoder.matches(password,userInDb.getPassword())){
+            long count = redisTemplate.opsForValue().increment(failKey);
+            if(count == 1){
+                redisTemplate.expire(failKey, 15, TimeUnit.MINUTES);//首次输错才开始计时15分钟，防止隔天多记
+            }
+            throw new BusinessException(ErrorCode.WRONG_PASSWORD, "密码错误，还剩 " + (5 - count)+ " 次机会");
+        }
+
+
+        // 更新登录数据，同时捕获数据库更新异常
         if (userMapper.updateLogintimeByUsername(userInDb.getUsername()) != 1) {
             // 如果还能走这里，那就是数据库更新失败
             logger.warn("为用户 {} 更新登录时间失败", usernameOrEmail);
-            throw new RuntimeException("用户 " + usernameOrEmail+ "更新最新登录时间失败，数据库无报错但返回行数不为1");
+            throw new BusinessException(ErrorCode.USER_UPDATE_FAILED,"用户 " + usernameOrEmail+ "更新最新登录时间失败，数据库无报错但返回行数不为1");
         }
         // 构造Spring Security的UserDetails对象
         UserDetails userDetails = loadUserByUsername(userInDb.getUsername());
         // 生成Token：将UserDetails传给JwtUtil实现
         String token = jwtUtil.generateToken(userDetails);
 
-        // 创建返回体
+        //登录成功洗白Redis记录
+        redisTemplate.delete(failKey);
 
-        return new LoginResponseDTO(userInDb.getUsername(),token);
+        // 创建返回体
+        return new LoginResponseVO(userInDb.getUsername(),token);
     }
 
+    /**
+     * 发送注册验证码到邮箱,选参为"注册"
+     * 校验邮箱是否已被注册
+     * 调用通用发送验证码接口
+     * @param email
+     */
+    @Override
+    public void sendRegisterCode(String email) {
+        User userByEmail = userMapper.findByEmail(email);
+        if(userByEmail != null){
+            throw new BusinessException(ErrorCode.EMAIL_EXISTS);
+        }
+        sendVerificationCode(email, VERCODE.REGISTER.getCodeType());
+    }
+
+    private static final String EMAIL_REGEX =
+            "^[A-Za-z0-9]+([_\\-\\.][A-Za-z0-9]+)*@[A-Za-z0-9]+([\\-\\.][A-Za-z0-9]+)*\\.[A-Za-z]{2,}$";
+    /**
+     * 发送邮箱验证码，通用带参版
+     * @param email
+     * @param mailType 可选验证码信息标注，可为空
+     */
+    @Override
+    public void sendVerificationCode(String email, String mailType) {
+        //检查redis中是否存在未过期的验证码
+        String redisKey = VERCODE.REGISTER.getRedisKey() + email;
+        if(redisTemplate.opsForValue().get(redisKey) != null){
+            //获取验证码剩余过期时间
+            Long expire = redisTemplate.getExpire(redisKey, TimeUnit.SECONDS);
+            logger.warn("邮箱 {} 的验证码未过期，剩余 {} 秒", email, expire);
+            throw new BusinessException(ErrorCode.INPUT_INVALID, "验证码已发送，请稍后再试");
+        }
+        // 校验邮箱格式->也可以限制邮箱类型，禁掉临时邮箱等
+        if(!email.matches(EMAIL_REGEX)){
+            throw new BusinessException(ErrorCode.EMAIL_INVALID);
+        }
+        // 生成验证码并发送
+        String code = emailService.generateVerificationCode();
+        emailService.sendCode(email,code,mailType);
+        // 将验证码存入Redis，设置10分钟过期时间
+        redisTemplate.opsForValue().set(redisKey, code, VERCODE.REGISTER.getTimeoutMinutes(), TimeUnit.MINUTES);
+    }
+
+    /**
+     * 获取所有用户，给管理员接口调用,之后可能分页
+     * @return List<User>
+     */
     @Override
     public List<User> getAllUser(){
         return userMapper.getAll();
+    }
+
+    /**
+     * 给Service层其他类调用的，根据id获取用户，找不到抛异常
+     * @param id
+     * @return User
+     */
+    @Override
+    public User getUserById(Long id){
+        User user = userMapper.findById(id);
+        if(user == null){
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND);
+        }
+        return user;
+    }
+
+    /**
+     * 给接口和其他Service用的，自获取当前登录的用户id去更新数据库
+     * @param updateUserDTO
+     * @return 用户级别的VO
+     */
+    @Override
+    public UpdateUserVO updateUser(UpdateUserDTO updateUserDTO) {//TODO:之后的更新用户信息时注意contorller层不给传入avatar，因为正常流程这个avatar是由专门的更新头像接口更新的，得拦截
+        //获取当前用户
+        User currentUser = SecurityUtil.getCurrentUser();
+        if(currentUser == null){//未登录或登录已过期
+            throw new BusinessException(ErrorCode.UNAUTHORIZED,"Unbelievable! 你是怎么进来的，谁让你没登录就进来的!💢 滚出去😡*");
+        }
+        //内容校验？目前都在DTO@Vailded完了
+        User user = userConverter.UpdateDtoTOUser(updateUserDTO);
+        user.setId(currentUser.getId());
+        //更新去Mapper
+        userMapper.updateUser(user);
+        return userConverter.ToUpdateVO(userMapper.findById(currentUser.getId()));
+    }
+
+    /**
+     * 更新用户头像
+     * @param file
+     * @return
+     */
+    @Override
+    public String uploadUserAvatar(MultipartFile file) throws Exception {
+        //0.删除旧头像
+        //1.上传文件拿到objectName
+        //2.用objectName获取url
+        //3.存到user里更新avatarUrl字段
+        User currentUser = SecurityUtil.getCurrentUser();
+        if(currentUser == null){//未登录或登录已过期
+            throw new BusinessException(ErrorCode.UNAUTHORIZED,"Unbelievable! 你是怎么进来的，谁让你没登录就进来的!💢 滚出去😡*");
+        }
+        String oldAvatarUrl = currentUser.getAvatarUrl();
+        if(oldAvatarUrl != null && !oldAvatarUrl.isEmpty()){
+            try{
+                String oldObjectName = FileUtil.extractObjectName(oldAvatarUrl,minioConfig.getBucket());
+                if(oldObjectName != null){
+                    minioService.deleteFile(oldObjectName);
+                    log.info("旧头像已删除：{}",oldObjectName);
+                }
+            } catch (Exception e) {
+                log.warn("头像更新失败，错误：{}",e.getMessage());
+            }
+        }
+
+        String objectName = minioService.uploadFile(file, FileType.AVATAR);
+        String url = minioService.getFileUrl(objectName);
+
+        UpdateUserDTO updateUserDTO = new UpdateUserDTO();
+        updateUserDTO.setAvatarUrl(url);
+        updateUser(updateUserDTO);
+        return url;
     }
 
     @Override
@@ -104,11 +279,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User existUser = userMapper.findById(id);
 
         if(existUser == null){
-            throw new UsernameNotFoundException("用户 " + existUser.getUsername() + " 不存在");
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND);  //NOTE: 异常升级途中升级了此处原本抛出的专类异常
         }
 
+        // 删除并检查返回值
         if(userMapper.deleteById(id)!=1){
-            throw new BusinessException("用户删除异常","503", HttpStatus.SERVICE_UNAVAILABLE);
+            throw new BusinessException(ErrorCode.USER_DELETE_FAILED);
         }
     }
 

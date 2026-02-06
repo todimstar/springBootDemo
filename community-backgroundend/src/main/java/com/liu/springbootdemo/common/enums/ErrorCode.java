@@ -31,6 +31,7 @@ public enum ErrorCode {
     SYSTEM_BUSY("A0002", "系统繁忙，请稍后重试", HttpStatus.SERVICE_UNAVAILABLE),
     SYSTEM_TIMEOUT("A0003", "系统执行超时", HttpStatus.REQUEST_TIMEOUT),
     SYSTEM_RESOURCE_ERROR("A0004", "系统资源异常", HttpStatus.INTERNAL_SERVER_ERROR),
+    SQL_ERROR("A0005", "数据库操作异常", HttpStatus.INTERNAL_SERVER_ERROR),
 
     // ==================== 用户相关错误 10000-19999 ====================
     // 用户基本错误 10001-10099
@@ -38,6 +39,8 @@ public enum ErrorCode {
     USER_ALREADY_EXISTS("10002", "用户已存在", HttpStatus.CONFLICT),
     USER_STATUS_ABNORMAL("10003", "用户状态异常", HttpStatus.FORBIDDEN),
     USER_BANNED("10004", "用户已被封禁", HttpStatus.FORBIDDEN),
+    USER_UPDATE_FAILED("10005", "用户信息更新失败", HttpStatus.INTERNAL_SERVER_ERROR),
+    USER_DELETE_FAILED("10006", "用户删除失败", HttpStatus.INTERNAL_SERVER_ERROR),
 
     // 用户注册错误 10100-10199
     USERNAME_EXISTS("10101", "用户名已被占用", HttpStatus.CONFLICT),
@@ -48,6 +51,14 @@ public enum ErrorCode {
     USERNAME_INVALID("10106", "用户名格式不正确", HttpStatus.BAD_REQUEST),
     EMAIL_INVALID("10107", "邮箱格式不正确", HttpStatus.BAD_REQUEST),
 
+    //用户端输入错误 10200-10299
+    EMPTY_USERNAME("10201", "用户名不能为空", HttpStatus.BAD_REQUEST),
+    EMPTY_EMAIL("10202","邮箱不能为空", HttpStatus.BAD_REQUEST),
+    EMPTY_PASSWORD("10203", "密码不能为空", HttpStatus.BAD_REQUEST),
+    EMPTY_USERNAME_OR_EMAIL("10204", "用户名或邮箱不能为空", HttpStatus.BAD_REQUEST),
+    INPUT_INVALID("10205", "输入不合法", HttpStatus.BAD_REQUEST),
+
+
     // ==================== 认证授权错误 20000-29999 ====================
     // 认证错误 20001-20099
     UNAUTHORIZED("20001", "未登录或登录已过期", HttpStatus.UNAUTHORIZED),
@@ -55,6 +66,7 @@ public enum ErrorCode {
     ACCOUNT_NOT_FOUND("20003", "账号不存在", HttpStatus.UNAUTHORIZED),
     ACCOUNT_DISABLED("20004", "账号已被禁用", HttpStatus.UNAUTHORIZED),
     ACCOUNT_EXPIRED("20005", "账号已过期", HttpStatus.UNAUTHORIZED),
+    FAILED_LOGIN_ATTEMPTS_EXCEEDED("20006", "登录失败次数过多，账号已被锁定", HttpStatus.LOCKED),
 
     // Token相关 20100-20199
     TOKEN_EXPIRED("20101", "登录已过期，请重新登录", HttpStatus.UNAUTHORIZED),
@@ -98,9 +110,10 @@ public enum ErrorCode {
     CATEGORY_NOT_FOUND("40201", "分区不存在", HttpStatus.NOT_FOUND),
     CATEGORY_NAME_EXISTS("40202", "分区名称已存在", HttpStatus.CONFLICT),
     CATEGORY_HAS_POSTS("40203", "分区下还有帖子，无法删除", HttpStatus.CONFLICT),
-    CATEGORY_CREATE_FAILED("40204", "创建分区失败", HttpStatus.INTERNAL_SERVER_ERROR),
-    CATEGORY_UPDATE_FAILED("40205", "更新分区失败", HttpStatus.INTERNAL_SERVER_ERROR),
-    CATEGORY_DELETE_FAILED("40206", "删除分区失败", HttpStatus.INTERNAL_SERVER_ERROR),
+    CATEGORY_COUNT_MISMATCH("40204", "分区帖子数量异常,请稍后重试", HttpStatus.INTERNAL_SERVER_ERROR),
+    CATEGORY_CREATE_FAILED("40205", "创建分区失败", HttpStatus.INTERNAL_SERVER_ERROR),
+    CATEGORY_UPDATE_FAILED("40206", "更新分区失败", HttpStatus.INTERNAL_SERVER_ERROR),
+    CATEGORY_DELETE_FAILED("40207", "删除分区失败", HttpStatus.INTERNAL_SERVER_ERROR),
 
     // 点赞收藏 40300-40399
     ALREADY_LIKED("40301", "您已经点过赞了", HttpStatus.CONFLICT),
@@ -119,15 +132,24 @@ public enum ErrorCode {
     FILE_TOO_LARGE("50002", "文件过大", HttpStatus.PAYLOAD_TOO_LARGE),
     FILE_TYPE_NOT_ALLOWED("50003", "不支持的文件类型", HttpStatus.BAD_REQUEST),
     FILE_NOT_FOUND("50004", "文件不存在", HttpStatus.NOT_FOUND),
-
+    FILE_URL_GET_BAD("50005","文件URL获取失败",HttpStatus.INTERNAL_SERVER_ERROR),
+    FILE_NAME_INVALID("50006","文件名格式错误或丢失后缀",HttpStatus.BAD_REQUEST),
+    FILE_DEL_FAIL("50007", "文件删除失败", HttpStatus.INTERNAL_SERVER_ERROR),
+    
     // 消息发送 50100-50199
     SMS_SEND_ERROR("50101", "短信发送失败", HttpStatus.INTERNAL_SERVER_ERROR),
     EMAIL_SEND_ERROR("50102", "邮件发送失败", HttpStatus.INTERNAL_SERVER_ERROR),
     NOTIFICATION_SEND_ERROR("50103", "通知发送失败", HttpStatus.INTERNAL_SERVER_ERROR),
+    VERIFICATION_CODE_SEND_ERROR("50104", "验证码发送失败", HttpStatus.INTERNAL_SERVER_ERROR),
 
-    // 外部API 50200-50299
-    EXTERNAL_API_ERROR("50201", "外部服务调用失败", HttpStatus.BAD_GATEWAY),
-    EXTERNAL_API_TIMEOUT("50202", "外部服务超时", HttpStatus.GATEWAY_TIMEOUT);
+    // 验证码相关 50200-50299
+    VERIFICATION_CODE_ERROR("50101", "验证码错误", HttpStatus.BAD_REQUEST),
+    VERIFICATION_CODE_EXPIRED("50202", "验证码已过期，请重新获取", HttpStatus.BAD_REQUEST),
+    VERIFICATION_CODE_SEND_FREQUENT("50203", "验证码请求过于频繁，请稍后再试", HttpStatus.TOO_MANY_REQUESTS),
+
+    // 外部API 50300-50399
+    EXTERNAL_API_ERROR("50301", "外部服务调用失败", HttpStatus.BAD_GATEWAY),
+    EXTERNAL_API_TIMEOUT("50302", "外部服务超时", HttpStatus.GATEWAY_TIMEOUT);
 
     /**
      * 错误码

@@ -1,8 +1,29 @@
+# 包含真实密码的环境变量文件
+.env
+.env.local
+
+# 数据库备份文件
+*.sql
+.backup/
+
+# 日志文件
+*.log
+logs/
+
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+
+# 排除 MinIO 的实际数据（防止将 TB 级数据上传到代码库）
+minio/data/
+
+# 排除配置信息（防止泄露证书或密钥）
+minio/config/
+
+# 排除运行产生的日志文件
+minio/logs/
 
 ### STS ###
 .apt_generated

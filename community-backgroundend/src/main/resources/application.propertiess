@@ -1,0 +1,25 @@
+# ========== 主配置文件 ==========
+# 激活的配置文件（现在切换到云端）
+spring.profiles.active=cloud
+
+# 应用名称
+spring.application.name=community-backend
+
+# 服务器端口
+#server.port=8080
+
+# JWT 配置
+#jwt.secret=YourSuperSecureAndLongSecretKeyForThisCommunityTechForumProject
+#jwt.expiration=604800000
+
+# 文件上传
+#spring.servlet.multipart.max-file-size=10MB
+#spring.servlet.multipart.max-request-size=10MB
+
+# ----- MyBatis  -----
+# Mapper XML
+mybatis.mapper-locations=classpath:mapper/*.xml
+# XML
+mybatis.type-aliases-package=com.liu.springbootdemo.entity
+# 【新增】开启MyBatis从下划线到驼峰的自动映射，实现实体类createTime能智能跟数据库create_time映射上
+mybatis.configuration.map-underscore-to-camel-case=true

@@ -1,6 +1,8 @@
 package com.liu.springbootdemo.mapper;
 
-import com.liu.springbootdemo.entity.Category;
+import com.github.pagehelper.Page;
+import com.liu.springbootdemo.POJO.dto.request.CategoryPageQueryDTO;
+import com.liu.springbootdemo.POJO.entity.Category;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -12,8 +14,8 @@ public interface CategoryMapper {
      * @param category 新分区,name,despcription,icon,sort_order
      * @return 影响的行数，1为成功
      */
-    @Insert("INSERT INTO categories(name,description,icon,sort_order)"+
-            "VALUES(#{name},#{description},#{icon},#{sortOrder})")
+    @Insert("INSERT INTO categories(name,description,icon,sort_order,create_time)"+
+            "VALUES(#{name},#{description},#{icon},#{sortOrder},#{createTime})")
     @Options(useGeneratedKeys = true,keyProperty = "id")
     int insert(Category category);
 
@@ -33,6 +35,17 @@ public interface CategoryMapper {
     @Select("SELECT * from categories WHERE id = #{id} and is_active = TRUE")
     Category findActiveById(Long id);
 
+    /**
+     * 根据ID查询激活的分区名 - 用户
+     * @param id
+     * @return category name
+     */
+    @Select("SELECT name from categories WHERE id = #{id} AND is_active = TRUE")
+    String findNameById(Long id);
+
+    @Select("SELECT EXISTS(SELECT 1 FROM categories WHERE id = #{id} AND is_active = TRUE)")
+    boolean isActiveById(Long id);
+
     // ======列表、ID、Name查询 - 管理员======
 
     /**
@@ -48,6 +61,13 @@ public interface CategoryMapper {
      */
     @Select("SELECT * from categories WHERE id = #{id}")
     Category findById(Long id);
+
+    /**
+     * 根据分页动态查询分区信息(根据dto判断isAdmin返回is_active和禁用分区)
+     * @param dto
+     * @return
+     */
+    Page<Category> pageQuery(CategoryPageQueryDTO dto);
 
     /**
      * 用Name查分区信息，用在创造和修改分区，仅管理员调用，不用校验isActive
@@ -136,4 +156,6 @@ public interface CategoryMapper {
      */
     @Delete("DELETE FROM categories WHERE id = #{id}")
     int deleteById(Long id);
+
+
 }

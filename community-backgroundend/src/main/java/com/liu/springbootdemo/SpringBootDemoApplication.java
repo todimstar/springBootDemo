@@ -5,7 +5,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.scheduling.annotation.EnableAsync;
 
+@EnableAsync
 @SpringBootApplication
 @ComponentScan(
         basePackages = "com.liu.springbootdemo",
@@ -14,6 +16,7 @@ import org.springframework.context.annotation.FilterType;
                 pattern = "com.liu.springbootdemo.service.impl.ais.*"
         )
 )
+@MapperScan("com.liu.springbootdemo.mapper")
 public class SpringBootDemoApplication {
 
     public static void main(String[] args) {

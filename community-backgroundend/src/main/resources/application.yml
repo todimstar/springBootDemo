@@ -1,0 +1,85 @@
+spring:
+  profiles:
+    active:
+      - cloud
+      - local
+  application:
+    name: community-service
+  #springData配置
+  data:
+    web:
+      #分页相关
+      pageable:
+        one-indexed-parameters: true # 让 page=1 代表第一页
+        default-page-size: 10        # 默认每页 10 条
+        max-page-size: 100           # 限制每页最多 100 条（防止恶意查询）
+    # redis数据源配置
+    redis:
+      host: ${local.redis.host}
+      port: ${local.redis.port}
+      database: ${local.redis.database}
+  # mysql数据库配置
+  datasource:
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  # Mail邮件发送配置
+  mail:
+    host: smtp.139.com
+    port: 465
+    username: 15177943783@139.com
+    password: bccbde45ca067610bd00
+    protocol: smtp
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+            trust: "*"
+            # required: true
+          # socketFactory: #SSL必要配置但是jdk8
+          #   class: jakarta.net.ssl.SSLSocketFactory
+          #   fallback: false
+          #   port: 465
+  # 文件上传限制
+  servlet:
+    multipart:
+      max-file-size: 5MB #单文件最大限制，springboot默认是1MB
+      max-request-size: 10MB  #整个请求最大限制，默认10MB
+
+# MinIO 配置
+minio:
+  endpoint: http://localhost:9000  # 端点,9000端口，给代码用的
+  access-key: minio-root           # docker-compose 里配置的那个账号
+  secret-key: 123456789            
+  bucket: forum-images
+
+mybatis:
+    #mapper配置文件
+    mapper-locations: classpath:mapper/*.xml
+    type-aliases-package: com.liu.springbootdemo.POJO
+    configuration:
+        #开启驼峰命名
+        map-underscore-to-camel-case: true
+
+community:
+    jwt:
+        # 设置jwt签名加密时使用的秘钥
+        SECRET_KEY: ${local.jwt.SECRET_KEY}
+        # 设置jwt过期时间
+        EXPIRATION_TIME: ${local.jwt.EXPIRATION_TIME}
+        # 设置前端传递过来的令牌名称
+#        admin-token-name: token
+
+# 日志配置
+logging:
+  level:
+    com:
+      liu:
+        springbootdemo:
+          mapper: debug
+          service: info
+          controller: info

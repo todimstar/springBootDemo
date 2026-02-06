@@ -1,5 +1,6 @@
 package com.liu.springbootdemo.POJO.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import java.time.LocalDateTime;
 
@@ -15,6 +16,7 @@ public class CategoryVO {
     private String icon;
     private Integer postCount;
     private Integer sortOrder;
+//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
 
     // 注意：不包含 isActive（内部字段，前端不需要）

@@ -1,8 +1,7 @@
 package com.liu.springbootdemo.mapper;
 
-import com.liu.springbootdemo.entity.Comment;
+import com.liu.springbootdemo.POJO.entity.Comment;
 import org.apache.ibatis.annotations.*;
-import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 

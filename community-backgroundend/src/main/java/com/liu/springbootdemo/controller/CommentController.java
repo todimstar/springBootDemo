@@ -1,9 +1,8 @@
 package com.liu.springbootdemo.controller;
 
-import com.liu.springbootdemo.POJO.vo.Result;
-import com.liu.springbootdemo.entity.Comment;
+import com.liu.springbootdemo.POJO.Result.Result;
+import com.liu.springbootdemo.POJO.entity.Comment;
 import com.liu.springbootdemo.service.CommentService;
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

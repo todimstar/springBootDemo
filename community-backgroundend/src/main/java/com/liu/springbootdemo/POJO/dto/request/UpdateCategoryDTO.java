@@ -13,13 +13,14 @@ public class UpdateCategoryDTO {
     @NotNull(message = "分区ID不能为空")
     private Long id;
 
-    @Size(max = 50, message = "分区名称不能超过50个字符")
+    @Size(max = 50, message = "分区名称不能超过{max}个字符")
     private String name;
 
-    @Size(max = 200, message = "分区描述不能超过200个字符")
+    @Size(max = 200, message = "分区描述不能超过{max}个字符")
     private String description;
 
     private String icon;
 
     private Integer sortOrder;
+
 }

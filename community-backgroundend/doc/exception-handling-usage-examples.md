@@ -10,7 +10,7 @@ package com.liu.springbootdemo.service.impl;
 import com.liu.springbootdemo.common.enums.ErrorCode;
 import com.liu.springbootdemo.common.exception.BusinessException;
 import com.liu.springbootdemo.common.utils.Assert;
-import com.liu.springbootdemo.entity.User;
+import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.mapper.UserMapper;
 import com.liu.springbootdemo.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -475,7 +475,7 @@ public class CategoryServiceImplRefactored implements CategoryService {
 ```java
 package com.liu.springbootdemo.controller;
 
-import com.liu.springbootdemo.POJO.vo.Result;
+import com.liu.springbootdemo.POJO.Result.Result;
 import com.liu.springbootdemo.common.enums.ErrorCode;
 import com.liu.springbootdemo.common.utils.Assert;
 import io.swagger.v3.oas.annotations.Operation;

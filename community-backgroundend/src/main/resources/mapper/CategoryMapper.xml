@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liu.springbootdemo.mapper.CategoryMapper">
+
+    <select id="pageQuery" resultType="com.liu.springbootdemo.POJO.entity.Category">
+        SELECT id,name,description,icon,post_count,sort_order,
+               <if test="isAdmin == true">is_active,</if>
+               create_time from categories
+        <if test="isAdmin == false">WHERE is_active = true</if>
+        ORDER BY create_time DESC
+    </select>
+
+
+</mapper>

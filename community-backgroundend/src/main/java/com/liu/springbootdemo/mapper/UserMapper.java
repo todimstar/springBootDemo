@@ -1,7 +1,7 @@
 package com.liu.springbootdemo.mapper;
 
 
-import com.liu.springbootdemo.entity.User;
+import com.liu.springbootdemo.POJO.entity.User;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -66,6 +66,12 @@ public interface UserMapper {
     @Select("SELECT * FROM users WHERE id = #{id}")
     User findById(Long id);
 
+    /**改
+     *根据userId更新user信息
+     * @param user
+     */
+    void updateUser(User user);
+
     /** 删
      * 根据id查询并删除一个用户
      * @param id 用户名
@@ -73,5 +79,6 @@ public interface UserMapper {
      */
     @Delete("DELETE FROM users WHERE id = #{id}")
     int deleteById(Long id);
+
 
 }

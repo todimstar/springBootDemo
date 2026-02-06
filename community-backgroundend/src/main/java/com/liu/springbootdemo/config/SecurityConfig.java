@@ -1,20 +1,16 @@
 package com.liu.springbootdemo.config;
 
 import com.liu.springbootdemo.filter.JwtAuthenticationFilter;
-import com.liu.springbootdemo.utils.ResponseUtil;
+import com.liu.springbootdemo.common.utils.ResponseUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -34,14 +30,27 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> authorize
                 // 白名单：对登录和注册路径的请求，允许所有形式访问
                 .requestMatchers("/api/auth/register","/api/auth/login").permitAll()
-                // 白名单：允许Get方法获取帖子列表，无需验证jwt
-                .requestMatchers(HttpMethod.GET,"/api/posts","/api/posts/allTitles",
-                                                "/api/posts/*", //获取单个帖子，根据帖子id
-                                                "/api/posts/*/comments",    // 允许Get方法获取单个帖子所有评论
-                                                "/api/categories",  // 获取分区列表
-                                                "/api/categories/*" // 获取单个分区信息，根据id
+                // Swagger/Knife4j/静态资源 白名单
+                .requestMatchers(
+                        "/doc.html",
+                        "/webjars/**",
+                        "/v3/api-docs/**",
+                        "/swagger-resources/**",
+                        "/v3/**",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html",
+                        "/favicon.ico"
                 ).permitAll()
-                // 默认全拦截
+                // 白名单：允许Get方法获取帖子列表，无需验证jwt
+                .requestMatchers(HttpMethod.GET,
+                        "/api/posts",
+                        "/api/posts/*", //获取单个帖子，根据帖子id
+                        "/api/comments/*/comments",    // 允许Get方法获取单个帖子所有评论
+                        "/api/categories",  // 获取分区列表
+                        "/api/categories/*", // 获取单个分区信息，根据id
+                        "/upload/getUrl"   //获取文件资源url
+                ).permitAll()
+                                // 默认全拦截
                 .anyRequest().authenticated()   // 对于任何其他未匹配的请求，都必须经过身份验证
 
         )
@@ -61,7 +70,7 @@ public class SecurityConfig {
                             HttpServletResponse.SC_UNAUTHORIZED,
                             "未登录，请登录后重试"
                             );
-                    System.out.println(this.getClass() + "的未认证处理");
+                    System.out.println(this.getClass() + "的未认证处理 -> 请求的Method是" + request.getMethod() + " -> RequestURL是" + request.getRequestURI() + " -> 异常信息是" + authException.getMessage());
                 })
                 .accessDeniedHandler(((request, response, accessDeniedException) -> {
                     ResponseUtil.sendErrorResponse(

@@ -13,7 +13,7 @@ import java.util.Map;
  * 简化参数校验和业务规则校验
  *
  * @author Liu
- * @date 2024
+ * @date 2025
  */
 public class Assert {
 

@@ -11,7 +11,7 @@
         <!-- Spring Boot的starter父项目 -->
         <artifactId>spring-boot-starter-parent</artifactId>
         <!-- Spring Boot版本号 -->
-        <version>3.5.5</version>
+        <version>3.3.5</version>
         <!-- 父项目的相对路径，用于从仓库查找父项目 -->
         <relativePath/>
     </parent>
@@ -46,6 +46,7 @@
     <properties>
         <!-- 指定Java版本为17 -->
         <java.version>17</java.version>
+        <pagehelper>2.1.0</pagehelper><!-- 2.0.0+适配spring Boot 3 -->
     </properties>
 
     <!-- 项目依赖配置 -->
@@ -65,11 +66,18 @@
         </dependency>
         <!-- MySQL 驱动 -->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.33</version><!-- 使用通义给的版本 -->
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>8.3.0</version>
             <scope>runtime</scope>
         </dependency>
+
+        <!-- redis -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
 
         <!-- MyBatis Spring Boot Starter -->
         <dependency>
@@ -128,13 +136,65 @@
             <version>1.18.20</version>
         </dependency>
 
-        <!-- Knife4j -->
+        <!-- MapStruct 对象映射 -->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>1.5.5.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+            <version>1.5.5.Final</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Knife4j ui + OpenAPI 3.0 -->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
-            <version>4.3.0</version>
+            <version>4.5.0</version>
         </dependency>
 
+        <!-- pageHelper -->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>${pagehelper}</version>
+        </dependency>
+
+        <!-- springdata使用其中的pageable分页 -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+        </dependency>
+
+        <!-- aop切面-为了AspectJ切面注入日志 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <!-- mail验证码依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
+        <!-- MinIO 对象存储客户端 -->
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>8.5.7</version>
+        </dependency>
+
+        <!-- 图像压缩: Thumbnailator (thumbnail + -ator 生成缩略图的库) -->
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.20</version>
+        </dependency>
+        
     </dependencies>
 
     <!-- 构建配置 -->

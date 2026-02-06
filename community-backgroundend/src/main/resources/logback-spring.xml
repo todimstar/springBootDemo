@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- 1. 定义日志存放路径：放在项目根目录下的 logs 文件夹 -->
+    <property name="log.path" value="./logs" />
+    <!-- 2. 定义统一的日志格式：时间 [线程] 级别 类名 - 信息 换行 -->
+    <property name="log.pattern" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{20} - %msg%n" />
+
+    <!-- 3. 输出源 A：控制台 (开发时看) -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 4. 输出源 B：INFO 文件 (记录正常业务) -->
+    <appender name="file_info" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.path}/sys-info.log</file>
+        <!-- 滚动策略：按天生成新文件，最多保留60天 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.path}/sys-info.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <!-- 过滤器：只收 INFO 级别的，拒绝 ERROR (因为 ERROR 有专属文件) -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- 5. 输出源 C：ERROR 文件 (记录报错，重点关注！) -->
+    <appender name="file_error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.path}/sys-error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.path}/sys-error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <!-- 过滤器：只收 ERROR 级别的 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- 6. 最终组装：定义不同包的日志级别和去向 -->
+    <!-- 你的代码包：记录 INFO 及以上 -->
+    <logger name="com.liu" level="info" />
+
+    <!-- Spring框架包：只记录 WARN 及以上 (不然控制台全是Spring的启动废话) -->
+    <logger name="org.springframework" level="warn" />
+
+    <!-- 根节点：所有日志默认去控制台、INFO文件、ERROR文件 -->
+    <root level="info">
+        <appender-ref ref="console" />
+        <appender-ref ref="file_info" />
+        <appender-ref ref="file_error" />
+    </root>
+</configuration>
