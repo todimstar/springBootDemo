@@ -21,7 +21,7 @@ public class CreatePostDTO {
     private String title;   //外显标题
     @NotNull
     @NotBlank
-    @Size(max = 50000, message = "内容不能超过{max}个字符")
+    @Size(max = 15000, message = "内容不能超过{max}个字符")//限制了1万5千字，数据库用的是TEXT类型，保险一点
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "帖子内容")
     private String content; // 内容
     @NotNull
