@@ -4,9 +4,16 @@
       "mcp__sequential-thinking__sequentialthinking",
       "Bash(dir:*)",
       "Bash(findstr:*)",
-      "Bash(ssh res:*)"
+      "Bash(ssh res:*)",
+      "WebSearch",
+      "Bash(curl:*)",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzM4NCJ9.eyJyb2xlcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9VU0VSIn1dLCJzdWIiOiJ0ZXN0dXNlckVuY29kZXIxIiwiaWF0IjoxNzcwNzI5MTg3LCJleHAiOjE3NzEzMzM5ODd9.1Ol7N94Bge1RhTGWX62-InKmViCJKRzkB4Wa-nCFll-Tqxhjah2yanOGzz5nENZl\")",
+      "Bash(ADMIN=\"eyJhbGciOiJIUzM4NCJ9.eyJyb2xlcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9BRE1JTiJ9XSwic3ViIjoidGVzdHVzZXJFbmNvZGVyMyIsImlhdCI6MTc3MDcyOTE5NywiZXhwIjoxNzcxMzMzOTk3fQ.oiFxMtxst1fRjUQbzWGqzeYzOW8cSlLyqai8IW8-SUy0q6EH-b3Vp9wzNXpqwOtX\")"
     ],
     "deny": [],
     "ask": []
+  },
+  "enabledPlugins": {
+    "dev-browser@dev-browser-marketplace": true
   }
 }

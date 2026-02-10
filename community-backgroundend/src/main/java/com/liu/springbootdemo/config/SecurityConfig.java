@@ -29,7 +29,11 @@ public class SecurityConfig {
         // 开始配置授权请求
         http.authorizeHttpRequests(authorize -> authorize
                 // 白名单：对登录和注册路径的请求，允许所有形式访问
-                .requestMatchers("/api/auth/register","/api/auth/login").permitAll()
+                .requestMatchers(HttpMethod.POST,
+                        "/api/auth/register",
+                        "/api/auth/login",
+                        "/api/auth/sendRegisterCode"    //新加注册验证码放行
+                ).permitAll()
                 // Swagger/Knife4j/静态资源 白名单
                 .requestMatchers(
                         "/doc.html",
