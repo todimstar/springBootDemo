@@ -25,7 +25,7 @@
 **Description:** 作为系统，我需要在帖子/评论提交时对文本进行规则匹配与风险评分，以便自动判定内容处置方式。
 
 **Acceptance Criteria:**
-- [ ] 规则引擎接收文本内容，依次执行：关键词匹配 → 正则匹配 → 黑名单检查
+- [ ] 规则引擎接收文本内容，依次执行：关键词匹配 → 正则匹配 → 黑名单检查（黑名单定义见下方说明）
 - [ ] 文本预处理：去空格、大小写统一、全半角归一化后再匹配
 - [ ] 每条命中规则返回规则 ID、规则类型、命中片段、该规则权重分
 - [ ] 汇总所有命中规则的加权分，输出最终风险分（0-100）
@@ -167,7 +167,7 @@
 - **FR-2:** 新建审核规则表 `moderation_rule`，字段包含：id、rule_type（keyword/regex/blacklist）、pattern、weight_score、enabled、description、created_at、updated_at、deleted（逻辑删除）
 - **FR-3:** 新建审核队列表 `moderation_queue`，字段包含：id、target_id、target_type（post/comment）、risk_score、matched_rules_snapshot（JSON）、user_profile_snapshot（JSON）、status、created_at、reviewed_at、reviewer_id
 - **FR-4:** 新建审计日志表 `moderation_audit_log`，字段包含：id、target_id、target_type、action、operator_id、operator_type（SYSTEM/ADMIN）、reason、matched_rules_snapshot、risk_score、created_at
-- **FR-5:** 规则引擎按优先级依次执行关键词匹配、正则匹配、黑名单检查，累加命中规则的权重分
+- **FR-5:** 规则引擎按优先级依次执行关键词匹配、正则匹配、黑名单检查，累加命中规则的权重分。**blacklist 定义：文本维度黑名单（URL / 域名 / 敏感短语），对预处理后的文本进行匹配；用户级封禁不属于规则引擎，沿用现有 `users.is_banned` 字段预检查**
 - **FR-6:** 用户画像加权因子从数据库读取，与文本基础分相乘得到最终风险分（封顶 100）
 - **FR-7:** 阈值配置存储在数据库（键值对），支持管理员在线调整
 - **FR-8:** 同步链路自动决策三档：放行/拦截立即更新状态并返回，灰区内容异步写入 `moderation_queue`（status 为 PENDING_REVIEW）；影子发布仅管理员人工审核时可选
@@ -195,6 +195,7 @@
 - **不做** 审核队列积压告警（二期加入通知机制）
 - **不做** 高级文本对抗（拼音/变体/谐音绕过检测，二期实现）
 - **不做** 分日/分周的规则命中趋势统计（一期仅累计值）
+- **不做** 用户级黑名单策略（用户封禁沿用现有 `users.is_banned` 字段预检查，不属于审核规则引擎范畴）
 
 ## 6. Design Considerations / 设计考量
 
