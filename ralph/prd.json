@@ -1,0 +1,186 @@
+{
+  "projectName": "Moderation Flow - 内容安全与审核流",
+  "branchName": "Ralph",
+  "version": "1.0",
+  "description": "为社区帖子与评论建立可解释、可复审、可追溯的内容审核体系",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "内容风险评分引擎",
+      "priority": 1,
+      "passes": false,
+      "description": "作为系统，我需要在帖子/评论提交时对文本进行规则匹配与风险评分，以便自动判定内容处置方式。",
+      "acceptanceCriteria": [
+        "规则引擎接收文本内容，依次执行：关键词匹配 → 正则匹配 → 黑名单检查",
+        "文本预处理：去空格、大小写统一、全半角归一化后再匹配",
+        "每条命中规则返回规则 ID、规则类型、命中片段、该规则权重分",
+        "汇总所有命中规则的加权分，输出最终风险分（0-100）",
+        "规则库数据存储在数据库，支持动态增删改（无需重启）",
+        "单次评分耗时 < 200ms（1000 字以内文本）",
+        "单元测试覆盖：无命中、单规则命中、多规则叠加、边界值场景",
+        "mvn compile 编译通过"
+      ]
+    },
+    {
+      "id": "US-002",
+      "title": "用户画像风险加权",
+      "priority": 2,
+      "passes": false,
+      "description": "作为系统，我需要根据用户画像因子对风险评分进行加权，使新用户或有违规历史的用户受到更严格的审核。",
+      "acceptanceCriteria": [
+        "画像因子至少包含：注册天数、历史违规次数、账号等级",
+        "定义加权系数映射表，初始经验值：注册 < 7 天 → ×1.5，违规 ≥ 3 次 → ×2.0",
+        "加权系数可通过数据库配置，无需硬编码",
+        "最终评分 = 文本基础分 × 用户画像加权系数，上限封顶 100",
+        "单元测试覆盖各画像因子的独立与组合场景",
+        "mvn compile 编译通过"
+      ]
+    },
+    {
+      "id": "US-003",
+      "title": "审核决策与状态流转",
+      "priority": 3,
+      "passes": false,
+      "description": "作为系统，我需要根据风险评分阈值自动决策内容状态，灰区内容进入人工审核队列。",
+      "acceptanceCriteria": [
+        "帖子状态复用现有 Post.status 字段，新增 5 = SHADOW_BANNED",
+        "审核决策到帖子状态映射：自动放行 → status=2, 送人审 → status=1, 自动拦截 → status=3",
+        "影子发布仅由管理员人工审核时手动触发，不纳入自动决策阈值",
+        "阈值配置存储在数据库：score < 30 → 自动放行，30 ≤ score < 70 → 送人审，score ≥ 70 → 自动拦截",
+        "阈值可在管理后台动态调整",
+        "同步链路：自动放行或拦截的内容立即更新状态并返回",
+        "异步链路：灰区内容状态为 PENDING_REVIEW，写入审核队列表",
+        "单元测试覆盖每个阈值区间的决策路径",
+        "mvn compile 编译通过"
+      ]
+    },
+    {
+      "id": "US-004",
+      "title": "影子发布可见性控制",
+      "priority": 4,
+      "passes": false,
+      "description": "作为用户，当我的内容被影子发布时，我能正常看到自己的帖子/评论，但其他用户不可见。",
+      "acceptanceCriteria": [
+        "状态为 SHADOW_BANNED（Post.status=5）的内容：发布者本人查询时正常返回",
+        "其他用户查询帖子列表/评论列表时，过滤掉 SHADOW_BANNED 状态的内容",
+        "发布者无任何提示表明内容被影子处理",
+        "集成测试覆盖：发布者视角 vs 其他用户视角",
+        "mvn compile 编译通过"
+      ]
+    },
+    {
+      "id": "US-005",
+      "title": "管理员审核队列页面",
+      "priority": 5,
+      "passes": false,
+      "description": "作为管理员，我需要一个简易审核页面，查看待审核内容列表并执行审核操作。",
+      "acceptanceCriteria": [
+        "审核列表页展示：内容摘要、作者、发布时间、风险分、命中规则摘要",
+        "支持按风险分降序排列",
+        "支持按内容类型（帖子/评论）筛选",
+        "每条记录提供操作按钮：通过 / 驳回 / 下架 / 影子发布",
+        "操作时必须填写审核理由",
+        "操作成功后列表实时刷新",
+        "mvn compile 编译通过，pnpm build 前端构建通过"
+      ]
+    },
+    {
+      "id": "US-006",
+      "title": "审核操作 API",
+      "priority": 6,
+      "passes": false,
+      "description": "作为开发者，我需要提供审核操作的后端 API，供管理后台页面调用。",
+      "acceptanceCriteria": [
+        "GET /api/admin/moderation/queue — 分页查询待审核列表",
+        "GET /api/admin/moderation/{id} — 查看审核详情",
+        "POST /api/admin/moderation/{id}/action — 执行审核操作",
+        "接口鉴权：仅 ADMIN 角色可访问",
+        "参数校验：非法 action、空 reason 返回 400",
+        "操作幂等：重复提交同一操作不报错",
+        "单元测试 + 接口测试覆盖",
+        "mvn compile 编译通过"
+      ]
+    },
+    {
+      "id": "US-007",
+      "title": "审计日志记录与查询",
+      "priority": 7,
+      "passes": false,
+      "description": "作为管理员，我需要查看每条内容的完整审核轨迹，以便追溯和复审。",
+      "acceptanceCriteria": [
+        "审计日志表记录：目标 ID、目标类型、操作类型、操作人、操作时间、审核理由、命中规则快照、风险评分快照",
+        "自动审核同样写入日志，操作人标记为 SYSTEM",
+        "GET /api/admin/moderation/{id}/logs — 返回审计轨迹",
+        "日志不可篡改（仅 INSERT）",
+        "单元测试覆盖",
+        "mvn compile 编译通过"
+      ]
+    },
+    {
+      "id": "US-008",
+      "title": "规则库管理 API",
+      "priority": 8,
+      "passes": false,
+      "description": "作为管理员，我需要通过 API 管理审核规则（增删改查）。",
+      "acceptanceCriteria": [
+        "GET /api/admin/moderation/rules — 分页查询规则列表",
+        "POST /api/admin/moderation/rules — 新增规则",
+        "PUT /api/admin/moderation/rules/{id} — 修改规则",
+        "DELETE /api/admin/moderation/rules/{id} — 软删除规则",
+        "规则变更写入审计日志",
+        "规则加载支持缓存，变更后自动刷新缓存",
+        "接口鉴权：仅 ADMIN 角色",
+        "单元测试 + 接口测试",
+        "mvn compile 编译通过"
+      ]
+    },
+    {
+      "id": "US-009",
+      "title": "图片审核扩展接口占位",
+      "priority": 9,
+      "passes": false,
+      "description": "作为开发者，我需要预留图片审核的扩展点。",
+      "acceptanceCriteria": [
+        "定义 ContentModerationStrategy 接口",
+        "文本审核实现该接口（TextModerationStrategy）",
+        "预留 ImageModerationStrategy 空实现",
+        "审核引擎通过策略模式按内容类型分发",
+        "mvn compile 编译通过"
+      ]
+    },
+    {
+      "id": "US-010",
+      "title": "发帖接口接入审核链路",
+      "priority": 10,
+      "passes": false,
+      "description": "作为开发者，我需要将现有帖子创建/编辑接口接入审核链路。",
+      "acceptanceCriteria": [
+        "帖子创建接口：提交后同步调用审核引擎，根据结果设置 status",
+        "帖子编辑接口：内容变更时重新触发审核",
+        "被驳回/下架的内容允许作者编辑后重新提交",
+        "自动放行的内容对用户无感知",
+        "被拦截的内容返回友好提示",
+        "灰区内容返回正常响应",
+        "集成测试覆盖三种决策路径",
+        "mvn compile 编译通过"
+      ]
+    },
+    {
+      "id": "US-011",
+      "title": "规则命中统计与效果评估",
+      "priority": 11,
+      "passes": false,
+      "description": "作为运营人员，我需要查看每条规则的命中统计数据。",
+      "acceptanceCriteria": [
+        "新建规则统计表 moderation_rule_stats",
+        "规则命中时同步更新对应统计计数",
+        "GET /api/admin/moderation/rules/{id}/stats — 返回单条规则统计",
+        "GET /api/admin/moderation/rules/stats — 批量返回所有规则统计摘要",
+        "统计更新采用原子操作",
+        "接口鉴权：仅 ADMIN 角色",
+        "单元测试覆盖",
+        "mvn compile 编译通过"
+      ]
+    }
+  ]
+}
