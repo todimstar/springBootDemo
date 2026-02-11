@@ -40,7 +40,7 @@
       "id": "US-003",
       "title": "审核决策与状态流转",
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "description": "作为系统，我需要根据风险评分阈值自动决策内容状态，灰区内容进入人工审核队列。",
       "acceptanceCriteria": [
         "帖子状态复用现有 Post.status 字段，新增 5 = SHADOW_BANNED",

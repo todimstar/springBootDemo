@@ -8,7 +8,13 @@
 - `community-backgroundend/.gitignore` 忽略 `*.sql`，新增 SQL 文件需 `git add -f`
 - Redis 配置在 `RedisConfig.java`，使用 `StringRedisSerializer` + `GenericJackson2JsonRedisSerializer`
 - 权限控制使用 `@PreAuthorize("hasRole('ADMIN')")` 注解
-- PostStatus 枚举定义帖子状态：0=DRAFT, 1=PENDING_REVIEW, 2=PUBLISHED, 3=REJECTED, 4=DELETED
+- PostStatus 枚举定义帖子状态：0=DRAFT, 1=PENDING_REVIEW, 2=PUBLISHED, 3=REJECTED, 4=DELETED, 5=SHADOW_BANNED
+- 审核决策阈值通过 `moderation_threshold_config` 表配置，key: `auto_approve_max`（默认30）, `auto_reject_min`（默认70）
+- `ModerationDecisionService.decide(text, user, targetId, targetType)` 是审核决策入口，返回 `ModerationDecisionResult`
+- 灰区内容自动写入 `moderation_queue` 审核队列表
+- `ModerationDecision` 枚举: AUTO_APPROVE→status=2, PENDING_REVIEW→status=1, AUTO_REJECT→status=3
+- SHADOW_BANNED(status=5) 仅由管理员人工审核手动触发，不纳入自动决策
+- CompressTest 和 PostServiceImplTest 存在 pre-existing 测试失败（环境/mock问题），非审核模块引入
 - SQL 初始化脚本在 `sql/springboot_db.sql`，Docker Compose 通过挂载 `sql/` 自动执行
 - 用户画像加权采用 `user_risk_factor_config` 配置表，支持灵活的因子名+运算符+阈值+系数配置
 - 多因子命中时取最大加权系数（MAX策略），避免极端叠加
@@ -79,4 +85,43 @@ Started: Wed Feb 11 20:22:21     2026
   - `ChronoUnit.DAYS.between(createTime, now)` 计算注册天数
   - User.createTime 可能为 null，需做防御处理
   - switch 表达式中 yield 关键字用于带花括号的 case 分支返回值
+---
+
+## 2026-02-11 21:20 - US-003
+- **实现了审核决策与状态流转功能**
+- `PostStatus` 枚举新增 `SHADOW_BANNED(5)` 影子发布状态
+- `ModerationDecision` 审核决策枚举: AUTO_APPROVE / PENDING_REVIEW / AUTO_REJECT
+- 新建 `moderation_threshold_config` 阈值配置表（`sql/V2_2__moderation_decision.sql`）
+  - 初始阈值: score < 30 → 自动放行, 30 ≤ score < 70 → 送人审, score ≥ 70 → 自动拦截
+- 新建 `moderation_queue` 审核队列表，灰区内容自动入队
+- `ModerationThresholdConfig.java` 阈值配置实体
+- `ModerationQueue.java` 审核队列实体
+- `ModerationThresholdConfigMapper.java` 阈值查询
+- `ModerationQueueMapper.java` 队列写入
+- `ModerationDecisionResult.java` 决策结果 DTO
+- `ModerationDecisionService` / `ModerationDecisionServiceImpl` 审核决策服务
+  - 阈值从数据库加载，支持 Redis 缓存（TTL 10 分钟）
+  - 缓存失败自动降级数据库，数据库失败使用硬编码默认值
+  - 灰区内容自动写入审核队列（内容截断500字，命中规则JSON序列化）
+  - 队列写入失败不影响决策结果返回
+- 17 个单元测试全部通过（总计 78 个测试通过）
+- Files changed:
+  - `sql/V2_2__moderation_decision.sql` (new)
+  - `common/enums/PostStatus.java` (modified - added SHADOW_BANNED)
+  - `common/enums/ModerationDecision.java` (new)
+  - `POJO/entity/ModerationThresholdConfig.java` (new)
+  - `POJO/entity/ModerationQueue.java` (new)
+  - `POJO/dto/ModerationDecisionResult.java` (new)
+  - `mapper/ModerationThresholdConfigMapper.java` (new)
+  - `mapper/ModerationQueueMapper.java` (new)
+  - `service/ModerationDecisionService.java` (new)
+  - `service/impl/ModerationDecisionServiceImpl.java` (new)
+  - `test/.../ModerationDecisionServiceImplTest.java` (new - 17 tests)
+- **Learnings for future iterations:**
+  - 阈值配置采用 key-value 模式（auto_approve_max / auto_reject_min），灵活且可扩展
+  - 三级缓存降级策略：Redis → DB → 硬编码默认值，确保服务可用
+  - 审核队列写入用 try-catch 包裹，写入失败不影响主决策流程
+  - ObjectMapper 可用 @Spy 注入真实实例，避免 mock JSON 序列化
+  - `lenient().when()` 对于 setUp 中的通用 stub 很有用
+  - Number 类型从 Redis 反序列化时可能为 Integer 或其他 Number 子类，需做类型判断
 ---

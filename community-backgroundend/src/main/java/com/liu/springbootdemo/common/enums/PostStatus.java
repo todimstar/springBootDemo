@@ -11,7 +11,8 @@ public enum PostStatus {
     PENDING_REVIEW(1),//待审核
     PUBLISHED(2),   //已发布，审核通过
     REJECTED(3),    //审核未通过,拒绝
-    DELETED(4);     //已删除，软删除，6个月后物理删除
+    DELETED(4),     //已删除，软删除，6个月后物理删除
+    SHADOW_BANNED(5); //影子发布，仅发布者可见
 
     private final int status;
 
