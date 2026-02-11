@@ -1,3 +1,45 @@
+## Codebase Patterns
+- 项目使用 MyBatis + `@Mapper` 注解，简单查询用 `@Select`/`@Insert` 注解，复杂动态 SQL 用 XML 映射文件（`resources/mapper/`）
+- 实体类位于 `POJO/entity/`，DTO 位于 `POJO/dto/`，VO 位于 `POJO/vo/`
+- 统一结果类 `Result<T>` 返回，错误使用 `ErrorCode` 枚举 + `BusinessException`
+- 枚举定义位于 `common/enums/`
+- 服务接口在 `service/`，实现在 `service/impl/`
+- 测试使用 `@ExtendWith(MockitoExtension.class)` + `@Mock` + `@InjectMocks` 模式
+- `community-backgroundend/.gitignore` 忽略 `*.sql`，新增 SQL 文件需 `git add -f`
+- Redis 配置在 `RedisConfig.java`，使用 `StringRedisSerializer` + `GenericJackson2JsonRedisSerializer`
+- 权限控制使用 `@PreAuthorize("hasRole('ADMIN')")` 注解
+- PostStatus 枚举定义帖子状态：0=DRAFT, 1=PENDING_REVIEW, 2=PUBLISHED, 3=REJECTED, 4=DELETED
+- SQL 初始化脚本在 `sql/springboot_db.sql`，Docker Compose 通过挂载 `sql/` 自动执行
+
 # Ralph Progress Log
 Started: Wed Feb 11 20:22:21     2026
+---
+
+## 2026-02-11 20:45 - US-001
+- **实现了内容风险评分引擎核心功能**
+- 新建 `moderation_rule` 审核规则表（`sql/V2_0__moderation_rule.sql`），含 8 条初始规则
+- 实体类 `ModerationRule.java`，DTO: `RuleHitResult.java`, `RiskScoreResult.java`
+- 枚举 `RuleType.java`（keyword/regex/blacklist）
+- `TextNormalizer.java` 文本预处理工具（去空格/统一小写/全半角归一化）
+- `ModerationRuleMapper.java` 查询启用规则
+- `RiskScoringService` / `RiskScoringServiceImpl` 规则引擎实现（责任链：关键词→正则→黑名单）
+- 支持 Redis 缓存规则，Redis 不可用时自动回退到数据库查询
+- 27 个单元测试全部通过
+- Files changed:
+  - `community-backgroundend/sql/V2_0__moderation_rule.sql` (new)
+  - `POJO/entity/ModerationRule.java` (new)
+  - `POJO/dto/RuleHitResult.java` (new)
+  - `POJO/dto/RiskScoreResult.java` (new)
+  - `common/enums/RuleType.java` (new)
+  - `common/utils/TextNormalizer.java` (new)
+  - `mapper/ModerationRuleMapper.java` (new)
+  - `service/RiskScoringService.java` (new)
+  - `service/impl/RiskScoringServiceImpl.java` (new)
+  - `test/.../TextNormalizerTest.java` (new)
+  - `test/.../RiskScoringServiceImplTest.java` (new)
+- **Learnings for future iterations:**
+  - 规则引擎使用 switch 表达式按 ruleType 分发匹配逻辑
+  - 正则匹配需要 try-catch 防止无效正则导致引擎崩溃
+  - Redis 缓存需要容错处理，连接失败时回退数据库
+  - `lenient().when()` 在 Mockito 中避免 strict stubbing 报错
 ---

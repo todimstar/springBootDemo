@@ -8,7 +8,7 @@
       "id": "US-001",
       "title": "内容风险评分引擎",
       "priority": 1,
-      "passes": false,
+      "passes": true,
       "description": "作为系统，我需要在帖子/评论提交时对文本进行规则匹配与风险评分，以便自动判定内容处置方式。",
       "acceptanceCriteria": [
         "规则引擎接收文本内容，依次执行：关键词匹配 → 正则匹配 → 黑名单检查",
