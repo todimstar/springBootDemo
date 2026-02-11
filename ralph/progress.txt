@@ -29,6 +29,9 @@
 - 前端使用 Vue 3 + Element Plus + Pinia + axios，Vite 代理 `/api` 到 `localhost:8080`
 - 前端 build 需要 `sass-embedded` 依赖（`pnpm install -D sass-embedded`）
 - ShadowBanVisibilityTest 存在 MockedStatic 注册冲突的 pre-existing 错误，非新代码引入
+- Controller 接口测试使用 Standalone MockMvc（`MockMvcBuilders.standaloneSetup`）+ `GlobalExceptionHandler` 作为 ControllerAdvice，避免 `@WebMvcTest` 加载完整上下文的复杂性
+- `@MockBean` 在 Spring Boot 3.3.5 中的包名是 `org.springframework.boot.test.mock.mockito.MockBean`
+- `ModerationQueuePageQueryDTO` 的 page/pageSize 字段为 `Integer`，无默认值；仅当 Spring 传入参数时才触发自定义 setter 设默认值
 
 # Ralph Progress Log
 Started: Wed Feb 11 20:22:21     2026
@@ -209,4 +212,31 @@ Started: Wed Feb 11 20:22:21     2026
   - 审核操作幂等设计：检查 queue 状态为 "reviewed" 则直接返回，不重复操作
   - Element Plus 的 `el-table` + `el-pagination` 组合非常适合管理后台列表页
   - 前端 build 需要 `sass-embedded`，PostDetailView.vue 使用了 SCSS
+---
+
+## 2026-02-11 22:18 - US-006
+- **确认审核操作 API 完整性并补充接口测试**
+- US-005 已实现完整后端 API（3 个端点 + 鉴权 + 校验 + 幂等），US-006 验证 API 满足所有验收标准
+- 新建 `ModerationControllerTest.java`（18 个接口测试）
+  - 3 个分页查询测试：成功返回、按类型筛选、默认参数
+  - 2 个详情查询测试：存在返回、不存在返回 400
+  - 13 个审核操作测试：
+    - 4 种操作成功（approve/reject/takedown/shadow_ban）
+    - 4 种参数校验（空 action/空 reason/null action/null reason → 400）
+    - 幂等测试（已审核记录不报错）
+    - 无请求体返回 400
+    - 非法操作类型返回 400
+    - 队列不存在返回 400
+    - 关联帖子不存在返回 404
+- 使用 Standalone MockMvc + GlobalExceptionHandler 作为 ControllerAdvice
+- mvn compile 编译通过，98 个审核模块测试全部通过
+- Files changed:
+  - `test/.../controller/admin/ModerationControllerTest.java` (new - 18 tests)
+  - `ralph/prd.json` (updated US-006 passes: true)
+- **Learnings for future iterations:**
+  - `@WebMvcTest` 在有自定义 SecurityConfig + JWT Filter 时加载上下文困难，改用 Standalone MockMvc 更轻量可靠
+  - Standalone MockMvc 需手动注册 `GlobalExceptionHandler` 以测试异常处理链路
+  - Spring Boot 3.3.5 的 `@MockBean` 包名是 `org.springframework.boot.test.mock.mockito`
+  - `ModerationQueuePageQueryDTO` 的 page/pageSize 无默认值，不传参时字段为 null
+  - Controller 测试应明确传入 page/pageSize 参数，避免 null 引起 NPE
 ---

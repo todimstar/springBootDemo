@@ -88,7 +88,7 @@
       "id": "US-006",
       "title": "审核操作 API",
       "priority": 6,
-      "passes": false,
+      "passes": true,
       "description": "作为开发者，我需要提供审核操作的后端 API，供管理后台页面调用。",
       "acceptanceCriteria": [
         "GET /api/admin/moderation/queue — 分页查询待审核列表",
