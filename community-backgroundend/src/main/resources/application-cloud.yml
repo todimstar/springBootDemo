@@ -9,10 +9,5 @@ spring:
       max-lifetime: 1800000 # 连接最大存活时间
       connection-test-query: SELECT 1 # 连接测试查询语句
 
-# mysql数据库配置 (Ralph分支: Docker MySQL, 端口3307)
-DB_HOST: localhost
-DB_PORT: 3307
-DB_NAME: springboot_db
-DB_USERNAME: springboot_dev
-DB_PASSWORD: Dev@springboot_114514
+# 数据库账号由 .env 提供，application.yml 通过 ${DB_*} 读取
 

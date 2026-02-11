@@ -6,11 +6,14 @@ You are an autonomous coding agent working on a software project.
 
 Before starting work, ensure the following services are running:
 
-1. **MySQL 8.0** - Port 3306 (DB: community_forum)
+1. **MySQL 8.0** - Port 3307 (from `community-backgroundend/.env`)
 2. **Redis 7** - Port 6379
 3. **MinIO** - Port 9000 (API) / 9001 (Console)
 
-Quick start: `docker-compose up -d` in project root.
+Quick start: `cd community-backgroundend && docker-compose up -d`.
+
+If running from project root, use:
+`docker-compose -f community-backgroundend/docker-compose.yml --env-file community-backgroundend/.env up -d`
 
 See [ENVIRONMENT.md](./ENVIRONMENT.md) for full setup instructions.
 

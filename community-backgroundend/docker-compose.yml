@@ -8,16 +8,16 @@ services:
     container_name: community-mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: root123456
-      MYSQL_DATABASE: springboot_db
-      MYSQL_USER: springboot_dev
-      MYSQL_PASSWORD: Dev@springboot_114514
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
       TZ: Asia/Shanghai
     ports:
-      - "3307:3306"   # 用 3307 避免和本地 MySQL 冲突
+      - "${DB_PORT}:3306"   # 由 .env 统一控制对外端口
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./community-backgroundend/sql:/docker-entrypoint-initdb.d  # 自动执行初始化SQL
+      - ./sql:/docker-entrypoint-initdb.d  # 自动执行初始化SQL
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_0900_ai_ci
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
@@ -31,7 +31,7 @@ services:
     container_name: community-redis
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT}:6379"
     volumes:
       - redis_data:/data
     command: redis-server --appendonly yes
@@ -50,8 +50,8 @@ services:
       MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minio-root}
       MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-123456789}
     ports:
-      - "9000:9000"   # API 端口
-      - "9001:9001"   # 控制台端口
+      - "${MINIO_API_PORT:-9000}:9000"   # API 端口
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"   # 控制台端口
     volumes:
       - ./minio/data:/data        # 数据持久化（重要！）
       - ./minio/config:/root/.minio

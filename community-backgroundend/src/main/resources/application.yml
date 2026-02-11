@@ -1,4 +1,6 @@
 spring:
+  config:
+    import: optional:file:./.env[.properties],optional:file:./community-backgroundend/.env[.properties]
   profiles:
     active:
       - cloud
@@ -15,9 +17,9 @@ spring:
         max-page-size: 100           # 限制每页最多 100 条（防止恶意查询）
     # redis数据源配置
     redis:
-      host: ${local.redis.host}
-      port: ${local.redis.port}
-      database: ${local.redis.database}
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      database: ${REDIS_DATABASE}
   # mysql数据库配置
   datasource:
     url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
@@ -52,10 +54,10 @@ spring:
 
 # MinIO 配置
 minio:
-  endpoint: http://localhost:9000  # 端点,9000端口，给代码用的
-  access-key: minio-root           # docker-compose 里配置的那个账号
-  secret-key: 123456789            
-  bucket: forum-images
+  endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+  access-key: ${MINIO_ACCESS_KEY}
+  secret-key: ${MINIO_SECRET_KEY}
+  bucket: ${MINIO_BUCKET}
 
 mybatis:
     #mapper配置文件
