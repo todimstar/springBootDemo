@@ -1,8 +1,11 @@
 package com.liu.springbootdemo.service.impl;
 
 import com.liu.springbootdemo.POJO.entity.Comment;
+import com.liu.springbootdemo.POJO.entity.Post;
 import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.common.enums.ErrorCode;
+import com.liu.springbootdemo.common.enums.PostStatus;
+import com.liu.springbootdemo.common.enums.UserRole;
 import com.liu.springbootdemo.common.exception.BusinessException;
 import com.liu.springbootdemo.mapper.CommentMapper;
 import com.liu.springbootdemo.mapper.PostMapper;
@@ -62,11 +65,19 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<Comment> findByPostIdByPage(Long postId, int page, int size) {
-        // 1.查空
-        // 2.查合法
-        // 3.调用
-        if(postMapper.findById(postId) == null){
-            throw new BusinessException(ErrorCode.POST_NOT_FOUND,"查看的帖子不存在了？？！ 你，不应该来这✈️");//应该进不到这步吧，应该帖子页面都进不去调用不了这个评论,不过确实可以用url访问所以还是有必要的拦截
+        Post post = postMapper.findById(postId);
+        if(post == null){
+            throw new BusinessException(ErrorCode.POST_NOT_FOUND,"查看的帖子不存在了？？！ 你，不应该来这✈️");
+        }
+
+        // 影子发布可见性控制：SHADOW_BANNED帖子的评论仅帖子作者和管理员可见
+        if(post.getStatus() == PostStatus.SHADOW_BANNED.getStatus()){
+            User currentUser = SecurityUtil.getCurrentUser();
+            boolean isAuthor = currentUser != null && currentUser.getId().equals(post.getUserId());
+            boolean isAdmin = currentUser != null && UserRole.ADMIN.getRoleName().equals(currentUser.getRole());
+            if(!isAuthor && !isAdmin){
+                throw new BusinessException(ErrorCode.POST_NOT_FOUND);
+            }
         }
 
         int index = (page-1)*size;

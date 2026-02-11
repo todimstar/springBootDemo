@@ -58,7 +58,7 @@
       "id": "US-004",
       "title": "影子发布可见性控制",
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "description": "作为用户，当我的内容被影子发布时，我能正常看到自己的帖子/评论，但其他用户不可见。",
       "acceptanceCriteria": [
         "状态为 SHADOW_BANNED（Post.status=5）的内容：发布者本人查询时正常返回",

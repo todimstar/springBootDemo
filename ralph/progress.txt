@@ -20,6 +20,9 @@
 - 多因子命中时取最大加权系数（MAX策略），避免极端叠加
 - User 实体已增加 `violationCount` 字段，对应 users 表 `violation_count` 列
 - `RiskScoringService.evaluateWithUserProfile(text, user)` 是带用户画像加权的评分入口
+- 帖子可见性控制已在 `PostServiceImpl` 和 `PostMapper.xml` 中实现：列表查询默认按 PUBLISHED 过滤，作者视角排除 DELETED，管理员视角不过滤
+- `BusinessException` 使用 `getCode()` (String) 而非 `getErrorCode()`，测试中用 `ErrorCode.XXX.getCode()` 比较
+- SHADOW_BANNED 帖子的评论可见性需在 `CommentServiceImpl.findByPostIdByPage` 中控制
 
 # Ralph Progress Log
 Started: Wed Feb 11 20:22:21     2026
@@ -124,4 +127,28 @@ Started: Wed Feb 11 20:22:21     2026
   - ObjectMapper 可用 @Spy 注入真实实例，避免 mock JSON 序列化
   - `lenient().when()` 对于 setUp 中的通用 stub 很有用
   - Number 类型从 Redis 反序列化时可能为 Integer 或其他 Number 子类，需做类型判断
+---
+
+## 2026-02-11 21:36 - US-004
+- **实现了影子发布可见性控制**
+- **帖子查询**：验证现有逻辑已正确处理 SHADOW_BANNED 可见性（无需修改）
+  - `pagePostSummary`/`getPostsByCursor` 只查 PUBLISHED，SHADOW_BANNED 自动过滤 ✅
+  - `findPostsByUserId` XML：作者视角排除 DELETED（含 SHADOW_BANNED），他人只看 PUBLISHED ✅
+  - `getPostById` 详情：非 PUBLISHED 状态走权限检查，仅作者/管理员可见 ✅
+- **评论查询**：修改 `CommentServiceImpl.findByPostIdByPage`，新增 SHADOW_BANNED 帖子评论可见性控制
+  - 帖子状态为 SHADOW_BANNED 时，仅帖子作者和管理员可查看评论
+  - 其他用户/未登录用户请求返回 POST_NOT_FOUND（隐蔽式拒绝）
+- 11 个集成测试全部通过（总计 89 个测试通过）
+  - 5 个帖子详情可见性测试：作者可见、他人404、匿名404、管理员可见、无提示
+  - 6 个评论可见性测试：作者可见、他人404、匿名404、管理员可见、正常帖子任何人可见×2
+- Files changed:
+  - `service/impl/CommentServiceImpl.java` (modified - added SHADOW_BANNED visibility check)
+  - `test/.../ShadowBanVisibilityTest.java` (new - 11 tests)
+  - `ralph/prd.json` (updated US-004 passes: true)
+- **Learnings for future iterations:**
+  - 帖子列表查询天然通过 status 过滤实现了影子发布，无需额外修改
+  - 评论查询是容易遗漏的盲点：评论本身无 status，但需检查所属帖子的状态
+  - `BusinessException` 没有 `getErrorCode()` 方法，用 `getCode()` (String) + `ErrorCode.XXX.getCode()` 做断言
+  - `MockedStatic<SecurityUtil>` 需要 try-with-resources 包裹，否则会污染其他测试
+  - `@Nested` 测试类可以各自独立注入 Mock，适合按模块分组测试
 ---
