@@ -10,6 +10,10 @@
 - 权限控制使用 `@PreAuthorize("hasRole('ADMIN')")` 注解
 - PostStatus 枚举定义帖子状态：0=DRAFT, 1=PENDING_REVIEW, 2=PUBLISHED, 3=REJECTED, 4=DELETED
 - SQL 初始化脚本在 `sql/springboot_db.sql`，Docker Compose 通过挂载 `sql/` 自动执行
+- 用户画像加权采用 `user_risk_factor_config` 配置表，支持灵活的因子名+运算符+阈值+系数配置
+- 多因子命中时取最大加权系数（MAX策略），避免极端叠加
+- User 实体已增加 `violationCount` 字段，对应 users 表 `violation_count` 列
+- `RiskScoringService.evaluateWithUserProfile(text, user)` 是带用户画像加权的评分入口
 
 # Ralph Progress Log
 Started: Wed Feb 11 20:22:21     2026
@@ -42,4 +46,37 @@ Started: Wed Feb 11 20:22:21     2026
   - 正则匹配需要 try-catch 防止无效正则导致引擎崩溃
   - Redis 缓存需要容错处理，连接失败时回退数据库
   - `lenient().when()` 在 Mockito 中避免 strict stubbing 报错
+---
+
+## 2026-02-11 21:00 - US-002
+- **实现了用户画像风险加权功能**
+- 新建 `user_risk_factor_config` 配置表（`sql/V2_1__user_risk_factor_config.sql`），含 3 条初始加权规则
+- `users` 表新增 `violation_count` 字段，User 实体同步更新
+- 新建 `UserRiskFactorConfig.java` 实体
+- 新建 `UserRiskFactorConfigMapper.java` Mapper
+- 新建 `UserRiskWeightService` / `UserRiskWeightServiceImpl` 画像加权服务
+  - 支持 registration_days / violation_count / level 三种画像因子
+  - 支持 LT / LTE / GT / GTE / EQ 五种比较运算符
+  - 多因子命中时取 MAX 加权系数，避免极端叠加
+  - Redis 缓存配置（TTL 10 分钟），缓存失败自动降级数据库
+- 扩展 `RiskScoringService` 接口，新增 `evaluateWithUserProfile(text, user)` 方法
+- `RiskScoringServiceImpl` 实现加权评分：基础分 × 加权系数，封顶 100
+- 50 个单元测试全部通过（新增 23 个测试）
+- Files changed:
+  - `sql/V2_1__user_risk_factor_config.sql` (new)
+  - `POJO/entity/User.java` (modified - added violationCount)
+  - `POJO/entity/UserRiskFactorConfig.java` (new)
+  - `mapper/UserRiskFactorConfigMapper.java` (new)
+  - `service/UserRiskWeightService.java` (new)
+  - `service/impl/UserRiskWeightServiceImpl.java` (new)
+  - `service/RiskScoringService.java` (modified - added evaluateWithUserProfile)
+  - `service/impl/RiskScoringServiceImpl.java` (modified - implemented evaluateWithUserProfile)
+  - `test/.../UserRiskWeightServiceImplTest.java` (new - 19 tests)
+  - `test/.../RiskScoringServiceImplTest.java` (modified - added 4 evaluateWithUserProfile tests)
+- **Learnings for future iterations:**
+  - 加权系数配置表设计：factor_name + operator + threshold + multiplier 组合，灵活度高
+  - 多因子组合策略选 MAX 而非乘积或累加，防止极端分数
+  - `ChronoUnit.DAYS.between(createTime, now)` 计算注册天数
+  - User.createTime 可能为 null，需做防御处理
+  - switch 表达式中 yield 关键字用于带花括号的 case 分支返回值
 ---

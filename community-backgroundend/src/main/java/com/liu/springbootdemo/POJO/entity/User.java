@@ -26,6 +26,7 @@ public class User {
     private String location;    //所在地，城市
     private int points; //积分
     private int level;  //用户等级
+    private int violationCount; //历史违规次数
     private boolean isBanned;  //是否被封禁
     private String banReason;   //封禁原因
     private LocalDateTime banUntil;    //封禁截止时间

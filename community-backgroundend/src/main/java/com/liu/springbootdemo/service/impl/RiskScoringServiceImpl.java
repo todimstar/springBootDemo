@@ -3,9 +3,11 @@ package com.liu.springbootdemo.service.impl;
 import com.liu.springbootdemo.POJO.dto.RiskScoreResult;
 import com.liu.springbootdemo.POJO.dto.RuleHitResult;
 import com.liu.springbootdemo.POJO.entity.ModerationRule;
+import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.common.utils.TextNormalizer;
 import com.liu.springbootdemo.mapper.ModerationRuleMapper;
 import com.liu.springbootdemo.service.RiskScoringService;
+import com.liu.springbootdemo.service.UserRiskWeightService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -36,6 +38,9 @@ public class RiskScoringServiceImpl implements RiskScoringService {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
+    @Autowired
+    private UserRiskWeightService userRiskWeightService;
+
     @Override
     public RiskScoreResult evaluate(String text) {
         if (text == null || text.isBlank()) {
@@ -64,6 +69,20 @@ public class RiskScoringServiceImpl implements RiskScoringService {
         int finalScore = Math.min(totalScore, 100);
 
         return new RiskScoreResult(finalScore, hitResults);
+    }
+
+    @Override
+    public RiskScoreResult evaluateWithUserProfile(String text, User user) {
+        // 先进行纯文本评分
+        RiskScoreResult baseResult = evaluate(text);
+
+        // 计算用户画像加权系数
+        double multiplier = userRiskWeightService.calculateMultiplier(user);
+
+        // 最终评分 = 文本基础分 × 加权系数，封顶 100
+        int weightedScore = (int) Math.min(baseResult.getRiskScore() * multiplier, 100);
+
+        return new RiskScoreResult(weightedScore, baseResult.getHitResults());
     }
 
     /**

@@ -25,7 +25,7 @@
       "id": "US-002",
       "title": "用户画像风险加权",
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "description": "作为系统，我需要根据用户画像因子对风险评分进行加权，使新用户或有违规历史的用户受到更严格的审核。",
       "acceptanceCriteria": [
         "画像因子至少包含：注册天数、历史违规次数、账号等级",

@@ -3,7 +3,9 @@ package com.liu.springbootdemo.service.impl;
 import com.liu.springbootdemo.POJO.dto.RiskScoreResult;
 import com.liu.springbootdemo.POJO.dto.RuleHitResult;
 import com.liu.springbootdemo.POJO.entity.ModerationRule;
+import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.mapper.ModerationRuleMapper;
+import com.liu.springbootdemo.service.UserRiskWeightService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,6 +38,9 @@ class RiskScoringServiceImplTest {
 
     @Mock
     private ValueOperations<String, Object> valueOperations;
+
+    @Mock
+    private UserRiskWeightService userRiskWeightService;
 
     @InjectMocks
     private RiskScoringServiceImpl riskScoringService;
@@ -229,6 +234,67 @@ class RiskScoringServiceImplTest {
 
         assertEquals(80, result.getRiskScore());
         verify(moderationRuleMapper).findAllEnabled();
+    }
+
+    // ============ evaluateWithUserProfile 场景 ============
+
+    @Test
+    void evaluateWithUserProfile_appliesMultiplier() {
+        ModerationRule rule = createRule(1L, "keyword", "赌博", 40);
+        when(moderationRuleMapper.findAllEnabled()).thenReturn(Collections.singletonList(rule));
+
+        User user = new User();
+        user.setId(1L);
+        when(userRiskWeightService.calculateMultiplier(user)).thenReturn(2.0);
+
+        RiskScoreResult result = riskScoringService.evaluateWithUserProfile("赌博内容", user);
+
+        // 文本基础分 40 × 加权系数 2.0 = 80
+        assertEquals(80, result.getRiskScore());
+    }
+
+    @Test
+    void evaluateWithUserProfile_cappedAt100() {
+        ModerationRule rule = createRule(1L, "keyword", "赌博", 80);
+        when(moderationRuleMapper.findAllEnabled()).thenReturn(Collections.singletonList(rule));
+
+        User user = new User();
+        user.setId(1L);
+        when(userRiskWeightService.calculateMultiplier(user)).thenReturn(2.0);
+
+        RiskScoreResult result = riskScoringService.evaluateWithUserProfile("赌博内容", user);
+
+        // 文本基础分 80 × 加权系数 2.0 = 160 → 封顶 100
+        assertEquals(100, result.getRiskScore());
+    }
+
+    @Test
+    void evaluateWithUserProfile_noMultiplier_sameAsBase() {
+        ModerationRule rule = createRule(1L, "keyword", "赌博", 50);
+        when(moderationRuleMapper.findAllEnabled()).thenReturn(Collections.singletonList(rule));
+
+        User user = new User();
+        user.setId(1L);
+        when(userRiskWeightService.calculateMultiplier(user)).thenReturn(1.0);
+
+        RiskScoreResult result = riskScoringService.evaluateWithUserProfile("赌博内容", user);
+
+        // 文本基础分 50 × 加权系数 1.0 = 50
+        assertEquals(50, result.getRiskScore());
+    }
+
+    @Test
+    void evaluateWithUserProfile_safeText_staysZero() {
+        when(moderationRuleMapper.findAllEnabled()).thenReturn(Collections.emptyList());
+
+        User user = new User();
+        user.setId(1L);
+        when(userRiskWeightService.calculateMultiplier(user)).thenReturn(2.0);
+
+        RiskScoreResult result = riskScoringService.evaluateWithUserProfile("正常内容", user);
+
+        // 文本基础分 0 × 加权系数 2.0 = 0
+        assertEquals(0, result.getRiskScore());
     }
 
     // ============ 辅助方法 ============
