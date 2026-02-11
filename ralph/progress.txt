@@ -23,6 +23,12 @@
 - 帖子可见性控制已在 `PostServiceImpl` 和 `PostMapper.xml` 中实现：列表查询默认按 PUBLISHED 过滤，作者视角排除 DELETED，管理员视角不过滤
 - `BusinessException` 使用 `getCode()` (String) 而非 `getErrorCode()`，测试中用 `ErrorCode.XXX.getCode()` 比较
 - SHADOW_BANNED 帖子的评论可见性需在 `CommentServiceImpl.findByPostIdByPage` 中控制
+- 管理员 Controller 命名格式：`@RestController("adminXxxController")`，RequestMapping 路径 `api/admin/xxx`
+- `ModerationAction` 枚举定义审核操作：approve→PUBLISHED, reject→REJECTED, takedown→DELETED, shadow_ban→SHADOW_BANNED
+- 审核队列分页查询使用 XML 映射文件（`ModerationQueueMapper.xml`），关联 users 表获取作者名
+- 前端使用 Vue 3 + Element Plus + Pinia + axios，Vite 代理 `/api` 到 `localhost:8080`
+- 前端 build 需要 `sass-embedded` 依赖（`pnpm install -D sass-embedded`）
+- ShadowBanVisibilityTest 存在 MockedStatic 注册冲突的 pre-existing 错误，非新代码引入
 
 # Ralph Progress Log
 Started: Wed Feb 11 20:22:21     2026
@@ -151,4 +157,56 @@ Started: Wed Feb 11 20:22:21     2026
   - `BusinessException` 没有 `getErrorCode()` 方法，用 `getCode()` (String) + `ErrorCode.XXX.getCode()` 做断言
   - `MockedStatic<SecurityUtil>` 需要 try-with-resources 包裹，否则会污染其他测试
   - `@Nested` 测试类可以各自独立注入 Mock，适合按模块分组测试
+---
+
+## 2026-02-11 21:58 - US-005
+- **实现了管理员审核队列页面（前后端完整）**
+- **后端**：
+  - 新建 `ModerationController`（`controller/admin/`）审核管理接口
+    - `GET /api/admin/moderation/queue` — 分页查询待审核列表，支持按内容类型筛选，风险分降序
+    - `GET /api/admin/moderation/{id}` — 查看审核详情
+    - `POST /api/admin/moderation/{id}/action` — 执行审核操作（通过/驳回/下架/影子发布）
+  - 新建 `ModerationQueueService` / `ModerationQueueServiceImpl` 审核队列服务
+    - 分页查询（PageHelper）、详情查询、审核操作执行
+    - 操作幂等：已审核记录重复提交不报错
+    - 事务支持：更新帖子状态 + 更新队列状态在同一事务
+  - 扩展 `ModerationQueueMapper`：新增 `pageQuery`/`findById`/`updateStatus` 方法
+  - 新建 `ModerationQueueMapper.xml`：分页查询 SQL（LEFT JOIN users，支持 targetType 筛选）
+  - 新建 `ModerationAction` 枚举：approve/reject/takedown/shadow_ban
+  - 新建 DTO：`ModerationQueuePageQueryDTO`、`ModerationActionDTO`（含 @NotBlank 校验）
+  - 新建 VO：`ModerationQueueVO`（含 authorName 关联字段）
+- **前端**：
+  - 新建 `AdminModerationView.vue`（Vue 3 + Element Plus）
+    - 表格展示：ID、内容摘要、作者、类型、风险分（彩色标签）、命中规则、提交时间
+    - 筛选栏：按内容类型（帖子/评论/全部）筛选
+    - 操作按钮：通过（绿）/驳回（红）/下架（橙）/影子发布
+    - 审核对话框：必填理由输入，确认后刷新列表
+    - 分页组件：支持切换页码和每页数量
+  - 新增路由 `/admin/moderation`，加入认证守卫
+- **测试**：13 个单元测试全部通过
+  - 3 个分页查询测试（无筛选、按帖子筛选、按评论筛选）
+  - 2 个详情查询测试（存在、不存在）
+  - 8 个审核操作测试（通过/驳回/下架/影子发布、非法操作、队列不存在、幂等、帖子不存在）
+- mvn compile 编译通过，pnpm build 前端构建通过
+- Files changed:
+  - `controller/admin/ModerationController.java` (new)
+  - `service/ModerationQueueService.java` (new)
+  - `service/impl/ModerationQueueServiceImpl.java` (new)
+  - `mapper/ModerationQueueMapper.java` (modified - added pageQuery/findById/updateStatus)
+  - `resources/mapper/ModerationQueueMapper.xml` (new)
+  - `common/enums/ModerationAction.java` (new)
+  - `POJO/dto/request/ModerationQueuePageQueryDTO.java` (new)
+  - `POJO/dto/request/ModerationActionDTO.java` (new)
+  - `POJO/vo/ModerationQueueVO.java` (new)
+  - `community-frontend/src/views/AdminModerationView.vue` (new)
+  - `community-frontend/src/router/index.js` (modified - added admin route)
+  - `test/.../ModerationQueueServiceImplTest.java` (new - 13 tests)
+  - `ralph/prd.json` (updated US-005 passes: true)
+- **Learnings for future iterations:**
+  - 管理员 Controller 需要 `@RestController("adminXxxController")` 指定 bean 名避免与用户侧同名 Controller 冲突
+  - PageHelper 分页查询需在 XML 中定义 resultType 为 VO 类全限定名
+  - ModerationQueueMapper 的 `pageQuery` 使用 XML 动态 SQL 支持可选的 targetType 筛选
+  - 审核操作幂等设计：检查 queue 状态为 "reviewed" 则直接返回，不重复操作
+  - Element Plus 的 `el-table` + `el-pagination` 组合非常适合管理后台列表页
+  - 前端 build 需要 `sass-embedded`，PostDetailView.vue 使用了 SCSS
 ---

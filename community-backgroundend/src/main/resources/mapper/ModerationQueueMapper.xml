@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liu.springbootdemo.mapper.ModerationQueueMapper">
+
+    <select id="pageQuery" resultType="com.liu.springbootdemo.POJO.vo.ModerationQueueVO">
+        SELECT mq.*, u.username AS author_name
+        FROM moderation_queue mq
+        LEFT JOIN users u ON mq.author_id = u.id
+        <where>
+            mq.status = 'pending'
+            <if test="targetType != null and targetType != ''">
+                AND mq.target_type = #{targetType}
+            </if>
+        </where>
+        ORDER BY mq.risk_score DESC, mq.created_at DESC
+    </select>
+
+</mapper>

@@ -72,7 +72,7 @@
       "id": "US-005",
       "title": "管理员审核队列页面",
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "description": "作为管理员，我需要一个简易审核页面，查看待审核内容列表并执行审核操作。",
       "acceptanceCriteria": [
         "审核列表页展示：内容摘要、作者、发布时间、风险分、命中规则摘要",

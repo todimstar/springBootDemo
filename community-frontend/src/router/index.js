@@ -33,6 +33,11 @@ const router = createRouter({
       path: '/posts/:id', //动态路由
       name: 'post-detail',
       component: () => import('../views/PostDetailView.vue'),
+    },
+    {
+      path: '/admin/moderation',
+      name: 'admin-moderation',
+      component: () => import('../views/AdminModerationView.vue'),
     }
   ],
 })
@@ -43,7 +48,7 @@ import {useAuthStore} from '@/stores/auth';
 router.beforeEach((to,from,next) => {
   const authStore = useAuthStore();
 
-  const requiresAuth = ['/create-post']; // 需要认证的路由列表
+  const requiresAuth = ['/create-post', 'admin-moderation']; // 需要认证的路由列表
 
   if(requiresAuth.includes(to.name) && !authStore.isAuthenticated) {
     // 如果访问需要认证页面且用户未认证，重定向到登录页面
