@@ -242,6 +242,8 @@ Started: Wed Feb 11 20:22:21     2026
 - `ModerationAuditLogService` 提供 `logAutoAction` 和 `logManualAction` 两个入口，分别用于自动审核和人工审核日志写入
 - 审计日志表 `moderation_audit_log` 仅 INSERT，Mapper 不提供 UPDATE/DELETE 方法，确保日志不可篡改
 - `SecurityUtil.getCurrentUser()` 是静态方法，在 Service 层调用时测试需要 `MockedStatic<SecurityUtil>` + try-with-resources
+- `ModerationRuleService` 提供规则 CRUD 操作，变更后自动刷新 Redis 缓存（删除 `moderation:rules:enabled` key）
+- 规则管理审计日志 targetType 为 "rule"，actionType 为 rule_create / rule_update / rule_delete
 ---
 
 ## 2026-02-11 22:40 - US-007
@@ -285,4 +287,66 @@ Started: Wed Feb 11 20:22:21     2026
   - `SecurityUtil.getCurrentUser()` 在 Service 层使用时，测试需要 MockedStatic + try-with-resources
   - Mapper 只暴露 INSERT + SELECT 方法即可实现"仅追加"语义，比数据库层面限制更实用
   - 审计日志查询通过 queue item 的 targetId + targetType 关联，而非直接用 queue ID
+---
+
+## 2026-02-11 23:10 - US-008
+- **实现了规则库管理 API（完整 CRUD + 审计日志 + 缓存刷新）**
+- **Mapper 层**：
+  - 扩展 `ModerationRuleMapper`：新增 `pageQuery`/`findById`/`insert`/`update`/`softDelete` 方法
+  - 新建 `ModerationRuleMapper.xml`：分页查询动态 SQL（支持 ruleType/enabled 筛选）、动态更新 SQL
+- **DTO 层**：
+  - `ModerationRulePageQueryDTO`：分页查询（含 ruleType/enabled 筛选参数，自定义 setter 校验）
+  - `ModerationRuleCreateDTO`：新增规则（@NotBlank ruleType/pattern，@NotNull @Min(0) @Max(100) weightScore）
+  - `ModerationRuleUpdateDTO`：修改规则（所有字段可选，仅更新非 null 字段）
+- **VO 层**：
+  - `ModerationRuleVO`：规则视图对象
+- **Service 层**：
+  - `ModerationRuleService` / `ModerationRuleServiceImpl`
+    - `pageQuery()` — 分页查询规则列表
+    - `createRule()` — 新增规则（校验规则类型 + 写入 + 刷新缓存 + 审计日志）
+    - `updateRule()` — 修改规则（校验存在 + 校验规则类型 + 动态更新 + 刷新缓存 + 审计日志）
+    - `deleteRule()` — 软删除规则（校验存在 + 软删除 + 刷新缓存 + 审计日志）
+  - 规则变更后自动删除 Redis 缓存 key `moderation:rules:enabled`，下次评分时重新加载
+  - 缓存刷新失败不影响主流程（try-catch 包裹）
+  - 规则变更写入审计日志（targetType="rule"，actionType=rule_create/rule_update/rule_delete）
+- **Controller 层**：
+  - `GET /api/admin/moderation/rules` — 分页查询规则列表
+  - `POST /api/admin/moderation/rules` — 新增规则
+  - `PUT /api/admin/moderation/rules/{id}` — 修改规则
+  - `DELETE /api/admin/moderation/rules/{id}` — 软删除规则
+  - 所有接口仅 ADMIN 角色可访问（`@PreAuthorize("hasRole('ADMIN')")`）
+- **测试**：
+  - `ModerationRuleServiceImplTest`（20 个单元测试）
+    - 3 个分页查询测试（无筛选、按类型、按启用状态）
+    - 6 个新增规则测试（keyword/regex/blacklist 成功、非法类型、缓存刷新验证、缓存失败容错）
+    - 5 个修改规则测试（成功、改类型、禁用、不存在、非法类型）
+    - 3 个删除规则测试（成功、不存在、已删除）
+    - 3 个审计日志写入测试（新增/修改/删除都写入审计日志）
+  - `ModerationRuleControllerTest`（15 个接口测试）
+    - 3 个分页查询测试（成功、按类型筛选、按启用筛选）
+    - 7 个新增规则测试（成功、空类型/空模式/空权重/超限权重/非法类型/无请求体 → 400）
+    - 3 个修改规则测试（成功、不存在 → 400、权重超限 → 400）
+    - 2 个删除规则测试（成功、不存在 → 400）
+  - 更新 `ModerationControllerTest` 添加缺失的 mock 字段（moderationAuditLogService/moderationRuleService）
+- mvn compile 编译通过，53 个相关测试全部通过
+- Files changed:
+  - `mapper/ModerationRuleMapper.java` (modified - added CRUD methods)
+  - `resources/mapper/ModerationRuleMapper.xml` (new)
+  - `POJO/dto/request/ModerationRulePageQueryDTO.java` (new)
+  - `POJO/dto/request/ModerationRuleCreateDTO.java` (new)
+  - `POJO/dto/request/ModerationRuleUpdateDTO.java` (new)
+  - `POJO/vo/ModerationRuleVO.java` (new)
+  - `service/ModerationRuleService.java` (new)
+  - `service/impl/ModerationRuleServiceImpl.java` (new)
+  - `controller/admin/ModerationController.java` (modified - added rule management endpoints)
+  - `test/.../ModerationRuleServiceImplTest.java` (new - 20 tests)
+  - `test/.../ModerationRuleControllerTest.java` (new - 15 tests)
+  - `test/.../ModerationControllerTest.java` (modified - added missing mock fields)
+  - `ralph/prd.json` (updated US-008 passes: true)
+- **Learnings for future iterations:**
+  - 规则管理审计日志复用 `ModerationAuditLogService.logManualAction`，targetType 设为 "rule" 而非 "post"/"comment"
+  - XML 动态 SQL 的 `<set>` 标签自动处理尾部逗号，适合可选字段更新场景
+  - 分页查询 DTO 的自定义 setter 模式（校验+默认值）在整个项目中保持一致
+  - Controller 新增依赖后，已有 Controller 测试需补充 @Mock 字段，否则 @InjectMocks 注入失败
+  - 缓存刷新策略：删除缓存 key（而非更新），让下次查询时重新加载，避免缓存与 DB 数据不一致
 ---

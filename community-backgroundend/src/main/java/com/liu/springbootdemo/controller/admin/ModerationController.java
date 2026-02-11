@@ -4,10 +4,15 @@ import com.liu.springbootdemo.POJO.Result.PageResult;
 import com.liu.springbootdemo.POJO.Result.Result;
 import com.liu.springbootdemo.POJO.dto.request.ModerationActionDTO;
 import com.liu.springbootdemo.POJO.dto.request.ModerationQueuePageQueryDTO;
+import com.liu.springbootdemo.POJO.dto.request.ModerationRuleCreateDTO;
+import com.liu.springbootdemo.POJO.dto.request.ModerationRulePageQueryDTO;
+import com.liu.springbootdemo.POJO.dto.request.ModerationRuleUpdateDTO;
 import com.liu.springbootdemo.POJO.vo.ModerationAuditLogVO;
 import com.liu.springbootdemo.POJO.vo.ModerationQueueVO;
+import com.liu.springbootdemo.POJO.vo.ModerationRuleVO;
 import com.liu.springbootdemo.service.ModerationAuditLogService;
 import com.liu.springbootdemo.service.ModerationQueueService;
+import com.liu.springbootdemo.service.ModerationRuleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,6 +40,9 @@ public class ModerationController {
 
     @Autowired
     private ModerationAuditLogService moderationAuditLogService;
+
+    @Autowired
+    private ModerationRuleService moderationRuleService;
 
     /**
      * 分页查询待审核列表
@@ -84,5 +92,62 @@ public class ModerationController {
         List<ModerationAuditLogVO> logs = moderationAuditLogService.getAuditLogs(
                 queueItem.getTargetId(), queueItem.getTargetType());
         return Result.success(logs);
+    }
+
+    // ==================== 规则管理接口 ====================
+
+    /**
+     * 分页查询规则列表
+     */
+    @GetMapping("/rules")
+    @Operation(summary = "分页查询审核规则列表")
+    @SecurityRequirement(name = "BearAuth")
+    public Result<PageResult> pageQueryRules(@Validated ModerationRulePageQueryDTO dto) {
+        log.info("查询规则列表: page={}, pageSize={}, ruleType={}, enabled={}",
+                dto.getPage(), dto.getPageSize(), dto.getRuleType(), dto.getEnabled());
+        PageResult pageResult = moderationRuleService.pageQuery(
+                dto.getPage(), dto.getPageSize(), dto.getRuleType(), dto.getEnabled());
+        return Result.success(pageResult);
+    }
+
+    /**
+     * 新增规则
+     */
+    @PostMapping("/rules")
+    @Operation(summary = "新增审核规则")
+    @SecurityRequirement(name = "BearAuth")
+    public Result<ModerationRuleVO> createRule(@RequestBody @Valid ModerationRuleCreateDTO dto) {
+        log.info("新增审核规则: type={}, pattern={}, weight={}", dto.getRuleType(), dto.getPattern(), dto.getWeightScore());
+        ModerationRuleVO vo = moderationRuleService.createRule(
+                dto.getRuleType(), dto.getPattern(), dto.getWeightScore(),
+                dto.getEnabled() != null ? dto.getEnabled() : true, dto.getDescription());
+        return Result.success(vo);
+    }
+
+    /**
+     * 修改规则
+     */
+    @PutMapping("/rules/{id}")
+    @Operation(summary = "修改审核规则")
+    @SecurityRequirement(name = "BearAuth")
+    public Result<ModerationRuleVO> updateRule(@PathVariable @NotNull @Min(1) Long id,
+                                               @RequestBody @Valid ModerationRuleUpdateDTO dto) {
+        log.info("修改审核规则: id={}", id);
+        ModerationRuleVO vo = moderationRuleService.updateRule(
+                id, dto.getRuleType(), dto.getPattern(),
+                dto.getWeightScore(), dto.getEnabled(), dto.getDescription());
+        return Result.success(vo);
+    }
+
+    /**
+     * 软删除规则
+     */
+    @DeleteMapping("/rules/{id}")
+    @Operation(summary = "软删除审核规则")
+    @SecurityRequirement(name = "BearAuth")
+    public Result<Void> deleteRule(@PathVariable @NotNull @Min(1) Long id) {
+        log.info("删除审核规则: id={}", id);
+        moderationRuleService.deleteRule(id);
+        return Result.success();
     }
 }

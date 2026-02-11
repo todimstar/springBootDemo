@@ -120,7 +120,7 @@
       "id": "US-008",
       "title": "规则库管理 API",
       "priority": 8,
-      "passes": false,
+      "passes": true,
       "description": "作为管理员，我需要通过 API 管理审核规则（增删改查）。",
       "acceptanceCriteria": [
         "GET /api/admin/moderation/rules — 分页查询规则列表",
