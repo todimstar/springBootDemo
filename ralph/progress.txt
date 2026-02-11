@@ -38,6 +38,8 @@
 - `PostMapper.insert()` 使用 `@Options(useGeneratedKeys)` 自动回填 ID，测试中需用 `doAnswer` 模拟此行为
 - 被自动拦截的内容仍会先写入数据库（status=REJECTED），再抛出 `POST_CONTENT_REJECTED` 友好异常
 - 帖子编辑仅在标题或正文变更时触发重新审核，封面图等元数据修改不触发
+- `INSERT ... ON DUPLICATE KEY UPDATE` 实现原子递增统计计数，适用于高频更新场景
+- Controller 新增依赖后，所有使用 `@InjectMocks` 的 Controller 测试类都需补充对应 `@Mock` 字段
 
 # Ralph Progress Log
 Started: Wed Feb 11 20:22:21     2026
@@ -437,4 +439,62 @@ Started: Wed Feb 11 20:22:21     2026
   - 审核链路设计为"先入库再审核"，确保即使审核失败内容也已持久化，不会丢失
   - 自动拦截先更新状态再抛异常，确保数据库中状态一致性
   - 编辑审核仅在 `StringUtils.hasText(title)` 或 `StringUtils.hasText(content)` 时触发，避免元数据修改重复审核
+---
+
+## 2026-02-12 00:00 - US-011
+- **实现了规则命中统计与效果评估功能**
+- **数据库层**：
+  - 新建 `moderation_rule_stats` 统计表（`sql/V2_4__moderation_rule_stats.sql`）
+    - 字段：rule_id（唯一索引）、hit_count、last_hit_at
+    - 使用 `INSERT ... ON DUPLICATE KEY UPDATE` 实现原子递增
+- **实体层**：
+  - `ModerationRuleStats.java` 统计实体
+  - `ModerationRuleStatsVO.java` 视图对象（含规则详情：ruleType, pattern, description, enabled, hitCount, lastHitAt）
+- **Mapper 层**：
+  - `ModerationRuleStatsMapper.java`
+    - `incrementHitCount(ruleId)` — 原子递增（INSERT ON DUPLICATE KEY UPDATE）
+    - `findByRuleId(ruleId)` — 单条规则统计查询（INNER JOIN moderation_rule）
+    - `findAllStats()` — 全量规则统计（LEFT JOIN，包含未命中规则，按 hitCount DESC 排序）
+- **Service 层**：
+  - `ModerationRuleStatsService` / `ModerationRuleStatsServiceImpl`
+    - `incrementHitCounts(List<Long> ruleIds)` — 批量递增，单条失败不影响后续
+    - `getStatsByRuleId(ruleId)` — 单条规则统计查询
+    - `getAllStats()` — 全量规则统计查询
+- **集成到评分引擎**：
+  - `RiskScoringServiceImpl.evaluate()` 中，规则命中后同步调用 `incrementHitCounts()`
+  - 统计更新失败 try-catch 包裹，不影响评分主流程
+- **Controller 层**：
+  - `GET /api/admin/moderation/rules/{id}/stats` — 返回单条规则统计
+  - `GET /api/admin/moderation/rules/stats` — 批量返回所有规则统计摘要
+  - 所有接口仅 ADMIN 角色可访问
+- **测试**：
+  - `ModerationRuleStatsServiceImplTest`（9 个单元测试）
+    - 5 个 incrementHitCounts 测试（单条/多条/空列表/null/异常容错）
+    - 2 个 getStatsByRuleId 测试（找到/未找到）
+    - 2 个 getAllStats 测试（有数据/空数据）
+  - 更新 `RiskScoringServiceImplTest`（补充 moderationRuleStatsService mock）
+  - 更新 `ModerationControllerTest`（补充 moderationRuleStatsService mock）
+  - 更新 `ModerationRuleControllerTest`（补充 moderationRuleStatsService mock）
+  - 全部 82 个审核模块测试通过，0 失败
+- mvn compile 编译通过
+- Files changed:
+  - `sql/V2_4__moderation_rule_stats.sql` (new)
+  - `POJO/entity/ModerationRuleStats.java` (new)
+  - `POJO/vo/ModerationRuleStatsVO.java` (new)
+  - `mapper/ModerationRuleStatsMapper.java` (new)
+  - `service/ModerationRuleStatsService.java` (new)
+  - `service/impl/ModerationRuleStatsServiceImpl.java` (new)
+  - `service/impl/RiskScoringServiceImpl.java` (modified — 集成统计更新)
+  - `controller/admin/ModerationController.java` (modified — 新增统计 API)
+  - `test/.../ModerationRuleStatsServiceImplTest.java` (new — 9 tests)
+  - `test/.../RiskScoringServiceImplTest.java` (modified — 补充 mock)
+  - `test/.../ModerationControllerTest.java` (modified — 补充 mock)
+  - `test/.../ModerationRuleControllerTest.java` (modified — 补充 mock)
+  - `ralph/prd.json` (updated US-011 passes: true)
+- **Learnings for future iterations:**
+  - `INSERT ... ON DUPLICATE KEY UPDATE hit_count = hit_count + 1` 是 MySQL 原子递增的最佳实践
+  - LEFT JOIN 统计查询可同时返回有命中和无命中的规则，COALESCE 处理 NULL 为 0
+  - Service 新增依赖后，所有使用 `@InjectMocks` 的测试类都需要补充对应的 `@Mock` 字段
+  - 统计更新应当容错处理（try-catch），避免统计写入失败影响核心评分流程
+  - 规则统计查询使用 INNER JOIN（单条）vs LEFT JOIN（全量），根据场景选择
 ---

@@ -169,7 +169,7 @@
       "id": "US-011",
       "title": "规则命中统计与效果评估",
       "priority": 11,
-      "passes": false,
+      "passes": true,
       "description": "作为运营人员，我需要查看每条规则的命中统计数据。",
       "acceptanceCriteria": [
         "新建规则统计表 moderation_rule_stats",

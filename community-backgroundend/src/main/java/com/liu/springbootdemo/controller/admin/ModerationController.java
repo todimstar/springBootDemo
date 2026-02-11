@@ -10,9 +10,11 @@ import com.liu.springbootdemo.POJO.dto.request.ModerationRuleUpdateDTO;
 import com.liu.springbootdemo.POJO.vo.ModerationAuditLogVO;
 import com.liu.springbootdemo.POJO.vo.ModerationQueueVO;
 import com.liu.springbootdemo.POJO.vo.ModerationRuleVO;
+import com.liu.springbootdemo.POJO.vo.ModerationRuleStatsVO;
 import com.liu.springbootdemo.service.ModerationAuditLogService;
 import com.liu.springbootdemo.service.ModerationQueueService;
 import com.liu.springbootdemo.service.ModerationRuleService;
+import com.liu.springbootdemo.service.ModerationRuleStatsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -43,6 +45,9 @@ public class ModerationController {
 
     @Autowired
     private ModerationRuleService moderationRuleService;
+
+    @Autowired
+    private ModerationRuleStatsService moderationRuleStatsService;
 
     /**
      * 分页查询待审核列表
@@ -149,5 +154,31 @@ public class ModerationController {
         log.info("删除审核规则: id={}", id);
         moderationRuleService.deleteRule(id);
         return Result.success();
+    }
+
+    // ==================== 规则统计接口 ====================
+
+    /**
+     * 查询单条规则命中统计
+     */
+    @GetMapping("/rules/{id}/stats")
+    @Operation(summary = "查询单条规则命中统计")
+    @SecurityRequirement(name = "BearAuth")
+    public Result<ModerationRuleStatsVO> getRuleStats(@PathVariable @NotNull @Min(1) Long id) {
+        log.info("查询规则统计: ruleId={}", id);
+        ModerationRuleStatsVO stats = moderationRuleStatsService.getStatsByRuleId(id);
+        return Result.success(stats);
+    }
+
+    /**
+     * 批量查询所有规则统计摘要
+     */
+    @GetMapping("/rules/stats")
+    @Operation(summary = "查询所有规则命中统计摘要")
+    @SecurityRequirement(name = "BearAuth")
+    public Result<List<ModerationRuleStatsVO>> getAllRuleStats() {
+        log.info("查询全量规则统计");
+        List<ModerationRuleStatsVO> stats = moderationRuleStatsService.getAllStats();
+        return Result.success(stats);
     }
 }

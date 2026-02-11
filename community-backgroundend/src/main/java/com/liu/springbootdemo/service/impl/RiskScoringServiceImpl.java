@@ -6,6 +6,7 @@ import com.liu.springbootdemo.POJO.entity.ModerationRule;
 import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.common.utils.TextNormalizer;
 import com.liu.springbootdemo.mapper.ModerationRuleMapper;
+import com.liu.springbootdemo.service.ModerationRuleStatsService;
 import com.liu.springbootdemo.service.RiskScoringService;
 import com.liu.springbootdemo.service.UserRiskWeightService;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,9 @@ public class RiskScoringServiceImpl implements RiskScoringService {
     @Autowired
     private UserRiskWeightService userRiskWeightService;
 
+    @Autowired
+    private ModerationRuleStatsService moderationRuleStatsService;
+
     @Override
     public RiskScoreResult evaluate(String text) {
         if (text == null || text.isBlank()) {
@@ -67,6 +71,18 @@ public class RiskScoringServiceImpl implements RiskScoringService {
 
         // 封顶 100
         int finalScore = Math.min(totalScore, 100);
+
+        // 更新命中规则的统计计数
+        if (!hitResults.isEmpty()) {
+            List<Long> hitRuleIds = hitResults.stream()
+                    .map(RuleHitResult::getRuleId)
+                    .toList();
+            try {
+                moderationRuleStatsService.incrementHitCounts(hitRuleIds);
+            } catch (Exception e) {
+                log.warn("更新规则命中统计失败", e);
+            }
+        }
 
         return new RiskScoreResult(finalScore, hitResults);
     }

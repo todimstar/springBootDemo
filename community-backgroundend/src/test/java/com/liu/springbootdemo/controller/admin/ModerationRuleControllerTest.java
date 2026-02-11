@@ -11,6 +11,7 @@ import com.liu.springbootdemo.common.exception.GlobalExceptionHandler;
 import com.liu.springbootdemo.service.ModerationAuditLogService;
 import com.liu.springbootdemo.service.ModerationQueueService;
 import com.liu.springbootdemo.service.ModerationRuleService;
+import com.liu.springbootdemo.service.ModerationRuleStatsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -48,6 +49,9 @@ class ModerationRuleControllerTest {
 
     @Mock
     private ModerationRuleService moderationRuleService;
+
+    @Mock
+    private ModerationRuleStatsService moderationRuleStatsService;
 
     @InjectMocks
     private ModerationController moderationController;

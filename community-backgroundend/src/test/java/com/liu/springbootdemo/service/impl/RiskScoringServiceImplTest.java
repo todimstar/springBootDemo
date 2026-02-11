@@ -5,6 +5,7 @@ import com.liu.springbootdemo.POJO.dto.RuleHitResult;
 import com.liu.springbootdemo.POJO.entity.ModerationRule;
 import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.mapper.ModerationRuleMapper;
+import com.liu.springbootdemo.service.ModerationRuleStatsService;
 import com.liu.springbootdemo.service.UserRiskWeightService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,6 +42,9 @@ class RiskScoringServiceImplTest {
 
     @Mock
     private UserRiskWeightService userRiskWeightService;
+
+    @Mock
+    private ModerationRuleStatsService moderationRuleStatsService;
 
     @InjectMocks
     private RiskScoringServiceImpl riskScoringService;

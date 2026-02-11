@@ -47,6 +47,9 @@ class ModerationControllerTest {
     @Mock
     private com.liu.springbootdemo.service.ModerationRuleService moderationRuleService;
 
+    @Mock
+    private com.liu.springbootdemo.service.ModerationRuleStatsService moderationRuleStatsService;
+
     @InjectMocks
     private ModerationController moderationController;
 

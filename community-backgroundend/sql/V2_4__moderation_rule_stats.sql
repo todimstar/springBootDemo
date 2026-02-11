@@ -1,0 +1,11 @@
+-- 规则命中统计表
+CREATE TABLE IF NOT EXISTS moderation_rule_stats (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    rule_id BIGINT NOT NULL COMMENT '规则ID',
+    hit_count BIGINT NOT NULL DEFAULT 0 COMMENT '命中次数',
+    last_hit_at DATETIME DEFAULT NULL COMMENT '最近一次命中时间',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_rule_id (rule_id),
+    INDEX idx_hit_count (hit_count DESC)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='审核规则命中统计表';
