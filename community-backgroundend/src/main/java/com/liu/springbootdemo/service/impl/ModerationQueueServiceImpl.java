@@ -7,8 +7,11 @@ import com.liu.springbootdemo.POJO.vo.ModerationQueueVO;
 import com.liu.springbootdemo.common.enums.ErrorCode;
 import com.liu.springbootdemo.common.enums.ModerationAction;
 import com.liu.springbootdemo.common.exception.BusinessException;
+import com.liu.springbootdemo.common.utils.SecurityUtil;
+import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.mapper.ModerationQueueMapper;
 import com.liu.springbootdemo.mapper.PostMapper;
+import com.liu.springbootdemo.service.ModerationAuditLogService;
 import com.liu.springbootdemo.service.ModerationQueueService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +30,9 @@ public class ModerationQueueServiceImpl implements ModerationQueueService {
 
     @Autowired
     private PostMapper postMapper;
+
+    @Autowired
+    private ModerationAuditLogService auditLogService;
 
     @Override
     public PageResult pageQuery(Integer page, Integer pageSize, String targetType) {
@@ -76,6 +82,15 @@ public class ModerationQueueServiceImpl implements ModerationQueueService {
 
         // 5. 更新队列状态
         moderationQueueMapper.updateStatus(id, "reviewed");
+
+        // 6. 写入审计日志（人工审核）
+        User currentUser = SecurityUtil.getCurrentUser();
+        Long operatorId = currentUser != null ? currentUser.getId() : null;
+        String operatorName = currentUser != null ? currentUser.getUsername() : "UNKNOWN";
+        auditLogService.logManualAction(
+                queueItem.getTargetId(), queueItem.getTargetType(), action,
+                operatorId, operatorName, reason,
+                queueItem.getHitRules(), queueItem.getRiskScore());
 
         log.info("审核操作完成: queueId={}, action={}, reason={}", id, action, reason);
     }

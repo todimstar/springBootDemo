@@ -4,7 +4,9 @@ import com.liu.springbootdemo.POJO.Result.PageResult;
 import com.liu.springbootdemo.POJO.Result.Result;
 import com.liu.springbootdemo.POJO.dto.request.ModerationActionDTO;
 import com.liu.springbootdemo.POJO.dto.request.ModerationQueuePageQueryDTO;
+import com.liu.springbootdemo.POJO.vo.ModerationAuditLogVO;
 import com.liu.springbootdemo.POJO.vo.ModerationQueueVO;
+import com.liu.springbootdemo.service.ModerationAuditLogService;
 import com.liu.springbootdemo.service.ModerationQueueService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -18,6 +20,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController("adminModerationController")
 @PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("api/admin/moderation")
@@ -28,6 +32,9 @@ public class ModerationController {
 
     @Autowired
     private ModerationQueueService moderationQueueService;
+
+    @Autowired
+    private ModerationAuditLogService moderationAuditLogService;
 
     /**
      * 分页查询待审核列表
@@ -63,5 +70,19 @@ public class ModerationController {
         log.info("执行审核操作: id={}, action={}, reason={}", id, dto.getAction(), dto.getReason());
         moderationQueueService.executeAction(id, dto.getAction(), dto.getReason());
         return Result.success();
+    }
+
+    /**
+     * 查询审计轨迹
+     */
+    @GetMapping("/{id}/logs")
+    @Operation(summary = "查询审核审计轨迹")
+    @SecurityRequirement(name = "BearAuth")
+    public Result<List<ModerationAuditLogVO>> getAuditLogs(@PathVariable @NotNull @Min(1) Long id) {
+        // 先查队列记录以获取 targetId 和 targetType
+        ModerationQueueVO queueItem = moderationQueueService.getById(id);
+        List<ModerationAuditLogVO> logs = moderationAuditLogService.getAuditLogs(
+                queueItem.getTargetId(), queueItem.getTargetType());
+        return Result.success(logs);
     }
 }

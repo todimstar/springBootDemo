@@ -105,7 +105,7 @@
       "id": "US-007",
       "title": "审计日志记录与查询",
       "priority": 7,
-      "passes": false,
+      "passes": true,
       "description": "作为管理员，我需要查看每条内容的完整审核轨迹，以便追溯和复审。",
       "acceptanceCriteria": [
         "审计日志表记录：目标 ID、目标类型、操作类型、操作人、操作时间、审核理由、命中规则快照、风险评分快照",

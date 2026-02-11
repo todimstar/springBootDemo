@@ -1,19 +1,23 @@
 package com.liu.springbootdemo.service.impl;
 
 import com.github.pagehelper.Page;
+import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.POJO.vo.ModerationQueueVO;
 import com.liu.springbootdemo.common.enums.ErrorCode;
 import com.liu.springbootdemo.common.enums.ModerationAction;
 import com.liu.springbootdemo.common.enums.PostStatus;
 import com.liu.springbootdemo.common.exception.BusinessException;
+import com.liu.springbootdemo.common.utils.SecurityUtil;
 import com.liu.springbootdemo.mapper.ModerationQueueMapper;
 import com.liu.springbootdemo.mapper.PostMapper;
+import com.liu.springbootdemo.service.ModerationAuditLogService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
@@ -33,6 +37,9 @@ class ModerationQueueServiceImplTest {
 
     @Mock
     private PostMapper postMapper;
+
+    @Mock
+    private ModerationAuditLogService auditLogService;
 
     @InjectMocks
     private ModerationQueueServiceImpl moderationQueueService;
@@ -128,10 +135,19 @@ class ModerationQueueServiceImplTest {
             when(moderationQueueMapper.findById(1L)).thenReturn(pendingItem);
             when(postMapper.isExistById(100L)).thenReturn(true);
 
-            moderationQueueService.executeAction(1L, "approve", "内容正常");
+            try (MockedStatic<SecurityUtil> securityUtil = org.mockito.Mockito.mockStatic(SecurityUtil.class)) {
+                User admin = new User();
+                admin.setId(10L);
+                admin.setUsername("admin");
+                securityUtil.when(SecurityUtil::getCurrentUser).thenReturn(admin);
+
+                moderationQueueService.executeAction(1L, "approve", "内容正常");
+            }
 
             verify(postMapper).updateStatus(100L, PostStatus.PUBLISHED.getStatus());
             verify(moderationQueueMapper).updateStatus(1L, "reviewed");
+            verify(auditLogService).logManualAction(eq(100L), eq("post"), eq("approve"),
+                    eq(10L), eq("admin"), eq("内容正常"), anyString(), eq(50));
         }
 
         @Test
@@ -139,7 +155,14 @@ class ModerationQueueServiceImplTest {
             when(moderationQueueMapper.findById(1L)).thenReturn(pendingItem);
             when(postMapper.isExistById(100L)).thenReturn(true);
 
-            moderationQueueService.executeAction(1L, "reject", "违规内容");
+            try (MockedStatic<SecurityUtil> securityUtil = org.mockito.Mockito.mockStatic(SecurityUtil.class)) {
+                User admin = new User();
+                admin.setId(10L);
+                admin.setUsername("admin");
+                securityUtil.when(SecurityUtil::getCurrentUser).thenReturn(admin);
+
+                moderationQueueService.executeAction(1L, "reject", "违规内容");
+            }
 
             verify(postMapper).updateStatus(100L, PostStatus.REJECTED.getStatus());
             verify(moderationQueueMapper).updateStatus(1L, "reviewed");
@@ -150,7 +173,14 @@ class ModerationQueueServiceImplTest {
             when(moderationQueueMapper.findById(1L)).thenReturn(pendingItem);
             when(postMapper.isExistById(100L)).thenReturn(true);
 
-            moderationQueueService.executeAction(1L, "takedown", "严重违规需下架");
+            try (MockedStatic<SecurityUtil> securityUtil = org.mockito.Mockito.mockStatic(SecurityUtil.class)) {
+                User admin = new User();
+                admin.setId(10L);
+                admin.setUsername("admin");
+                securityUtil.when(SecurityUtil::getCurrentUser).thenReturn(admin);
+
+                moderationQueueService.executeAction(1L, "takedown", "严重违规需下架");
+            }
 
             verify(postMapper).updateStatus(100L, PostStatus.DELETED.getStatus());
             verify(moderationQueueMapper).updateStatus(1L, "reviewed");
@@ -161,7 +191,14 @@ class ModerationQueueServiceImplTest {
             when(moderationQueueMapper.findById(1L)).thenReturn(pendingItem);
             when(postMapper.isExistById(100L)).thenReturn(true);
 
-            moderationQueueService.executeAction(1L, "shadow_ban", "隐蔽处理");
+            try (MockedStatic<SecurityUtil> securityUtil = org.mockito.Mockito.mockStatic(SecurityUtil.class)) {
+                User admin = new User();
+                admin.setId(10L);
+                admin.setUsername("admin");
+                securityUtil.when(SecurityUtil::getCurrentUser).thenReturn(admin);
+
+                moderationQueueService.executeAction(1L, "shadow_ban", "隐蔽处理");
+            }
 
             verify(postMapper).updateStatus(100L, PostStatus.SHADOW_BANNED.getStatus());
             verify(moderationQueueMapper).updateStatus(1L, "reviewed");

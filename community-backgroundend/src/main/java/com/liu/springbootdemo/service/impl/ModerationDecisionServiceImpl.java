@@ -11,6 +11,7 @@ import com.liu.springbootdemo.common.enums.ModerationDecision;
 import com.liu.springbootdemo.mapper.ModerationQueueMapper;
 import com.liu.springbootdemo.mapper.ModerationThresholdConfigMapper;
 import com.liu.springbootdemo.service.ModerationDecisionService;
+import com.liu.springbootdemo.service.ModerationAuditLogService;
 import com.liu.springbootdemo.service.RiskScoringService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,9 @@ public class ModerationDecisionServiceImpl implements ModerationDecisionService 
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private ModerationAuditLogService auditLogService;
+
     @Override
     public ModerationDecisionResult decide(String text, User user, Long targetId, String targetType) {
         // 1. 风险评分（含用户画像加权）
@@ -79,6 +83,10 @@ public class ModerationDecisionServiceImpl implements ModerationDecisionService 
 
         log.info("审核决策完成: targetId={}, targetType={}, riskScore={}, decision={}, postStatus={}",
                 targetId, targetType, riskScore, decision.getCode(), decision.getPostStatus());
+
+        // 5. 写入审计日志（自动审核，操作人为 SYSTEM）
+        auditLogService.logAutoAction(targetId, targetType, decision.getCode(),
+                serializeHitRules(scoreResult), riskScore);
 
         return new ModerationDecisionResult(riskScore, decision, decision.getPostStatus(), scoreResult);
     }

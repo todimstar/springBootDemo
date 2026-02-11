@@ -11,6 +11,7 @@ import com.liu.springbootdemo.common.enums.ModerationDecision;
 import com.liu.springbootdemo.common.enums.PostStatus;
 import com.liu.springbootdemo.mapper.ModerationQueueMapper;
 import com.liu.springbootdemo.mapper.ModerationThresholdConfigMapper;
+import com.liu.springbootdemo.service.ModerationAuditLogService;
 import com.liu.springbootdemo.service.RiskScoringService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,6 +56,9 @@ class ModerationDecisionServiceImplTest {
 
     @Spy
     private ObjectMapper objectMapper = new ObjectMapper();
+
+    @Mock
+    private ModerationAuditLogService auditLogService;
 
     @InjectMocks
     private ModerationDecisionServiceImpl moderationDecisionService;

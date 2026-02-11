@@ -239,4 +239,50 @@ Started: Wed Feb 11 20:22:21     2026
   - Spring Boot 3.3.5 的 `@MockBean` 包名是 `org.springframework.boot.test.mock.mockito`
   - `ModerationQueuePageQueryDTO` 的 page/pageSize 无默认值，不传参时字段为 null
   - Controller 测试应明确传入 page/pageSize 参数，避免 null 引起 NPE
+- `ModerationAuditLogService` 提供 `logAutoAction` 和 `logManualAction` 两个入口，分别用于自动审核和人工审核日志写入
+- 审计日志表 `moderation_audit_log` 仅 INSERT，Mapper 不提供 UPDATE/DELETE 方法，确保日志不可篡改
+- `SecurityUtil.getCurrentUser()` 是静态方法，在 Service 层调用时测试需要 `MockedStatic<SecurityUtil>` + try-with-resources
+---
+
+## 2026-02-11 22:40 - US-007
+- **实现了审核审计日志记录与查询功能**
+- 新建 `moderation_audit_log` 审计日志表（`sql/V2_3__moderation_audit_log.sql`）
+  - 字段：target_id, target_type, action_type, operator_id, operator_name, reason, hit_rules, risk_score, created_at
+  - 仅 INSERT，不提供 UPDATE/DELETE，确保日志不可篡改
+- `ModerationAuditLog.java` 实体类
+- `ModerationAuditLogVO.java` 视图对象
+- `ModerationAuditLogMapper.java`：insert + findByTarget（按目标查询审计轨迹，时间升序）
+- `ModerationAuditLogService` / `ModerationAuditLogServiceImpl`：
+  - `logAutoAction()` — 自动审核日志（操作人=SYSTEM）
+  - `logManualAction()` — 人工审核日志（含操作人信息）
+  - `getAuditLogs()` — 按目标查询审计轨迹
+  - 日志写入失败 try-catch 包裹，不影响主流程
+- 集成到 `ModerationDecisionServiceImpl.decide()`：自动审核决策后写入日志
+- 集成到 `ModerationQueueServiceImpl.executeAction()`：人工审核操作后写入日志，通过 SecurityUtil 获取操作人
+- `ModerationController` 新增 `GET /api/admin/moderation/{id}/logs` 审计轨迹查询端点
+- 12 个新单元测试全部通过（总计 41 个审核模块测试通过）
+  - 4 个自动审核日志测试（auto_approve/auto_reject/pending_review/写入失败容错）
+  - 4 个人工审核日志测试（approve/reject/shadow_ban/写入失败容错）
+  - 3 个审计查询测试（有日志/无日志/评论类型）
+  - 1 个 approve 操作审计日志集成验证
+- mvn compile 编译通过
+- Files changed:
+  - `sql/V2_3__moderation_audit_log.sql` (new)
+  - `POJO/entity/ModerationAuditLog.java` (new)
+  - `POJO/vo/ModerationAuditLogVO.java` (new)
+  - `mapper/ModerationAuditLogMapper.java` (new)
+  - `service/ModerationAuditLogService.java` (new)
+  - `service/impl/ModerationAuditLogServiceImpl.java` (new)
+  - `service/impl/ModerationDecisionServiceImpl.java` (modified - added audit log integration)
+  - `service/impl/ModerationQueueServiceImpl.java` (modified - added audit log integration)
+  - `controller/admin/ModerationController.java` (modified - added /logs endpoint)
+  - `test/.../ModerationAuditLogServiceImplTest.java` (new - 12 tests)
+  - `test/.../ModerationDecisionServiceImplTest.java` (modified - added auditLogService mock)
+  - `test/.../ModerationQueueServiceImplTest.java` (modified - added MockedStatic for SecurityUtil)
+  - `ralph/prd.json` (updated US-007 passes: true)
+- **Learnings for future iterations:**
+  - 审计日志写入应 try-catch 包裹，避免日志失败拖垮主流程
+  - `SecurityUtil.getCurrentUser()` 在 Service 层使用时，测试需要 MockedStatic + try-with-resources
+  - Mapper 只暴露 INSERT + SELECT 方法即可实现"仅追加"语义，比数据库层面限制更实用
+  - 审计日志查询通过 queue item 的 targetId + targetType 关联，而非直接用 queue ID
 ---
