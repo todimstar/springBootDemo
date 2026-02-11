@@ -2,7 +2,7 @@
 
 ## 1. Introduction / 概述
 
-为社区帖子与评论建立**可解释、可复审、可追溯**的内容审核体系。内容在发布时经过同步规则引擎快速判定——自动放行、自动拦截或影子发布；命中灰区的内容异步进入人工审核队列。所有审核动作均留存审计日志，支持运营治理与合规追溯。
+为社区帖子与评论建立**可解释、可复审、可追溯**的内容审核体系。内容在发布时经过同步规则引擎快速判定——自动放行、自动拦截，或送入人工审核队列；管理员可在人工审核时选择影子发布。所有审核动作均留存审计日志，支持运营治理与合规追溯。
 
 当前痛点：
 - 内容发布无审核闭环，违规内容可直接传播
@@ -13,7 +13,8 @@
 
 - 对帖子（创建 & 编辑）和评论的文本内容进行实时风险评分
 - 结合用户画像（注册时长、历史违规次数等）对评分加权
-- 按阈值自动放行 / 影子发布 / 送人工审核 / 自动拦截，减少人工审核量 ≥ 60%
+- 按阈值自动放行 / 送人工审核 / 自动拦截，减少人工审核量 ≥ 60%
+- 管理员人工审核时可选择影子发布（一期不做自动影子决策）
 - 提供简易管理后台，支持审核队列浏览与通过/驳回/下架/影子操作
 - 审计日志完整记录命中规则、评分、审核人、操作时间与理由
 - 图片审核预留扩展接口，第一期不实现图片检测逻辑
@@ -31,7 +32,7 @@
 - [ ] 规则库数据存储在数据库，支持动态增删改（无需重启）
 - [ ] 单次评分耗时 < 200ms（1000 字以内文本）
 - [ ] 单元测试覆盖：无命中、单规则命中、多规则叠加、边界值场景
-- [ ] Typecheck / 编译通过
+- [ ] `mvn compile` 编译通过
 
 ### US-002: 用户画像风险加权
 **Description:** 作为系统，我需要根据用户画像因子对风险评分进行加权，使新用户或有违规历史的用户受到更严格的审核。
@@ -42,21 +43,22 @@
 - [ ] 加权系数可通过数据库配置，无需硬编码
 - [ ] 最终评分 = 文本基础分 × 用户画像加权系数，上限封顶 100
 - [ ] 单元测试覆盖各画像因子的独立与组合场景
-- [ ] Typecheck / 编译通过
+- [ ] `mvn compile` 编译通过
 
 ### US-003: 审核决策与状态流转
 **Description:** 作为系统，我需要根据风险评分阈值自动决策内容状态，灰区内容进入人工审核队列。
 
 **Acceptance Criteria:**
 - [ ] **帖子状态复用现有 `Post.status` 字段**，在现有值基础上新增 `5 = SHADOW_BANNED`（影子发布）。完整映射：0=draft, 1=pending_review, 2=published, 3=rejected, 4=deleted, **5=shadow_banned**
-- [ ] **评论表新增 `status` 字段**（int），值映射：0=pending_review, 1=approved, 2=rejected, 3=shadow_banned, 4=taken_down。默认 `0`（待审核）
-- [ ] 审核决策到帖子状态的映射：自动放行 → status=2(published)，送人审 → status=1(pending_review)，自动拦截 → status=3(rejected)，影子发布 → status=5(shadow_banned)
-- [ ] 阈值配置存储在数据库：如 score < 30 → 自动放行，30 ≤ score < 70 → 送人审，score ≥ 70 → 自动拦截
+- [ ] **评论表新增 `status` 字段**（int），值映射：0=pending_review, 1=approved, 2=rejected, 3=shadow_banned, 4=taken_down, **5=deleted**。默认 `0`（待审核）。新增后**废弃原 `is_deleted` 字段**，软删除统一由 `status=5` 表达
+- [ ] 审核决策到帖子状态的映射（自动三档）：自动放行 → status=2(published)，送人审 → status=1(pending_review)，自动拦截 → status=3(rejected)
+- [ ] **影子发布（status=5）仅由管理员在人工审核时手动触发**，不纳入自动决策阈值
+- [ ] 阈值配置存储在数据库（三档）：score < 30 → 自动放行，30 ≤ score < 70 → 送人审，score ≥ 70 → 自动拦截
 - [ ] 阈值可在管理后台动态调整
 - [ ] 同步链路：规则引擎判定 → 自动放行或拦截的内容立即更新状态并返回
 - [ ] 异步链路：灰区内容状态为 `PENDING_REVIEW`，写入审核队列表
 - [ ] 单元测试覆盖每个阈值区间的决策路径
-- [ ] Typecheck / 编译通过
+- [ ] `mvn compile` 编译通过
 
 ### US-004: 影子发布可见性控制
 **Description:** 作为用户，当我的内容被影子发布时，我能正常看到自己的帖子/评论，但其他用户不可见。
@@ -66,7 +68,7 @@
 - [ ] 其他用户查询帖子列表/评论列表时，过滤掉 `SHADOW_BANNED` 状态的内容
 - [ ] 发布者无任何提示表明内容被影子处理（无 UI 标记）
 - [ ] 集成测试覆盖：发布者视角 vs 其他用户视角
-- [ ] Typecheck / 编译通过
+- [ ] `mvn compile` 编译通过
 
 ### US-005: 管理员审核队列页面
 **Description:** 作为管理员，我需要一个简易审核页面，查看待审核内容列表并执行审核操作。
@@ -78,7 +80,7 @@
 - [ ] 每条记录提供操作按钮：通过 / 驳回 / 下架 / 影子发布
 - [ ] 操作时必须填写审核理由（文本输入，不可为空）
 - [ ] 操作成功后列表实时刷新，已处理项移出队列
-- [ ] Typecheck / 编译通过
+- [ ] `mvn compile` 编译通过，`pnpm build` 前端构建通过
 - [ ] 在浏览器中验证页面交互（使用 dev-browser skill）
 
 ### US-006: 审核操作 API
@@ -92,7 +94,7 @@
 - [ ] 参数校验：非法 action、空 reason 返回 400
 - [ ] 操作幂等：重复提交同一操作不报错，返回当前状态
 - [ ] 单元测试 + 接口测试覆盖正常流与异常流
-- [ ] Typecheck / 编译通过
+- [ ] `mvn compile` 编译通过
 
 ### US-007: 审计日志记录与查询
 **Description:** 作为管理员，我需要查看每条内容的完整审核轨迹，以便追溯和复审。
@@ -103,7 +105,7 @@
 - [ ] `GET /api/admin/moderation/{id}/logs` — 按时间倒序返回该内容的审计轨迹
 - [ ] 日志不可篡改（仅 INSERT，无 UPDATE/DELETE）
 - [ ] 单元测试覆盖自动审核与人工审核的日志写入
-- [ ] Typecheck / 编译通过
+- [ ] `mvn compile` 编译通过
 
 ### US-008: 规则库管理 API
 **Description:** 作为管理员，我需要通过 API 管理审核规则（增删改查），以便灵活应对新型违规内容。
@@ -117,7 +119,7 @@
 - [ ] 规则加载支持缓存，变更后自动刷新缓存
 - [ ] 接口鉴权：仅 ADMIN 角色
 - [ ] 单元测试 + 接口测试
-- [ ] Typecheck / 编译通过
+- [ ] `mvn compile` 编译通过
 
 ### US-009: 图片审核扩展接口占位
 **Description:** 作为开发者，我需要预留图片审核的扩展点，以便后续接入第三方图片检测服务。
@@ -128,7 +130,7 @@
 - [ ] 预留 `ImageModerationStrategy` 空实现（直接返回通过，风险分 0）
 - [ ] 审核引擎通过策略模式按内容类型分发
 - [ ] 后续接入图片审核只需实现该接口，无需改动核心链路
-- [ ] Typecheck / 编译通过
+- [ ] `mvn compile` 编译通过
 
 ### US-010: 发帖/评论接口接入审核链路
 **Description:** 作为开发者，我需要将现有的帖子创建/编辑、评论创建接口接入审核链路，使所有内容经过审核流程。
@@ -142,7 +144,7 @@
 - [ ] 被拦截的内容返回友好提示（如"内容正在审核中，请稍候"）
 - [ ] 灰区内容返回正常响应，用户不感知进入人审
 - [ ] 集成测试覆盖三种决策路径
-- [ ] Typecheck / 编译通过
+- [ ] `mvn compile` 编译通过
 
 ### US-011: 规则命中统计与效果评估
 **Description:** 作为运营人员，我需要查看每条规则的命中统计数据，以便评估规则有效性、发现误杀并优化规则质量。
@@ -157,18 +159,18 @@
 - [ ] 统计更新采用原子操作（如 `UPDATE ... SET hit_total = hit_total + 1`），避免并发丢失
 - [ ] 接口鉴权：仅 ADMIN 角色
 - [ ] 单元测试覆盖计数累加、并发安全
-- [ ] Typecheck / 编译通过
+- [ ] `mvn compile` 编译通过
 
 ## 4. Functional Requirements / 功能需求
 
-- **FR-1:** 帖子表**复用现有 `status` 字段**（int），在现有值 0-4 基础上新增 `5 = shadow_banned`；评论表**新增 `status` 字段**（int：0=pending_review, 1=approved, 2=rejected, 3=shadow_banned, 4=taken_down，默认 0）
+- **FR-1:** 帖子表**复用现有 `status` 字段**（int），在现有值 0-4 基础上新增 `5 = shadow_banned`；评论表**新增 `status` 字段**（int：0=pending_review, 1=approved, 2=rejected, 3=shadow_banned, 4=taken_down, 5=deleted，默认 0），**废弃原 `is_deleted` 字段**，软删除统一由 status=5 表达
 - **FR-2:** 新建审核规则表 `moderation_rule`，字段包含：id、rule_type（keyword/regex/blacklist）、pattern、weight_score、enabled、description、created_at、updated_at、deleted（逻辑删除）
 - **FR-3:** 新建审核队列表 `moderation_queue`，字段包含：id、target_id、target_type（post/comment）、risk_score、matched_rules_snapshot（JSON）、user_profile_snapshot（JSON）、status、created_at、reviewed_at、reviewer_id
 - **FR-4:** 新建审计日志表 `moderation_audit_log`，字段包含：id、target_id、target_type、action、operator_id、operator_type（SYSTEM/ADMIN）、reason、matched_rules_snapshot、risk_score、created_at
 - **FR-5:** 规则引擎按优先级依次执行关键词匹配、正则匹配、黑名单检查，累加命中规则的权重分
 - **FR-6:** 用户画像加权因子从数据库读取，与文本基础分相乘得到最终风险分（封顶 100）
 - **FR-7:** 阈值配置存储在数据库（键值对），支持管理员在线调整
-- **FR-8:** 同步链路处理自动放行与自动拦截；灰区内容异步写入 `moderation_queue`，状态为 PENDING_REVIEW
+- **FR-8:** 同步链路自动决策三档：放行/拦截立即更新状态并返回，灰区内容异步写入 `moderation_queue`（status 为 PENDING_REVIEW）；影子发布仅管理员人工审核时可选
 - **FR-9:** 影子发布内容仅对发布者本人可见，其他用户的查询结果自动过滤
 - **FR-10:** 审核操作 API 仅限 ADMIN 角色访问，操作需附带理由
 - **FR-11:** 所有审核动作（含系统自动判定）均写入 `moderation_audit_log`，日志仅追加不可修改
@@ -224,17 +226,19 @@
 
 ### 数据库迁移
 - 需要新建 4 张表：`moderation_rule`、`moderation_queue`、`moderation_audit_log`、`moderation_rule_stats`
-- **帖子表**：复用现有 `status` 字段，新增值 `5 = shadow_banned`，**不新增字段**
-- **评论表**：新增 `status` 字段（int，默认 0）
-- 迁移脚本存量数据处理：**不回溯审核**，存量帖子保持原 status 不变，存量评论 `status` 默认设为 `1`(approved)
+- **帖子表**：复用现有 `status` 字段，新增值 `5 = shadow_banned`，**不新增字段**；需同步更新 status 校验上限 `@Max(4)` → `@Max(5)`，涉及文件：`PostController.java:31`、`PostService.java:54`
+- **评论表**：新增 `status` 字段（int，默认 0）；存量评论 status 设为 `1`(approved)；**废弃 `is_deleted` 字段**，存量 `is_deleted=true` 的记录迁移为 `status=5`(deleted)
+- 迁移脚本存量数据处理：**不回溯审核**，存量帖子保持原 status 不变，仅新内容进入审核链路
 
 ### 并发与幂等
-- 审核操作接口需保证幂等：同一内容多次提交相同操作不应报错
-- 乐观锁或状态机校验防止并发审核冲突（如两个管理员同时操作同一内容）
+- 审核操作仅允许从 `PENDING_REVIEW` 迁移到终态（approve / reject / takedown / shadow），非 PENDING_REVIEW 状态的内容拒绝操作并返回当前状态
+- 重复提交同一动作幂等返回，不报错
+- v1.0 **暂不引入 version 字段**（乐观锁放 v1.2），通过状态机前置校验防止非法流转
 
 ## 8. Success Metrics / 成功指标
 
-- 所有新发帖子和评论 100% 经过审核链路
+- **v1.0:** 所有新发帖子 100% 经过审核链路
+- **v1.1:** 所有新发评论 100% 经过审核链路
 - 自动放行率 ≥ 60%（减少人工审核工作量）
 - 同步审核链路 P99 延迟 < 300ms
 - 审计日志完整率 100%（每条审核动作均有日志）
@@ -246,9 +250,60 @@
 
 | # | 问题 | 决策 |
 |---|------|------|
-| 1 | 存量数据是否回溯审核 | **不回溯**，存量默认 APPROVED，仅新内容生效 |
+| 1 | 存量数据是否回溯审核 | **不回溯**。帖子保持原 status 不变；评论新增 status 字段后存量默认置为 `1`(approved)。仅新内容生效 |
 | 2 | 驳回/下架内容能否编辑再提交 | **允许**，编辑后状态重置为 PENDING_REVIEW |
 | 3 | 关键词是否支持模糊/拼音/变体对抗 | **一期不做**，仅基础归一化（去空格/大小写/全半角）+ 正则；二期扩展 |
 | 4 | 画像加权系数初始值 | 使用**经验值**（注册<7天 ×1.5，违规≥3次 ×2.0），存配置表可动态调整 |
 | 5 | 影子发布是否自动过期 | **一期不做**，避免引入定时任务；二期实现 |
 | 6 | 审核队列积压告警 | **一期不做**，仅后台高亮高风险项；二期加告警 |
+
+## 10. Release Plan / 发布计划
+
+### v1.0：帖子审核闭环 + 管理后台 + 规则统计
+
+**范围：** 帖子（创建 & 编辑）全链路审核，管理后台审核队列，规则引擎与统计。
+
+| User Story | 说明 |
+|------------|------|
+| US-001 | 内容风险评分引擎（文本规则匹配） |
+| US-002 | 用户画像风险加权 |
+| US-003 | 审核决策与状态流转（仅帖子部分） |
+| US-004 | 影子发布可见性控制（仅帖子部分） |
+| US-005 | 管理员审核队列页面 |
+| US-006 | 审核操作 API |
+| US-007 | 审计日志记录与查询 |
+| US-008 | 规则库管理 API |
+| US-009 | 图片审核扩展接口占位 |
+| US-010 | 发帖接口接入审核链路（**仅帖子创建 & 编辑**，评论暂不接入） |
+| US-011 | 规则命中统计与效果评估 |
+
+**数据库变更：**
+- 新建 4 张表：`moderation_rule`、`moderation_queue`、`moderation_audit_log`、`moderation_rule_stats`
+- 帖子表 `status` 新增值 `5 = shadow_banned`
+- 更新 `PostController.java:31`、`PostService.java:54` 中 `@Max(4)` → `@Max(5)`
+
+**交付标准：** 帖子发布/编辑经过审核链路 → 管理员可审核 → 审计日志完整 → 规则可管理
+
+---
+
+### v1.1：评论接入 + is_deleted 迁移
+
+**范围：** 评论接入审核链路，评论表 `is_deleted` → `status` 迁移。
+
+| User Story | 说明 |
+|------------|------|
+| US-003 | 审核决策与状态流转（补充评论部分） |
+| US-004 | 影子发布可见性控制（补充评论部分） |
+| US-010 | 评论创建接口接入审核链路 |
+
+**数据库变更：**
+- 评论表新增 `status` 字段（int，默认 0）
+- 存量数据迁移：`is_deleted=true` → `status=5`(deleted)，其余存量 → `status=1`(approved)
+- `is_deleted` 字段**保留但不再写入**，等 v1.2 确认无遗漏后再 DROP
+
+**代码变更：**
+- 评论相关查询从 `WHERE is_deleted = false` 迁移为 `WHERE status IN (1, ...)` 条件
+- 评论删除逻辑从 `SET is_deleted = true` 改为 `SET status = 5`
+- **过渡期：新老查询条件并存**（`WHERE status IN (...) AND is_deleted = false`），防止历史逻辑漏改导致数据不一致；v1.2 移除 is_deleted 条件
+
+**交付标准：** 评论创建经过审核链路 → 存量数据平滑迁移 → is_deleted 不再有新写入 → 新老条件并存无数据泄漏
