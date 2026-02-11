@@ -10,7 +10,7 @@ import com.liu.springbootdemo.POJO.entity.User;
 public interface ModerationDecisionService {
 
     /**
-     * 对内容进行审核决策
+     * 对内容进行审核决策（默认按文本类型审核）
      *
      * @param text       内容文本
      * @param user       发布者
@@ -19,4 +19,16 @@ public interface ModerationDecisionService {
      * @return 审核决策结果
      */
     ModerationDecisionResult decide(String text, User user, Long targetId, String targetType);
+
+    /**
+     * 对内容进行审核决策，按内容类型分发到对应的审核策略
+     *
+     * @param content     内容（文本原文或图片 URL 等）
+     * @param contentType 内容类型（"text"、"image" 等）
+     * @param user        发布者
+     * @param targetId    目标ID
+     * @param targetType  目标类型（post/comment）
+     * @return 审核决策结果
+     */
+    ModerationDecisionResult decide(String content, String contentType, User user, Long targetId, String targetType);
 }

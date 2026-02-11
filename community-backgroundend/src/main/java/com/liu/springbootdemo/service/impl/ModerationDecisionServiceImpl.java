@@ -13,6 +13,7 @@ import com.liu.springbootdemo.mapper.ModerationThresholdConfigMapper;
 import com.liu.springbootdemo.service.ModerationDecisionService;
 import com.liu.springbootdemo.service.ModerationAuditLogService;
 import com.liu.springbootdemo.service.RiskScoringService;
+import com.liu.springbootdemo.service.strategy.ModerationStrategyDispatcher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -56,6 +57,9 @@ public class ModerationDecisionServiceImpl implements ModerationDecisionService 
     @Autowired
     private ModerationAuditLogService auditLogService;
 
+    @Autowired
+    private ModerationStrategyDispatcher strategyDispatcher;
+
     @Override
     public ModerationDecisionResult decide(String text, User user, Long targetId, String targetType) {
         // 1. 风险评分（含用户画像加权）
@@ -85,6 +89,41 @@ public class ModerationDecisionServiceImpl implements ModerationDecisionService 
                 targetId, targetType, riskScore, decision.getCode(), decision.getPostStatus());
 
         // 5. 写入审计日志（自动审核，操作人为 SYSTEM）
+        auditLogService.logAutoAction(targetId, targetType, decision.getCode(),
+                serializeHitRules(scoreResult), riskScore);
+
+        return new ModerationDecisionResult(riskScore, decision, decision.getPostStatus(), scoreResult);
+    }
+
+    @Override
+    public ModerationDecisionResult decide(String content, String contentType, User user, Long targetId, String targetType) {
+        // 1. 通过策略分发器按内容类型进行风险评分
+        RiskScoreResult scoreResult = strategyDispatcher.dispatch(contentType, content, user);
+        int riskScore = scoreResult.getRiskScore();
+
+        // 2. 加载阈值配置
+        int autoApproveMax = loadThreshold("auto_approve_max", DEFAULT_AUTO_APPROVE_MAX);
+        int autoRejectMin = loadThreshold("auto_reject_min", DEFAULT_AUTO_REJECT_MIN);
+
+        // 3. 根据阈值做决策
+        ModerationDecision decision;
+        if (riskScore < autoApproveMax) {
+            decision = ModerationDecision.AUTO_APPROVE;
+        } else if (riskScore >= autoRejectMin) {
+            decision = ModerationDecision.AUTO_REJECT;
+        } else {
+            decision = ModerationDecision.PENDING_REVIEW;
+        }
+
+        // 4. 灰区内容写入审核队列
+        if (decision == ModerationDecision.PENDING_REVIEW) {
+            enqueueForReview(targetId, targetType, user.getId(), content, riskScore, scoreResult);
+        }
+
+        log.info("审核决策完成: targetId={}, targetType={}, contentType={}, riskScore={}, decision={}",
+                targetId, targetType, contentType, riskScore, decision.getCode());
+
+        // 5. 写入审计日志
         auditLogService.logAutoAction(targetId, targetType, decision.getCode(),
                 serializeHitRules(scoreResult), riskScore);
 

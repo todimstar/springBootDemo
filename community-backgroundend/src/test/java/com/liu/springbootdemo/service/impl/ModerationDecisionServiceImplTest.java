@@ -13,6 +13,7 @@ import com.liu.springbootdemo.mapper.ModerationQueueMapper;
 import com.liu.springbootdemo.mapper.ModerationThresholdConfigMapper;
 import com.liu.springbootdemo.service.ModerationAuditLogService;
 import com.liu.springbootdemo.service.RiskScoringService;
+import com.liu.springbootdemo.service.strategy.ModerationStrategyDispatcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -59,6 +60,9 @@ class ModerationDecisionServiceImplTest {
 
     @Mock
     private ModerationAuditLogService auditLogService;
+
+    @Mock
+    private ModerationStrategyDispatcher strategyDispatcher;
 
     @InjectMocks
     private ModerationDecisionServiceImpl moderationDecisionService;

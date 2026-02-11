@@ -3,6 +3,8 @@
 - 实体类位于 `POJO/entity/`，DTO 位于 `POJO/dto/`，VO 位于 `POJO/vo/`
 - 统一结果类 `Result<T>` 返回，错误使用 `ErrorCode` 枚举 + `BusinessException`
 - 枚举定义位于 `common/enums/`
+- 审核策略接口 `ContentModerationStrategy` 位于 `service/strategy/`，通过 `ModerationStrategyDispatcher` 按内容类型分发
+- `ModerationDecisionService.decide(content, contentType, user, targetId, targetType)` 是策略模式的审核入口，支持多内容类型
 - 服务接口在 `service/`，实现在 `service/impl/`
 - 测试使用 `@ExtendWith(MockitoExtension.class)` + `@Mock` + `@InjectMocks` 模式
 - `community-backgroundend/.gitignore` 忽略 `*.sql`，新增 SQL 文件需 `git add -f`
@@ -349,4 +351,49 @@ Started: Wed Feb 11 20:22:21     2026
   - 分页查询 DTO 的自定义 setter 模式（校验+默认值）在整个项目中保持一致
   - Controller 新增依赖后，已有 Controller 测试需补充 @Mock 字段，否则 @InjectMocks 注入失败
   - 缓存刷新策略：删除缓存 key（而非更新），让下次查询时重新加载，避免缓存与 DB 数据不一致
+---
+
+## 2026-02-11 23:30 - US-009
+- **实现了图片审核扩展接口占位（策略模式重构）**
+- **策略接口**：
+  - 新建 `ContentModerationStrategy` 接口（`service/strategy/`）
+    - `supports(String contentType)` — 判断是否支持该内容类型
+    - `evaluate(String content, User user)` — 执行风险评分
+- **文本审核策略**：
+  - `TextModerationStrategy` 实现 `ContentModerationStrategy`
+    - 委托给现有 `RiskScoringService`，支持带/不带用户画像加权
+    - contentType = "text"
+- **图片审核策略（占位）**：
+  - `ImageModerationStrategy` 实现 `ContentModerationStrategy`
+    - 当前版本直接返回 `RiskScoreResult.safe()`，内容直接放行
+    - contentType = "image"
+    - 预留扩展点，后续可接入第三方图片审核 API
+- **策略分发器**：
+  - `ModerationStrategyDispatcher` 通过 Spring 自动注入所有策略实现
+    - `dispatch(contentType, content, user)` — 按内容类型路由到对应策略
+    - `supportsContentType(contentType)` — 检查是否支持
+    - 无匹配策略时抛出 `UnsupportedContentTypeException`
+- **审核决策服务扩展**：
+  - `ModerationDecisionService` 新增重载方法 `decide(content, contentType, user, targetId, targetType)`
+  - `ModerationDecisionServiceImpl` 新方法通过 `ModerationStrategyDispatcher` 进行评分
+  - 原有 `decide(text, user, targetId, targetType)` 保持不变，向后兼容
+- **测试更新**：
+  - `ModerationDecisionServiceImplTest` 补充 `@Mock ModerationStrategyDispatcher` 字段
+  - 全部 155 个审核模块测试通过，0 失败
+- mvn compile 编译通过
+- Files changed:
+  - `service/strategy/ContentModerationStrategy.java` (new — 策略接口)
+  - `service/strategy/TextModerationStrategy.java` (new — 文本策略)
+  - `service/strategy/ImageModerationStrategy.java` (new — 图片策略占位)
+  - `service/strategy/ModerationStrategyDispatcher.java` (new — 策略分发器)
+  - `service/ModerationDecisionService.java` (modified — 新增重载 decide 方法)
+  - `service/impl/ModerationDecisionServiceImpl.java` (modified — 实现策略分发 decide 方法)
+  - `test/.../ModerationDecisionServiceImplTest.java` (modified — 补充 strategyDispatcher mock)
+  - `ralph/prd.json` (updated US-009 passes: true)
+- **Learnings for future iterations:**
+  - Spring 自动注入 `List<SomeInterface>` 即可收集所有实现类，非常适合策略模式
+  - 新增字段到 Service 后，使用 `@InjectMocks` 的测试类必须补充对应的 `@Mock` 字段
+  - 策略接口设计关键：`supports()` 方法判断类型 + `evaluate()` 方法执行逻辑，分发器遍历匹配
+  - 占位策略返回 `RiskScoreResult.safe()` 即可，使图片内容默认放行
+  - 重载方法保持原方法签名不变，避免破坏现有调用链
 ---

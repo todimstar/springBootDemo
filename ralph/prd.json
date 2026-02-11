@@ -138,7 +138,7 @@
       "id": "US-009",
       "title": "图片审核扩展接口占位",
       "priority": 9,
-      "passes": false,
+      "passes": true,
       "description": "作为开发者，我需要预留图片审核的扩展点。",
       "acceptanceCriteria": [
         "定义 ContentModerationStrategy 接口",
