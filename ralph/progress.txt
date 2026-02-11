@@ -34,6 +34,10 @@
 - Controller 接口测试使用 Standalone MockMvc（`MockMvcBuilders.standaloneSetup`）+ `GlobalExceptionHandler` 作为 ControllerAdvice，避免 `@WebMvcTest` 加载完整上下文的复杂性
 - `@MockBean` 在 Spring Boot 3.3.5 中的包名是 `org.springframework.boot.test.mock.mockito.MockBean`
 - `ModerationQueuePageQueryDTO` 的 page/pageSize 字段为 `Integer`，无默认值；仅当 Spring 传入参数时才触发自定义 setter 设默认值
+- 帖子创建/编辑后通过 `ModerationDecisionService.decide()` 同步审核，审核结果直接设置 `Post.status`
+- `PostMapper.insert()` 使用 `@Options(useGeneratedKeys)` 自动回填 ID，测试中需用 `doAnswer` 模拟此行为
+- 被自动拦截的内容仍会先写入数据库（status=REJECTED），再抛出 `POST_CONTENT_REJECTED` 友好异常
+- 帖子编辑仅在标题或正文变更时触发重新审核，封面图等元数据修改不触发
 
 # Ralph Progress Log
 Started: Wed Feb 11 20:22:21     2026
@@ -396,4 +400,41 @@ Started: Wed Feb 11 20:22:21     2026
   - 策略接口设计关键：`supports()` 方法判断类型 + `evaluate()` 方法执行逻辑，分发器遍历匹配
   - 占位策略返回 `RiskScoreResult.safe()` 即可，使图片内容默认放行
   - 重载方法保持原方法签名不变，避免破坏现有调用链
+---
+
+## 2026-02-11 23:45 - US-010
+- **实现了发帖接口接入审核链路**
+- **帖子创建接口**：
+  - `PostServiceImpl.createPost()` 插入帖子后同步调用 `ModerationDecisionService.decide()`
+  - 审核文本为 `title + " " + content` 拼接
+  - 审核结果通过 `PostMapper.updateStatus()` 立即更新帖子状态
+  - 自动放行（score < 30）→ status=PUBLISHED，用户无感知
+  - 灰区（30 ≤ score < 70）→ status=PENDING_REVIEW，返回正常响应
+  - 自动拦截（score ≥ 70）→ status=REJECTED，抛出 `POST_CONTENT_REJECTED` 友好异常
+- **帖子编辑接口**：
+  - `PostServiceImpl.updatePost()` 在内容变更（标题或正文有修改）时重新触发审核
+  - 非内容变更（仅修改封面图、分区等元数据）跳过审核
+  - 审核后的状态更新逻辑与创建一致
+- **被驳回/下架帖子可重新编辑**：
+  - 现有代码仅阻止编辑 DELETED 状态帖子，REJECTED 和 SHADOW_BANNED 状态均允许编辑
+  - 编辑后内容重新经过审核引擎评估
+- **友好提示**：
+  - 新增 `ErrorCode.POST_CONTENT_REJECTED("40005", "您的内容包含违规信息，请修改后重新提交")`
+  - 被拦截的内容返回 HTTP 400 + 友好提示信息
+- **测试**：11 个集成测试全部通过
+  - 创建帖子 4 个测试：自动放行、送人审、自动拦截（友好提示）、文本拼接验证
+  - 编辑帖子 7 个测试：内容变更自动放行、内容变更自动拦截、内容变更送人审、
+    非内容变更跳过审核、被驳回帖子可编辑重提、已删除帖子禁止编辑、影子帖子可编辑重提
+- mvn compile 编译通过
+- Files changed:
+  - `service/impl/PostServiceImpl.java` (modified - 注入 ModerationDecisionService，创建/编辑接入审核)
+  - `common/enums/ErrorCode.java` (modified - 新增 POST_CONTENT_REJECTED)
+  - `test/.../PostModerationIntegrationTest.java` (new - 11 tests)
+  - `ralph/prd.json` (updated US-010 passes: true)
+- **Learnings for future iterations:**
+  - `PostMapper.insert()` 使用 `@Options(useGeneratedKeys=true)` 回填 ID，Mock 测试中需用 `doAnswer` 手动设置 ID
+  - `anyLong()` 不匹配 `null`，Mock 中自动生成键未回填时 `post.getId()` 为 null，需注意 matcher 选择
+  - 审核链路设计为"先入库再审核"，确保即使审核失败内容也已持久化，不会丢失
+  - 自动拦截先更新状态再抛异常，确保数据库中状态一致性
+  - 编辑审核仅在 `StringUtils.hasText(title)` 或 `StringUtils.hasText(content)` 时触发，避免元数据修改重复审核
 ---

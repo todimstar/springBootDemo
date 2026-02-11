@@ -4,11 +4,13 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.liu.springbootdemo.POJO.Result.PageResult;
 import com.liu.springbootdemo.POJO.dto.CreatePostDTO;
+import com.liu.springbootdemo.POJO.dto.ModerationDecisionResult;
 import com.liu.springbootdemo.POJO.entity.Post;
 import com.liu.springbootdemo.POJO.entity.User;
 import com.liu.springbootdemo.POJO.vo.PostDetailVO;
 import com.liu.springbootdemo.POJO.vo.PostSummaryVO;
 import com.liu.springbootdemo.common.enums.ErrorCode;
+import com.liu.springbootdemo.common.enums.ModerationDecision;
 import com.liu.springbootdemo.common.enums.PostStatus;
 import com.liu.springbootdemo.common.enums.UserRole;
 import com.liu.springbootdemo.common.exception.BusinessException;
@@ -16,6 +18,7 @@ import com.liu.springbootdemo.converter.PostConverter;
 import com.liu.springbootdemo.mapper.CategoryMapper;
 import com.liu.springbootdemo.mapper.PostMapper;
 import com.liu.springbootdemo.service.CategoryService;
+import com.liu.springbootdemo.service.ModerationDecisionService;
 import com.liu.springbootdemo.service.PostService;
 import com.liu.springbootdemo.service.UserService;
 import com.liu.springbootdemo.common.utils.SecurityUtil;
@@ -44,6 +47,9 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     private PostConverter postConverter;
+
+    @Autowired
+    private ModerationDecisionService moderationDecisionService;
 
 
     /**
@@ -81,8 +87,24 @@ public class PostServiceImpl implements PostService {
         if(postMapper.insert(post) != 1){
             throw new BusinessException(ErrorCode.SQL_ERROR,"帖子\"" + post.getTitle() + "\"创建失败，数据库插入行数不为1");
         }
-        
-        log.info("用户[{}]发布了新帖子: [{}], ID: {}", currentUser.getUsername(), post.getTitle(), post.getId());
+
+        // 5. 同步调用审核引擎，根据审核结果设置帖子状态
+        String textToModerate = post.getTitle() + " " + post.getContent();
+        ModerationDecisionResult moderationResult = moderationDecisionService.decide(
+                textToModerate, currentUser, post.getId(), "post");
+        int moderatedStatus = moderationResult.getPostStatus();
+
+        // 更新帖子状态为审核结果
+        postMapper.updateStatus(post.getId(), moderatedStatus);
+
+        log.info("用户[{}]发布了新帖子: [{}], ID: {}, 审核决策: {}, 状态: {}",
+                currentUser.getUsername(), post.getTitle(), post.getId(),
+                moderationResult.getDecision().getCode(), moderatedStatus);
+
+        // 被自动拦截的内容返回友好提示
+        if (moderationResult.getDecision() == ModerationDecision.AUTO_REJECT) {
+            throw new BusinessException(ErrorCode.POST_CONTENT_REJECTED);
+        }
 
         return postConverter.toDetailVO(postMapper.findById(post.getId()));
     }
@@ -147,11 +169,30 @@ public class PostServiceImpl implements PostService {
         if( postMapper.updatePost(postId,post) != 1){
             throw new RuntimeException("帖子 \"" + postInDb.getTitle() + "\" 修改失败，数据库修改行数不为1");
         }
-        
-        log.info("用户[{}]修改了帖子: [{}], ID: {}", currentUser.getUsername(), postInDb.getTitle(), postId);
 
-        // 直接返回现在的post引用（X）
-        // 返回该id从posts里查出来的原文
+        // 内容变更时重新触发审核（标题或正文有修改）
+        boolean contentChanged = StringUtils.hasText(post.getTitle()) || StringUtils.hasText(post.getContent());
+        if (contentChanged) {
+            Post updatedPost = postMapper.findById(postId);
+            String textToModerate = updatedPost.getTitle() + " " + updatedPost.getContent();
+            ModerationDecisionResult moderationResult = moderationDecisionService.decide(
+                    textToModerate, currentUser, postId, "post");
+            int moderatedStatus = moderationResult.getPostStatus();
+
+            postMapper.updateStatus(postId, moderatedStatus);
+
+            log.info("用户[{}]修改了帖子: [{}], ID: {}, 重新审核决策: {}, 状态: {}",
+                    currentUser.getUsername(), postInDb.getTitle(), postId,
+                    moderationResult.getDecision().getCode(), moderatedStatus);
+
+            if (moderationResult.getDecision() == ModerationDecision.AUTO_REJECT) {
+                throw new BusinessException(ErrorCode.POST_CONTENT_REJECTED);
+            }
+        } else {
+            log.info("用户[{}]修改了帖子: [{}], ID: {}（非内容变更，跳过审核）",
+                    currentUser.getUsername(), postInDb.getTitle(), postId);
+        }
+
         return postConverter.toDetailVO(postMapper.findById(postId));
     }
 

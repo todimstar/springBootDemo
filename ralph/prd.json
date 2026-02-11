@@ -152,7 +152,7 @@
       "id": "US-010",
       "title": "发帖接口接入审核链路",
       "priority": 10,
-      "passes": false,
+      "passes": true,
       "description": "作为开发者，我需要将现有帖子创建/编辑接口接入审核链路。",
       "acceptanceCriteria": [
         "帖子创建接口：提交后同步调用审核引擎，根据结果设置 status",

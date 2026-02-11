@@ -93,6 +93,7 @@ public enum ErrorCode {
     POST_NOT_AUTHOR("40002", "您不是该帖子的作者", HttpStatus.FORBIDDEN),
     POST_ALREADY_DELETED("40003", "帖子已被删除", HttpStatus.GONE),
     POST_LOCKED("40004", "帖子已被锁定", HttpStatus.FORBIDDEN),
+    POST_CONTENT_REJECTED("40005", "您的内容包含违规信息，请修改后重新提交", HttpStatus.BAD_REQUEST),
     POST_TITLE_EMPTY("40011", "帖子标题不能为空", HttpStatus.BAD_REQUEST),
     POST_CONTENT_EMPTY("40012", "帖子内容不能为空", HttpStatus.BAD_REQUEST),
     POST_TITLE_TOO_LONG("40013", "帖子标题过长", HttpStatus.BAD_REQUEST),
