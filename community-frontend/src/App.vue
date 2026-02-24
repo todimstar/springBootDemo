@@ -12,7 +12,7 @@ import {computed} from 'vue'
 const authStore = useAuthStore()
 
 // 使用 store-To-Refs 保持响应式来解构，确保 isAuthenticated 和 user 保持响应性
-const { isAuthenticated, user } = storeToRefs(authStore)
+const { isAuthenticated, user, isAdmin } = storeToRefs(authStore)
 // logout 是一个 action (动作)，可以直接从 store 中解构
 const { logout } = authStore
 const route = useRoute()
@@ -31,6 +31,8 @@ const isLoginRoute = computed(() => {
         <router-link to="/">首页</router-link>
         <router-link to="/posts">帖子列表</router-link>
         <router-link :to="{ name: 'about' }">关于我们</router-link>
+        <!-- 管理员专属入口 -->
+        <router-link v-if="isAdmin" to="/admin/moderation">审核管理</router-link>
 
         <!-- 不在登录页面时才显示用户信息 -->
         <div class="user-info" v-if="!isLoginRoute">

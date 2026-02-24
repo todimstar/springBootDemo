@@ -49,11 +49,15 @@ router.beforeEach((to,from,next) => {
   const authStore = useAuthStore();
 
   const requiresAuth = ['create-post', 'admin-moderation']; // 需要认证的路由列表
+  const requiresAdmin = ['admin-moderation']; // 需要管理员权限的路由列表
 
   if(requiresAuth.includes(to.name) && !authStore.isAuthenticated) {
     // 如果访问需要认证页面且用户未认证，重定向到登录页面
     next({ name: 'login' });
-  }else{
+  } else if(requiresAdmin.includes(to.name) && !authStore.isAdmin) {
+    // 如果访问需要管理员权限的页面且用户不是管理员，重定向到首页
+    next({ name: 'home' });
+  } else {
     next(); // 直接next()放行路由
   }
 

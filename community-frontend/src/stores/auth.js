@@ -29,6 +29,8 @@ export const useAuthStore = defineStore('auth', () => {
       return {}
     }
   })())
+  // 新增：用户角色 state，从 localStorage 恢复
+  const role = ref(localStorage.getItem('role') || '')
 
   // --- Actions ---
   // 7. 定义一个名为 login 的 action。它是一个 async 函数，接收登录所需的参数。
@@ -41,14 +43,17 @@ export const useAuthStore = defineStore('auth', () => {
         password: password,
       })
 
-      // b. 从响应中获取JWT Token
+      // b. 从响应中获取JWT Token 和用户信息
       const responseToken = response.data.data.jwtToken
+      const responseRole = response.data.data.role
 
       // c. 更新 state
       token.value = responseToken
+      role.value = responseRole
 
-      // d. 将 token 存入浏览器的 localStorage，以便持久化
+      // d. 将 token 和 role 存入浏览器的 localStorage，以便持久化
       localStorage.setItem('token', responseToken)
+      localStorage.setItem('role', responseRole)
 
       // 附加：登录成功后，我们通常需要获取当前用户信息
       // 我们可以再发一个请求，或者更好的方式是在登录成功后，后端直接返回用户信息
@@ -75,11 +80,13 @@ export const useAuthStore = defineStore('auth', () => {
   function logout() {
     // a. 清空 state
     token.value = null
+    role.value = ''
     // 关键修复：直接赋值空对象，而不是 Object.assign（避免操作到字符串引用）
     user.value = {}
 
     // b. 清空 localStorage
     localStorage.removeItem('token')
+    localStorage.removeItem('role')
     localStorage.removeItem('user')
 
     // c. 跳转到登录页
@@ -90,6 +97,9 @@ export const useAuthStore = defineStore('auth', () => {
   // 9. 定义一个计算属性，用于判断用户是否已登录
   const isAuthenticated = computed(() => !!token.value) // 通过 token 是否存在来判断
 
-  // 10. 最后，必须将你需要暴露给外部使用的 state, actions, getters 返回出去
-  return { token, user, login, logout, isAuthenticated }
+  // 10. 定义一个计算属性，用于判断用户是否为管理员
+  const isAdmin = computed(() => role.value === 'ROLE_ADMIN')
+
+  // 11. 最后，必须将你需要暴露给外部使用的 state, actions, getters 返回出去
+  return { token, user, role, login, logout, isAuthenticated, isAdmin }
 })

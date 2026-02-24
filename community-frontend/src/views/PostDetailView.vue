@@ -6,7 +6,7 @@
       <h1 class="post-title">{{ post.title }}</h1>
       <div class="post-meta">
         <span class="author">作者：{{ post.author }}</span>
-        <span class="created-at">发布于：{{ new Date(post.createdAt).toLocaleDateString() }}</span>
+        <span class="created-at">发布于：{{ new Date(post.updateTime).toLocaleDateString() }}</span>
       </div>
       <div class="post-content" v-html="post.content"></div>
     </article>
@@ -17,8 +17,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
-// 假设你有一个服务来获取帖子数据
-// import { getPostById } from '@/services/postService'
+
 
 export default {
   setup() {
@@ -31,9 +30,9 @@ export default {
       try {
         const postId = route.params.id    //从路由参数获取帖子ID
 
-        // 模拟 API 调用
-        const response = await new axios.get('/api/posts/' + postId);
-        post.value = response
+        // 调用后端 API 获取帖子详情
+        const response = await axios.get('/api/posts/' + postId);
+        post.value = response.data.data  // 修复：取出实际的帖子数据
       } catch (err) {
         error.value = '加载帖子失败，请稍后再试。'
         console.error(err)
