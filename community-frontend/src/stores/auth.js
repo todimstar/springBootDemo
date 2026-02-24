@@ -16,7 +16,19 @@ export const useAuthStore = defineStore('auth', () => {
   // 6. 定义 token state，初始值为 null。
   //    我们还尝试从浏览器的 localStorage 读取之前保存的token，这样即使用户刷新页面，登录状态也能保持。
   const token = ref(localStorage.getItem('token'))
-  const user = ref(localStorage.getItem('user') || {}) // 用户信息也一样
+  // 关键修复：localStorage 只能存字符串，必须用 JSON.parse() 还原成对象
+  // 用 try/catch 包裹，防止 localStorage 里的内容格式损坏时直接白屏崩溃
+  const user = ref((() => {
+    try {
+      return JSON.parse(localStorage.getItem('user') || '{}')
+    } catch (e) {
+      console.warn('[auth store] localStorage 里的 user 数据解析失败，已重置为空对象')
+      console.warn('  错误类型:', e.name)        // 错误名称，如 SyntaxError
+      console.warn('  错误信息:', e.message)     // 具体描述，如 Unexpected token ...
+      console.warn('  原始数据:', localStorage.getItem('user')) // 打出损坏的原始字符串
+      return {}
+    }
+  })())
 
   // --- Actions ---
   // 7. 定义一个名为 login 的 action。它是一个 async 函数，接收登录所需的参数。
@@ -43,8 +55,8 @@ export const useAuthStore = defineStore('auth', () => {
       // 这里我们先假设登录成功后，需要再请求一次用户信息
       // (在你的后端，你可能需要创建一个 /api/users/me 这样的接口)
       // 为了简化，我们暂时先把用户名存起来
-      // user.value = { username: response.data.data.username }; // 这是一个简化的例子
-      Object.assign(user.value, { username: response.data.data.username })
+      // 关键修复：直接赋值新对象，而不是 Object.assign（避免操作到字符串引用）
+      user.value = { username: response.data.data.username }
 
       localStorage.setItem('user', JSON.stringify(user.value))
       console.log(localStorage.getItem('user'))
@@ -63,8 +75,8 @@ export const useAuthStore = defineStore('auth', () => {
   function logout() {
     // a. 清空 state
     token.value = null
-    // user.value = null;
-    Object.assign(user.value, {}) // 清空 user 的所有属性
+    // 关键修复：直接赋值空对象，而不是 Object.assign（避免操作到字符串引用）
+    user.value = {}
 
     // b. 清空 localStorage
     localStorage.removeItem('token')

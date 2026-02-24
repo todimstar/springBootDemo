@@ -147,7 +147,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         redisTemplate.delete(failKey);
 
         // 创建返回体
-        return new LoginResponseVO(userInDb.getUsername(),token);
+        return new LoginResponseVO(userInDb.getUsername(), token, userInDb.getRole());
     }
 
     /**

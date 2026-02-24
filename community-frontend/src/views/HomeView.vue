@@ -8,6 +8,9 @@ import { onMounted, ref } from 'vue'
 const count = ref(1)
 const change = ref(1)
 
+// 用于绑定输入框的临时值（字符串类型）
+const countInput = ref('1')
+
 // 全部帖子（从后端获取或本地模拟）
 const allPosts = ref([])
 
@@ -17,10 +20,12 @@ let posts = ref([])
 function add() {
   if (allPosts.value.length === 0) return
   count.value = Math.min(count.value + change.value, allPosts.value.length)
+  countInput.value = String(count.value)   // 同步回输入框
   draw()
 }
 function sub() {
   count.value = Math.max(count.value - change.value, 1)
+  countInput.value = String(count.value)   // 同步回输入框
   draw()
 }
 
@@ -39,6 +44,21 @@ function sampleWithoutReplacement(arr, n) {
   return copy.slice(len - n)
 }
 
+// 用户手动修改输入框后，按回车或点"重新抽取"时调用
+// 把输入框的字符串解析成数字，做边界检查，再更新 count
+function applyCountInput() {
+  const parsed = parseInt(countInput.value, 10)  // parseInt：字符串转整数
+  if (isNaN(parsed) || parsed < 1) {
+    // 输入非法（空、字母、0以下），重置回当前 count
+    countInput.value = String(count.value)
+    return
+  }
+  // 不能超过总帖子数量
+  count.value = Math.min(parsed, allPosts.value.length || parsed)
+  countInput.value = String(count.value)  // 修正显示（比如输入999会被修正）
+  draw()
+}
+
 function draw() {
   posts.value = sampleWithoutReplacement(allPosts.value, count.value)
 }
@@ -49,13 +69,14 @@ async function fetchPosts() {
   // const data = await res.json()
   // allPosts.value = data
   try {
-    const res = await fetch('/api/posts/allTitles')
+    const res = await fetch('/api/posts/feed')
     const { data } = await res.json()
     allPosts.value = data
     console.log(allPosts.value)
 
     // 修正 count 不超过总量
     count.value = Math.min(count.value, allPosts.value.length || 1)
+    countInput.value = String(count.value)  // 同步输入框初始值
     draw()
   } catch (err) {
     console.error('获取帖子失败:', err)
@@ -82,7 +103,14 @@ onMounted(fetchPosts)
         <h2>抽取设置</h2>
         <div class="control-group">
           <label for="draw-count">抽取数量：</label>
-          <span id="draw-count" class="count-display">{{ count }}</span>
+          <input
+            id="draw-count"
+            type="number"
+            v-model="countInput"
+            min="1"
+            class="count-input"
+            @keyup.enter="applyCountInput"
+          />
         </div>
         <div class="control-group">
           <label for="change-step">调整步长：</label>
@@ -95,7 +123,7 @@ onMounted(fetchPosts)
         <div class="button-group">
           <button @click="add">加 {{ change }}</button>
           <button @click="sub">减 {{ change }}</button>
-          <button @click="draw" class="primary">重新抽取</button>
+          <button @click="applyCountInput" class="primary">重新抽取</button>
         </div>
       </div>
 
@@ -207,6 +235,25 @@ onMounted(fetchPosts)
   background-color: #f0f8ff;
   padding: 4px 10px;
   border-radius: 4px;
+}
+
+/* 可编辑的数量输入框 */
+.count-input {
+  width: 70px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #3498db;
+  background-color: #f0f8ff;
+  padding: 4px 10px;
+  border: 1px solid #b3d7f5;
+  border-radius: 4px;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.count-input:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
 }
 
 .control-panel select {

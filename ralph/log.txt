@@ -1,0 +1,228 @@
+US-001 已完成。PRD 中仍有 US-002 到 US-011（共 10 个故事）`passes: false`，下一个迭代将处理 US-002：用户画像风险加权。
+
+**US-001 完成总结：**
+
+- **新建文件 11 个**，覆盖数据库迁移、实体、DTO、枚举、工具类、Mapper、Service 接口及实现、单元测试
+- **核心功能**：规则引擎按责任链（关键词→正则→黑名单）执行文本匹配，输出 0-100 风险分
+- **文本预处理**：去空格、小写统一、全角→半角归一化
+- **Redis 缓存**：规则优先从缓存加载，Redis 不可用时自动降级到数据库查询
+- **测试覆盖**：27 个单元测试全部通过（TextNormalizer 11 个 + RiskScoringService 16 个）
+- **mvn compile** 和 **mvn test** 均通过
+Iteration 1 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 2 of 20 (claude)
+===============================================================
+US-002 已完成验证。来回顾一下状态：
+
+**US-002: 用户画像风险加权** - 已完成 ✓
+
+实现摘要：
+- `UserRiskFactorConfig` 实体 + `user_risk_factor_config` 配置表（含种子数据）
+- `UserRiskWeightService` / `UserRiskWeightServiceImpl` - 画像因子加权计算
+- `RiskScoringService.evaluateWithUserProfile(text, user)` - 带用户画像的评分入口
+- `User.violationCount` 新增字段 + `ALTER TABLE users` 迁移
+- 50 个单元测试全部通过，`mvn compile` 成功
+
+验收标准全部满足：
+1. ✓ 画像因子包含注册天数、历史违规次数、账号等级
+2. ✓ 初始加权规则：注册 < 7天 → ×1.5，违规 ≥ 3次 → ×2.0，等级 < 3 → ×1.2
+3. ✓ 加权系数通过数据库 `user_risk_factor_config` 表配置，无硬编码
+4. ✓ 最终评分 = 文本基础分 × 加权系数，封顶 100
+5. ✓ 单元测试覆盖独立因子、组合因子、边界值等场景
+6. ✓ `mvn compile` 编译通过
+
+PRD 中仍有 US-003 到 US-011 共 9 个故事 `passes: false`，后续迭代将继续处理。
+Iteration 2 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 3 of 20 (claude)
+===============================================================
+⚠️  [BashTool] Pre-flight check is taking longer than expected. Run with ANTHROPIC_LOG=debug to check for failed or slow API requests.
+US-003 已完成。PRD 中仍有 US-004 至 US-011 的 `passes: false`，下一个迭代将继续处理 US-004。
+
+## US-003 完成总结
+
+**实现内容：审核决策与状态流转**
+
+### 新增文件
+| 文件 | 说明 |
+|------|------|
+| `sql/V2_2__moderation_decision.sql` | 阈值配置表 + 审核队列表 DDL |
+| `common/enums/ModerationDecision.java` | 审核决策枚举 |
+| `POJO/entity/ModerationThresholdConfig.java` | 阈值配置实体 |
+| `POJO/entity/ModerationQueue.java` | 审核队列实体 |
+| `POJO/dto/ModerationDecisionResult.java` | 决策结果 DTO |
+| `mapper/ModerationThresholdConfigMapper.java` | 阈值查询 Mapper |
+| `mapper/ModerationQueueMapper.java` | 队列写入 Mapper |
+| `service/ModerationDecisionService.java` | 决策服务接口 |
+| `service/impl/ModerationDecisionServiceImpl.java` | 决策服务实现 |
+| `test/.../ModerationDecisionServiceImplTest.java` | 17 个单元测试 |
+
+### 修改文件
+- `PostStatus.java` — 新增 `SHADOW_BANNED(5)`
+
+### 核心决策逻辑
+- `score < 30` → 自动放行 (status=2)
+- `30 ≤ score < 70` → 送人审 (status=1)，写入审核队列
+- `score ≥ 70` → 自动拦截 (status=3)
+- 阈值从数据库读取，支持 Redis 缓存 + 三级降级
+
+### 测试结果
+- 17 个新测试全部通过，总计 78 个测试通过，`mvn compile` 成功
+Iteration 3 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 4 of 20 (claude)
+===============================================================
+US-004 完成。总结：
+
+**US-004: 影子发布可见性控制** - 已完成 ✅
+
+**实现内容：**
+- **帖子查询**：验证现有代码已正确处理 SHADOW_BANNED(status=5) 可见性 — 所有列表查询默认只展示 PUBLISHED 帖子，详情查询中非作者/非管理员返回404
+- **评论查询**：修改 `CommentServiceImpl.findByPostIdByPage`，新增对 SHADOW_BANNED 帖子评论的可见性控制 — 仅帖子作者和管理员可查看，其他用户/匿名用户返回 POST_NOT_FOUND（隐蔽式拒绝）
+- **11 个集成测试**全部通过（总计 89 个测试通过），覆盖帖子详情和评论列表在发布者/他人/匿名/管理员四种视角下的行为
+
+**文件变更：**
+- `CommentServiceImpl.java` — 新增 SHADOW_BANNED 可见性检查
+- `ShadowBanVisibilityTest.java` — 新增 11 个测试用例
+
+PRD 中仍有 US-005 ~ US-011 共 7 个 story 待完成（`passes: false`），下一迭代将处理 US-005。
+Iteration 4 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 5 of 20 (claude)
+===============================================================
+⚠️  [BashTool] Pre-flight check is taking longer than expected. Run with ANTHROPIC_LOG=debug to check for failed or slow API requests.
+US-005 已完成。提交成功：`cf8ea2c feat: [US-005] - 管理员审核队列页面`
+
+## US-005 完成总结
+
+**实现内容：**
+
+### 后端 (Spring Boot)
+- **ModerationController** (`controller/admin/`) — 3 个 API 接口：
+  - `GET /api/admin/moderation/queue` — 分页查询待审核列表（支持按帖子/评论筛选，风险分降序）
+  - `GET /api/admin/moderation/{id}` — 查看审核详情
+  - `POST /api/admin/moderation/{id}/action` — 执行审核操作（通过/驳回/下架/影子发布）
+- **ModerationQueueService** — 审核队列业务逻辑（分页查询、幂等操作、事务支持）
+- **ModerationAction** 枚举 — 4 种操作映射到帖子状态
+- **ModerationQueueMapper** 扩展 — 分页查询 XML + findById + updateStatus
+- VO/DTO — `ModerationQueueVO`、`ModerationQueuePageQueryDTO`、`ModerationActionDTO`
+
+### 前端 (Vue 3 + Element Plus)
+- **AdminModerationView.vue** — 审核队列管理页面
+  - 表格展示所有待审核内容（内容摘要、作者、类型、风险分色标、命中规则、提交时间）
+  - 按内容类型筛选（全部/帖子/评论）
+  - 四个操作按钮 + 必填理由对话框
+  - 分页支持
+
+### 质量保证
+- **13 个单元测试**全部通过（分页查询 3 + 详情查询 2 + 审核操作 8）
+- `mvn compile` 编译通过
+- `pnpm build` 前端构建通过
+
+---
+
+PRD 中仍有 US-006 ~ US-011 的 `passes: false` stories 待完成，下一轮迭代将继续。
+Iteration 5 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 6 of 20 (claude)
+===============================================================
+US-006 is complete. There are still stories with `passes: false` (US-007 through US-011), so another iteration will pick up the next story.
+
+**US-006 完成总结：**
+
+US-005 已经实现了审核操作 API 的全部后端功能（3 个端点、ADMIN 鉴权、参数校验、幂等处理）。US-006 的主要贡献是补充了 **18 个 Controller 层接口测试**，使用 Standalone MockMvc + GlobalExceptionHandler 覆盖：
+
+- **分页查询 API**：成功返回、按类型筛选、默认参数
+- **审核详情 API**：存在返回、不存在返回 400
+- **审核操作 API**：4 种操作成功、4 种参数校验返回 400、幂等测试、无请求体 400、非法操作 400、队列不存在 400、关联帖子不存在 404
+
+共 98 个审核模块测试全部通过，mvn compile 编译通过。
+Iteration 6 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 7 of 20 (claude)
+===============================================================
+US-007 已完成。PRD 中仍有 US-008 到 US-011 的 `passes: false`，还有更多工作要做。
+
+**US-007 完成摘要：**
+
+- **审计日志表** `moderation_audit_log`：记录目标 ID、目标类型、操作类型、操作人、操作时间、审核理由、命中规则快照、风险评分快照
+- **自动审核写入日志**：集成到 `ModerationDecisionServiceImpl.decide()`，操作人标记为 `SYSTEM`
+- **人工审核写入日志**：集成到 `ModerationQueueServiceImpl.executeAction()`，通过 `SecurityUtil.getCurrentUser()` 获取操作人
+- **查询 API**：`GET /api/admin/moderation/{id}/logs` 返回审计轨迹
+- **日志不可篡改**：Mapper 仅提供 INSERT + SELECT，无 UPDATE/DELETE
+- **12 个单元测试**全部通过，mvn compile 编译通过
+Iteration 7 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 8 of 20 (claude)
+===============================================================
+⚠️  [BashTool] Pre-flight check is taking longer than expected. Run with ANTHROPIC_LOG=debug to check for failed or slow API requests.
+⚠️  [BashTool] Pre-flight check is taking longer than expected. Run with ANTHROPIC_LOG=debug to check for failed or slow API requests.
+⚠️  [BashTool] Pre-flight check is taking longer than expected. Run with ANTHROPIC_LOG=debug to check for failed or slow API requests.
+⚠️  [BashTool] Pre-flight check is taking longer than expected. Run with ANTHROPIC_LOG=debug to check for failed or slow API requests.
+⚠️  [BashTool] Pre-flight check is taking longer than expected. Run with ANTHROPIC_LOG=debug to check for failed or slow API requests.
+⚠️  [BashTool] Pre-flight check is taking longer than expected. Run with ANTHROPIC_LOG=debug to check for failed or slow API requests.
+⚠️  [BashTool] Pre-flight check is taking longer than expected. Run with ANTHROPIC_LOG=debug to check for failed or slow API requests.
+⚠️  [BashTool] Pre-flight check is taking longer than expected. Run with ANTHROPIC_LOG=debug to check for failed or slow API requests.
+⚠️  [BashTool] Pre-flight check is taking longer than expected. Run with ANTHROPIC_LOG=debug to check for failed or slow API requests.
+⚠️  [BashTool] Pre-flight check is taking longer than expected. Run with ANTHROPIC_LOG=debug to check for failed or slow API requests.
+⚠️  [BashTool] Pre-flight check is taking longer than expected. Run with ANTHROPIC_LOG=debug to check for failed or slow API requests.
+⚠️  [BashTool] Pre-flight check is taking longer than expected. Run with ANTHROPIC_LOG=debug to check for failed or slow API requests.
+US-008 is complete. There are still stories with `passes: false` (US-009, US-010, US-011), so another iteration will pick up the next story.
+
+**US-008 完成总结：**
+
+实现了规则库管理 API，包含以下功能：
+
+| 端点 | 说明 |
+|------|------|
+| `GET /api/admin/moderation/rules` | 分页查询规则列表（支持按类型/启用状态筛选） |
+| `POST /api/admin/moderation/rules` | 新增规则（含参数校验） |
+| `PUT /api/admin/moderation/rules/{id}` | 修改规则（动态更新非 null 字段） |
+| `DELETE /api/admin/moderation/rules/{id}` | 软删除规则 |
+
+**关键特性：**
+- 所有接口仅 ADMIN 角色可访问
+- 规则变更后自动刷新 Redis 缓存
+- 规则变更写入审计日志（targetType="rule"）
+- 缓存刷新失败不影响主流程
+
+**测试覆盖：** 35 个新测试（20 个单元测试 + 15 个接口测试），全部通过。
+Iteration 8 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 9 of 20 (claude)
+===============================================================
+US-009 已完成。PRD 中还有 US-010 (`passes: false`) 和 US-011 (`passes: false`) 未完成，需要后续迭代继续处理。
+
+**US-009 完成总结：**
+
+- **ContentModerationStrategy** 接口 — `supports()` + `evaluate()` 两方法定义审核策略契约
+- **TextModerationStrategy** — 委托给现有 `RiskScoringService`，处理文本类型内容
+- **ImageModerationStrategy** — 占位实现，图片内容默认安全放行，预留未来扩展
+- **ModerationStrategyDispatcher** — Spring 自动收集所有策略实现，按 `contentType` 路由分发
+- **ModerationDecisionService** — 新增重载 `decide(content, contentType, user, targetId, targetType)` 方法
+- 全部 155 个测试通过，`mvn compile` 编译通过
+- 已提交 commit: `feat: [US-009] - 图片审核扩展接口占位`
+Iteration 9 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 10 of 20 (claude)
+===============================================================
+US-010 已完成。PRD 中还有 US-011 (`passes: false`)，所以还有未完成的 story，正常结束本次迭代。
+
+**US-010 完成总结：**
+
+- **帖子创建接口**：`PostServiceImpl.createPost()` 在插入帖子后同步调用 `ModerationDecisionService.decide()`，根据审核结果更新帖子状态
+- **帖子编辑接口**：`PostServiceImpl.updatePost()` 在标题或正文变更时重新触发审核
+- **被驳回/下架帖子**：REJECTED 和 SHADOW_BANNED 状态允许作者编辑后重新提交
+- **友好提示**：新增 `POST_CONTENT_REJECTED` 错误码，被自动拦截的内容返回 "您的内容包含违规信息，请修改后重新提交"
+- **测试**：11 个集成测试覆盖创建（自动放行/送人审/自动拦截/文本拼接验证）和编辑（内容变更三种决策/非内容变更跳过/被驳回可编辑/已删除禁止编辑/影子帖子可编辑）
+- **编译**：`mvn compile` 通过，所有测试通过
+Iteration 10 complete. Continuing...
