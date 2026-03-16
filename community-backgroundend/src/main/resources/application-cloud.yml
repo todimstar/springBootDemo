@@ -10,7 +10,7 @@ spring:
       connection-test-query: SELECT 1 # 连接测试查询语句
 
 # mysql数据库配置
-DB_HOST: 113.45.27.27
+DB_HOST: 47.107.182.221
 DB_PORT: 3306
 DB_NAME: springboot_db
 DB_USERNAME: springboot_dev

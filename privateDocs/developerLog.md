@@ -180,3 +180,41 @@ redis引入：1.依赖；2.配置数据源yml；3.Commen配置类以序列化输
 
 
 > 那么会出现用户最后一秒提交验证码然后redis里验证在springboot里失效导致最终验证失败的情况吗？不过这种场景应该也不影响吧。又不是秒杀系统。不过引入redis时听说redis更新中已经更新了轻型消息队列？我们如果不引用MQ或者kafuka这些大型消息队列用得上redis的吗？还是springboot也自带轻型消息队列？毕竟之后可能会做通知系统消息系统啥的，虽然只是可能，时间快不够找实习了。不知道这个项目要做到什么程度才能开始找实习面试
+
+2026.1.17 00:20
+
+搞完了Minio引入的用户头像更新接口，过期未用到的图片删除这个需要作为亮点搞搞，还有MinioService的uploadFile可能要搞多种枚举
+
+18:26
+
+发现UserServiceImpl竟然继承了UserDetailService实现loaduserByUsername方法用于Security认证和返回UserDetail对象，这样就能肯定SecurityContentHolder拿到的UserDetail内容了，其实就是{username,password,authorities(Role())}，三个内容
+
+20:53
+
+对于内容不多的update，为了完善删除某些信息的功能，比如这里的用户信息更新，采用null和""空字符串作为区分删除还是不更新。不过又发现去，其实根本没什么需要更新时改为删除的字段。额，所以跳过接着实现上传头像时删除旧头像和过期删除图片资源功能。注意检查user和post等要update的表里是否有对应的default字段即可，一旦更新便不允许变为默认，这是常见应用的策略
+
+1.18 11:11
+
+注意到jwt过滤器链中存储的UserDeatil只有username、password、auths，不过SecurityUtil里的getcurrent已经findByUsername过一次了，所以优化了uploadAvatar中获取url
+
+更新了用户头像上传后删除功能，且多枚举了FileType用于Minio上传时判断文件类型与大小限制和各处调用时选择类型文件前缀
+
+> "在论坛项目中，我使用 MinIO 实现了分布式对象存储服务。
+>
+> 具体实现：
+>
+> 文件分类管理：设计了 FileType 枚举，区分头像、帖子封面等类型，每种类型有独立的存储路径和大小限制。
+> 安全上传：实现了文件类型、大小校验，采用 UUID + 日期分层命名策略，防止文件名冲突和路径穿越攻击。
+> 资源管理：用户更换头像时自动删除旧头像，避免存储空间浪费。
+> 性能优化：配置 Bucket 为 Public Read，图片可直接通过 URL 访问，减少后端压力。"
+
+1.19 01:11
+
+昨天一天更新了图片压缩方法，准备收工时还差点忘了之前的同一用户更新头像会删除旧头像，还以为没法根据旧objectName找到旧资源是错误的，其实这能找到才有鬼了。现在测试不同用户即使使用同一张图都不会因为隔壁用户删除图片或者修改影响到自身了，这就是uuid的作用啊
+
+22:37
+
+写了个1114按序打印，多线程但得按序调用的题，用了Semaphore信号量实现，ReentrantLock互斥锁配其Condition状况，依靠修改volatile共享变量实现按需通知唤醒。
+
+Redis缓存击穿的永不过期与互斥锁中的互斥锁就是用的ReentantLock去实现放行单请求去更新Redis热点key。
+
