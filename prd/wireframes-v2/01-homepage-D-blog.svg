@@ -1,0 +1,217 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <defs>
+    <style>
+      text { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
+      .ann { font-size: 9px; fill: #c0392b; font-style: italic; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="800" fill="#fff"/>
+
+  <!-- ==================== TOP NAV ==================== -->
+  <rect width="1200" height="52" fill="#fff"/>
+  <line x1="0" y1="52" x2="1200" y2="52" stroke="#eee" stroke-width="1"/>
+  <text x="40" y="34" font-size="18" font-weight="bold" fill="#111" letter-spacing="0.5">TechHub</text>
+  <!-- Nav links -->
+  <text x="148" y="34" font-size="13" fill="#bbb">|</text>
+  <text x="168" y="34" font-size="13" fill="#999">首页</text>
+  <text x="216" y="34" font-size="13" fill="#999">发现</text>
+  <!-- Right -->
+  <!-- Search icon button -->
+  <rect x="944" y="14" width="32" height="28" rx="14" fill="none" stroke="#e0e0e0" stroke-width="1"/>
+  <circle cx="957" cy="25" r="6" fill="none" stroke="#bbb" stroke-width="1.2"/>
+  <line x1="962" y1="30" x2="966" y2="34" stroke="#bbb" stroke-width="1.2"/>
+  <!-- Write button -->
+  <rect x="992" y="14" width="80" height="28" rx="14" fill="#111"/>
+  <text x="1012" y="33" font-size="12" fill="#fff">写文章</text>
+  <!-- Avatar -->
+  <circle cx="1112" cy="28" r="15" fill="#f0f0f0" stroke="#eee" stroke-width="0.5"/>
+  <text x="1103" y="32" font-size="9" fill="#bbb">头像</text>
+  <!-- Unlogged annotation -->
+  <text x="1140" y="22" class="ann">已登录态</text>
+  <text x="1140" y="34" class="ann">未登录: [登录][注册]</text>
+
+  <!-- ==================== LEFT SIDEBAR (180px) ==================== -->
+  <rect x="0" y="52" width="180" height="748" fill="#fafafa"/>
+  <line x1="180" y1="52" x2="180" y2="800" stroke="#f0f0f0" stroke-width="1"/>
+
+  <!-- Section: 分区 -->
+  <text x="28" y="88" font-size="10" fill="#ccc" letter-spacing="2">分区</text>
+
+  <!-- Active -->
+  <rect x="16" y="100" width="152" height="34" rx="8" fill="#f0f0f0"/>
+  <text x="36" y="122" font-size="13" fill="#111" font-weight="600">全部</text>
+
+  <text x="36" y="158" font-size="13" fill="#777">后端与开发实践</text>
+  <text x="36" y="186" font-size="13" fill="#777">算法与竞赛</text>
+  <text x="36" y="214" font-size="13" fill="#777">AI与工具探索</text>
+  <text x="36" y="242" font-size="13" fill="#777">解决方案与踩坑</text>
+  <text x="36" y="270" font-size="13" fill="#777">工具与资源</text>
+  <text x="36" y="298" font-size="13" fill="#777">茶水间</text>
+
+  <text x="28" y="328" class="ann">点击切换筛选</text>
+  <text x="28" y="340" class="ann">选中: 灰色圆角底</text>
+
+  <!-- Divider -->
+  <line x1="28" y1="360" x2="156" y2="360" stroke="#eee" stroke-width="0.5"/>
+
+  <!-- Section: 热门标签 — 竖列文字列表，不用药丸标签云 -->
+  <text x="28" y="394" font-size="10" fill="#ccc" letter-spacing="2">热门标签</text>
+  <text x="36" y="420" font-size="12" fill="#777">Spring Boot</text>
+  <text x="148" y="420" font-size="9" fill="#ddd" text-anchor="end">128</text>
+  <text x="36" y="444" font-size="12" fill="#777">Redis</text>
+  <text x="148" y="444" font-size="9" fill="#ddd" text-anchor="end">96</text>
+  <text x="36" y="468" font-size="12" fill="#777">MySQL</text>
+  <text x="148" y="468" font-size="9" fill="#ddd" text-anchor="end">87</text>
+  <text x="36" y="492" font-size="12" fill="#777">力扣</text>
+  <text x="148" y="492" font-size="9" fill="#ddd" text-anchor="end">72</text>
+  <text x="36" y="516" font-size="12" fill="#777">Docker</text>
+  <text x="148" y="516" font-size="9" fill="#ddd" text-anchor="end">65</text>
+  <text x="36" y="540" font-size="12" fill="#777">Python</text>
+  <text x="148" y="540" font-size="9" fill="#ddd" text-anchor="end">54</text>
+  <text x="36" y="564" font-size="12" fill="#aaa">查看全部 →</text>
+  <text x="28" y="586" class="ann">竖排列表 + 右对齐计数</text>
+  <text x="28" y="598" class="ann">点击标签 → 筛选帖子列表</text>
+  <text x="28" y="610" class="ann">❌ 标签系统未实现，V1可先隐藏</text>
+
+  <!-- Divider -->
+  <line x1="28" y1="726" x2="156" y2="726" stroke="#eee" stroke-width="0.5"/>
+
+  <!-- Section: 社区 — 小字低调展示 -->
+  <text x="28" y="750" font-size="10" fill="#ccc" letter-spacing="2">社区</text>
+  <text x="36" y="772" font-size="11" fill="#bbb">帖子</text>
+  <text x="148" y="772" font-size="11" fill="#999" text-anchor="end" font-weight="600">1,234</text>
+  <text x="36" y="792" font-size="11" fill="#bbb">作者</text>
+  <text x="148" y="792" font-size="11" fill="#999" text-anchor="end" font-weight="600">567</text>
+
+  <!-- ====================================================== -->
+  <!-- MAIN CONTENT AREA                                       -->
+  <!-- Left margin: 180(sidebar) + 40(gap) = 220px start       -->
+  <!-- Content width: ~740px                                    -->
+  <!-- Right margin: 1200 - 220 - 740 = 240px (≈ sidebar 180+gap) -->
+  <!-- ====================================================== -->
+
+  <!-- Sort: text only -->
+  <text x="232" y="84" font-size="15" font-weight="bold" fill="#111">最新</text>
+  <text x="284" y="84" font-size="15" fill="#ddd">·</text>
+  <text x="302" y="84" font-size="15" fill="#ccc">精选</text>
+  <text x="352" y="84" font-size="15" fill="#ddd">·</text>
+  <text x="370" y="84" font-size="15" fill="#ccc">热门</text>
+
+  <!-- ===== HERO CARD — 精选/首条大图 ===== -->
+  <rect x="232" y="104" width="740" height="200" rx="12" fill="#f5f5f5" stroke="#eee" stroke-width="0.5"/>
+  <!-- Cover image placeholder -->
+  <rect x="232" y="104" width="340" height="200" rx="12 0 0 12" fill="#e8e8e8"/>
+  <text x="370" y="196" font-size="12" fill="#bbb" text-anchor="middle">封面图</text>
+  <text x="370" y="214" font-size="10" fill="#ccc" text-anchor="middle">16:10 · cover_image</text>
+  <!-- Right: text content -->
+  <circle cx="604" y="140" r="4" fill="#111"/>
+  <text x="616" y="144" font-size="10" fill="#111" font-weight="600">精选</text>
+  <text x="664" y="144" font-size="10" fill="#ddd">·</text>
+  <text x="676" y="144" font-size="10" fill="#bbb">后端与开发实践</text>
+  <text x="596" y="180" font-size="18" font-weight="bold" fill="#111">Spring Boot 3.x 集成 Redis</text>
+  <text x="596" y="204" font-size="18" font-weight="bold" fill="#111">实现分布式缓存最佳实践</text>
+  <text x="596" y="232" font-size="12" fill="#999">本文详细介绍了连接池配置、序列化方案</text>
+  <text x="596" y="250" font-size="12" fill="#999">选择以及集群部署方案。</text>
+  <!-- Meta -->
+  <circle cx="606" cy="278" r="8" fill="#e0e0e0"/>
+  <text x="620" y="282" font-size="11" fill="#666">张三</text>
+  <text x="660" y="282" font-size="11" fill="#ddd">·</text>
+  <text x="672" y="282" font-size="11" fill="#bbb">3小时前</text>
+  <text x="730" y="282" font-size="11" fill="#ddd">·</text>
+  <text x="742" y="282" font-size="11" fill="#bbb">23 评论</text>
+
+  <!-- Annotation -->
+  <line x1="972" y1="140" x2="996" y2="140" stroke="#c0392b" stroke-width="0.5" stroke-dasharray="2,2"/>
+  <text x="1000" y="136" class="ann">精选/置顶帖子</text>
+  <text x="1000" y="148" class="ann">左侧封面大图</text>
+  <text x="1000" y="160" class="ann">右侧标题+摘要</text>
+  <text x="1000" y="172" class="ann">无封面图时全宽文字</text>
+
+  <!-- Divider -->
+  <line x1="232" y1="324" x2="972" y2="324" stroke="#f0f0f0" stroke-width="0.5"/>
+
+  <!-- ===== REGULAR CARD 1 — 纯文字 ===== -->
+  <text x="232" y="362" font-size="18" font-weight="bold" fill="#111" letter-spacing="-0.3">力扣周赛 380：从前缀和到单调栈的优雅解法</text>
+
+  <text x="232" y="388" font-size="13" fill="#999">这道题乍看是个模拟，但换个角度用前缀和+单调栈可以做到 O(n) 复杂度。</text>
+  <text x="232" y="406" font-size="13" fill="#999">分享我的思路演进过程和踩过的坑。</text>
+
+  <circle cx="244" cy="432" r="8" fill="#f0f0f0"/>
+  <text x="258" y="436" font-size="11" fill="#666">李四</text>
+  <text x="292" y="436" font-size="11" fill="#ddd">·</text>
+  <text x="304" y="436" font-size="11" fill="#bbb">算法与竞赛</text>
+  <text x="382" y="436" font-size="11" fill="#ddd">·</text>
+  <text x="394" y="436" font-size="11" fill="#bbb">昨天</text>
+  <text x="432" y="436" font-size="11" fill="#ddd">·</text>
+  <text x="444" y="436" font-size="11" fill="#bbb">42 评论</text>
+
+  <line x1="232" y1="456" x2="972" y2="456" stroke="#f0f0f0" stroke-width="0.5"/>
+
+  <!-- ===== REGULAR CARD 2 ===== -->
+  <text x="232" y="492" font-size="18" font-weight="bold" fill="#111" letter-spacing="-0.3">用 Claude + MCP 自动化我的整个开发工作流</text>
+
+  <text x="232" y="518" font-size="13" fill="#999">分享如何利用 Claude 的 MCP 协议连接本地工具链，实现从需求分析到代码</text>
+  <text x="232" y="536" font-size="13" fill="#999">生成再到测试部署的全流程自动化实践。</text>
+
+  <circle cx="244" cy="562" r="8" fill="#f0f0f0"/>
+  <text x="258" y="566" font-size="11" fill="#666">王五</text>
+  <text x="292" y="566" font-size="11" fill="#ddd">·</text>
+  <text x="304" y="566" font-size="11" fill="#bbb">AI与工具探索</text>
+  <text x="396" y="566" font-size="11" fill="#ddd">·</text>
+  <text x="408" y="566" font-size="11" fill="#bbb">2天前</text>
+  <text x="456" y="566" font-size="11" fill="#ddd">·</text>
+  <text x="468" y="566" font-size="11" fill="#bbb">89 评论</text>
+  <circle cx="532" cy="562" r="3" fill="#111"/>
+  <text x="542" y="566" font-size="10" fill="#111" font-weight="600">精选</text>
+
+  <line x1="232" y1="586" x2="972" y2="586" stroke="#f0f0f0" stroke-width="0.5"/>
+
+  <!-- ===== REGULAR CARD 3 ===== -->
+  <text x="232" y="622" font-size="18" font-weight="bold" fill="#111" letter-spacing="-0.3">MySQL 8.0 死锁排查全记录：从 binlog 到 MVCC</text>
+
+  <text x="232" y="648" font-size="13" fill="#999">线上突发死锁告警，本文记录从发现到定位到修复的完整过程。</text>
+
+  <circle cx="244" cy="674" r="8" fill="#f0f0f0"/>
+  <text x="258" y="678" font-size="11" fill="#666">赵六</text>
+  <text x="292" y="678" font-size="11" fill="#ddd">·</text>
+  <text x="304" y="678" font-size="11" fill="#bbb">解决方案与踩坑</text>
+  <text x="412" y="678" font-size="11" fill="#ddd">·</text>
+  <text x="424" y="678" font-size="11" fill="#bbb">3天前</text>
+  <text x="472" y="678" font-size="11" fill="#ddd">·</text>
+  <text x="484" y="678" font-size="11" fill="#bbb">31 评论</text>
+
+  <line x1="232" y1="698" x2="972" y2="698" stroke="#f0f0f0" stroke-width="0.5"/>
+
+  <!-- ===== REGULAR CARD 4 (partial) ===== -->
+  <text x="232" y="734" font-size="18" font-weight="bold" fill="#111" letter-spacing="-0.3">程序员下班后都在干什么？来聊聊你的副业</text>
+
+  <text x="232" y="760" font-size="13" fill="#999">好奇大家工作之余都在做什么，是继续写代码还是有其他爱好？</text>
+
+  <!-- Fade -->
+  <defs>
+    <linearGradient id="fadeD" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#fff" stop-opacity="1"/>
+    </linearGradient>
+  </defs>
+  <rect x="220" y="766" width="760" height="34" fill="url(#fadeD)"/>
+
+  <!-- ==================== RIGHT MARGIN AREA — 对称留白 ==================== -->
+  <!-- 此区域刻意留空，与左侧栏宽度对称 -->
+  <!-- 用虚线标注说明 -->
+  <line x1="980" y1="60" x2="980" y2="760" stroke="#f0f0f0" stroke-width="0.5" stroke-dasharray="4,4"/>
+  <text x="988" y="80" class="ann">对称留白区</text>
+  <text x="988" y="92" class="ann">≈ 左侧栏宽度</text>
+  <text x="988" y="104" class="ann">视觉平衡</text>
+
+  <!-- ==================== DIMENSION ANNOTATIONS ==================== -->
+  <!-- Bottom ruler -->
+  <line x1="0" y1="794" x2="180" y2="794" stroke="#c0392b" stroke-width="0.5"/>
+  <text x="80" y="792" font-size="8" fill="#c0392b" text-anchor="middle">180px</text>
+  <line x1="220" y1="794" x2="972" y2="794" stroke="#c0392b" stroke-width="0.5"/>
+  <text x="596" y="792" font-size="8" fill="#c0392b" text-anchor="middle">~750px 内容区</text>
+  <line x1="980" y1="794" x2="1200" y2="794" stroke="#c0392b" stroke-width="0.5"/>
+  <text x="1090" y="792" font-size="8" fill="#c0392b" text-anchor="middle">~220px</text>
+
+</svg>

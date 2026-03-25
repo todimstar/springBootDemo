@@ -22,11 +22,11 @@ class PostServiceImplTest {
 
 
    // @Mock: 我们需要模拟 SecurityContext 和 Authentication 用以当做PostServiceInjectMocks的成员注入
-   @Mock
-   private SecurityContext securityContext;
-
-   @Mock
-   private Authentication authentication;
+//   @Mock
+//   private SecurityContext securityContext;
+//
+//   @Mock
+//   private Authentication authentication;
 
     @InjectMocks
     private PostServiceImpl postService;

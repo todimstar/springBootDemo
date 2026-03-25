@@ -4,9 +4,12 @@
       "mcp__sequential-thinking__sequentialthinking",
       "Bash(dir:*)",
       "Bash(findstr:*)",
-      "Bash(ssh res:*)"
+      "Bash(ssh res:*)",
+      "WebSearch",
+      "Bash(xargs grep:*)"
     ],
     "deny": [],
     "ask": []
-  }
+  },
+  "outputStyle": "Learning"
 }

@@ -1,0 +1,174 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 950" font-family="'Segoe UI',system-ui,sans-serif">
+  <defs>
+    <style>
+      .title{font-size:18px;font-weight:700;fill:#1e293b}
+      .sub{font-size:12px;fill:#64748b}
+      .wlbl{font-size:13px;fill:#475569;font-weight:600}
+      .wsub{font-size:10px;fill:#94a3b8}
+      .api-m{font-size:11px;font-weight:700;font-family:Consolas,monospace}
+      .api-p{font-size:11px;font-family:Consolas,monospace;fill:#334155}
+      .api-n{font-size:10px;fill:#64748b}
+      .num{font-size:11px;font-weight:700;fill:#fff}
+      .lg{font-size:11px;fill:#475569}
+    </style>
+  </defs>
+  <rect width="1400" height="950" fill="#fafafa"/>
+  <text x="30" y="35" class="title">管理后台 — API 标注图</text>
+  <text x="30" y="52" class="sub">基于 PRD V1 · 绿=已实现 黄=部分实现 红=未实现</text>
+  <g transform="translate(1100,18)">
+    <rect width="12" height="12" rx="2" fill="#22c55e"/><text x="17" y="11" class="lg">已实现</text>
+    <rect x="75" width="12" height="12" rx="2" fill="#f59e0b"/><text x="92" y="11" class="lg">部分实现</text>
+    <rect x="165" width="12" height="12" rx="2" fill="#ef4444"/><text x="182" y="11" class="lg">未实现</text>
+  </g>
+
+  <!-- ===== WIREFRAME ===== -->
+  <!-- Admin sidebar -->
+  <rect x="30" y="70" width="160" height="850" rx="6" fill="#1e293b"/>
+  <text x="55" y="100" class="wlbl" fill="#e2e8f0">管理后台</text>
+  <rect x="40" y="120" width="140" height="30" rx="4" fill="#334155"/>
+  <text x="55" y="140" class="wsub" fill="#e2e8f0">📋 待审核帖子</text>
+  <rect x="40" y="160" width="140" height="30" rx="4" fill="#334155"/>
+  <text x="55" y="180" class="wsub" fill="#e2e8f0">✨ 精选申请</text>
+  <rect x="40" y="200" width="140" height="30" rx="4" fill="#334155"/>
+  <text x="55" y="220" class="wsub" fill="#e2e8f0">📂 分区管理</text>
+  <rect x="40" y="240" width="140" height="30" rx="4" fill="#334155"/>
+  <text x="55" y="260" class="wsub" fill="#e2e8f0">👥 用户管理</text>
+
+  <!-- Pending Review Section -->
+  <rect x="200" y="70" width="630" height="280" rx="6" fill="#fff" stroke="#e2e8f0"/>
+  <text x="220" y="100" class="wlbl">📋 待审核帖子列表</text>
+  <circle cx="800" cy="90" r="12" fill="#ef4444"/><text x="800" y="94" text-anchor="middle" class="num">1</text>
+
+  <rect x="215" y="115" width="600" height="55" rx="4" fill="#fef9c3" stroke="#fbbf24"/>
+  <text x="230" y="138" class="wsub">帖子标题 · 作者: 张三 · 提交时间: 2024-03-18</text>
+  <text x="230" y="155" class="wsub">摘要: 本文介绍 Spring Boot 项目结构...</text>
+  <rect x="680" y="123" width="55" height="24" rx="4" fill="#22c55e"/><text x="693" y="140" class="wsub" fill="#fff">通过</text>
+  <rect x="740" y="123" width="55" height="24" rx="4" fill="#ef4444"/><text x="753" y="140" class="wsub" fill="#fff">拒绝</text>
+  <circle cx="800" cy="135" r="12" fill="#f59e0b"/><text x="800" y="139" text-anchor="middle" class="num">2</text>
+
+  <rect x="215" y="180" width="600" height="55" rx="4" fill="#fef9c3" stroke="#fbbf24"/>
+  <text x="230" y="203" class="wsub">帖子标题 · 作者: 李四 · 提交时间: 2024-03-17</text>
+  <text x="230" y="220" class="wsub">摘要: React 新特性解读...</text>
+
+  <!-- Reject reason modal -->
+  <rect x="350" y="260" width="280" height="70" rx="6" fill="#fee2e2" stroke="#ef4444" stroke-dasharray="4"/>
+  <text x="365" y="280" class="wlbl">拒绝原因 (必填)</text>
+  <rect x="365" y="290" width="250" height="25" rx="3" fill="#fff" stroke="#94a3b8"/>
+  <text x="375" y="308" class="wsub">请输入拒绝原因...</text>
+  <circle cx="610" cy="275" r="12" fill="#ef4444"/><text x="610" y="279" text-anchor="middle" class="num">3</text>
+
+  <!-- Feature Request Section -->
+  <rect x="200" y="360" width="630" height="150" rx="6" fill="#fff" stroke="#e2e8f0"/>
+  <text x="220" y="390" class="wlbl">✨ 精选申请管理</text>
+  <circle cx="800" cy="385" r="12" fill="#ef4444"/><text x="800" y="389" text-anchor="middle" class="num">4</text>
+
+  <rect x="215" y="405" width="600" height="45" rx="4" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="230" y="425" class="wsub">「Spring Boot 实战」· 申请人: 张三 · 已发布 · 浏览 256 · 评论 12</text>
+  <text x="230" y="440" class="wsub">操作: 批准精选 · 拒绝</text>
+
+  <!-- Category Management Section -->
+  <rect x="200" y="520" width="630" height="190" rx="6" fill="#fff" stroke="#e2e8f0"/>
+  <text x="220" y="550" class="wlbl">📂 分区管理</text>
+  <circle cx="800" cy="545" r="12" fill="#22c55e"/><text x="800" y="549" text-anchor="middle" class="num">5</text>
+
+  <rect x="215" y="565" width="600" height="40" rx="4" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="230" y="588" class="wsub">前端 · 帖子数: 42 · 排序: 1 · 状态: 启用 · [编辑] [禁用] [删除]</text>
+  <rect x="215" y="615" width="600" height="40" rx="4" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="230" y="638" class="wsub">后端 · 帖子数: 38 · 排序: 2 · 状态: 启用 · [编辑] [禁用] [删除]</text>
+  <rect x="215" y="665" width="100" height="30" rx="4" fill="#3b82f6"/><text x="235" y="685" class="wsub" fill="#fff">新建分区</text>
+
+  <!-- User Management Section -->
+  <rect x="200" y="720" width="630" height="180" rx="6" fill="#fff" stroke="#e2e8f0"/>
+  <text x="220" y="750" class="wlbl">👥 用户管理</text>
+  <circle cx="800" cy="745" r="12" fill="#22c55e"/><text x="800" y="749" text-anchor="middle" class="num">6</text>
+
+  <rect x="215" y="765" width="600" height="40" rx="4" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="230" y="788" class="wsub">张三 · role: USER · 注册: 2024-01 · 帖子: 42 · [删除]</text>
+  <rect x="215" y="815" width="600" height="40" rx="4" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="230" y="838" class="wsub">李四 · role: USER · 注册: 2024-02 · 帖子: 15 · [删除]</text>
+
+  <!-- ===== API PANEL ===== -->
+  <rect x="860" y="70" width="520" height="850" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="885" y="100" font-size="15" font-weight="700" fill="#1e293b">API 端点清单</text>
+
+  <!-- API 1: Pending review list ❌ -->
+  <g transform="translate(875,115)">
+    <rect width="490" height="55" rx="6" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+    <circle cx="20" cy="20" r="12" fill="#ef4444"/><text x="20" y="24" text-anchor="middle" class="num">1</text>
+    <text x="42" y="20" class="api-m" fill="#991b1b">GET</text>
+    <text x="80" y="20" class="api-p">/api/admin/posts?status=PENDING_REVIEW&amp;page=</text>
+    <text x="42" y="38" class="api-n">❌ 按状态查询帖子 — admin/PostController 无查询端点</text>
+  </g>
+
+  <!-- API 2: Approve ⚠️ -->
+  <g transform="translate(875,180)">
+    <rect width="490" height="75" rx="6" fill="#fef9c3" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="20" cy="20" r="12" fill="#f59e0b"/><text x="20" y="24" text-anchor="middle" class="num">2</text>
+    <text x="42" y="20" class="api-m" fill="#92400e">POST</text>
+    <text x="90" y="20" class="api-p">/api/admin/posts/{postId}?status=2</text>
+    <text x="42" y="38" class="api-n">⚠ 审核通过 — 通过 setPostStatus(id, 2) 实现</text>
+    <text x="42" y="55" class="api-n">可用但非语义化 · PRD 建议: /api/admin/posts/{id}/approve</text>
+    <text x="42" y="68" class="api-n">缺少: 审核日志记录 (post_moderation_log 表)</text>
+  </g>
+
+  <!-- API 3: Reject with reason ⚠️ -->
+  <g transform="translate(875,265)">
+    <rect width="490" height="75" rx="6" fill="#fef9c3" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="20" cy="20" r="12" fill="#f59e0b"/><text x="20" y="24" text-anchor="middle" class="num">3</text>
+    <text x="42" y="20" class="api-m" fill="#92400e">POST</text>
+    <text x="90" y="20" class="api-p">/api/admin/posts/{postId}?status=3</text>
+    <text x="42" y="38" class="api-n">⚠ 拒绝 — 通过 setPostStatus(id, 3) 实现</text>
+    <text x="42" y="55" class="api-n" fill="#dc2626">❌ 缺少: reject_reason 参数</text>
+    <text x="42" y="68" class="api-n" fill="#dc2626">Post 实体无 rejectReason 字段, 无法存储拒绝原因</text>
+  </g>
+
+  <!-- API 4: Feature requests ❌ -->
+  <g transform="translate(875,350)">
+    <rect width="490" height="75" rx="6" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+    <circle cx="20" cy="20" r="12" fill="#ef4444"/><text x="20" y="24" text-anchor="middle" class="num">4</text>
+    <text x="42" y="20" class="api-m" fill="#991b1b">GET</text>
+    <text x="80" y="20" class="api-p">/api/admin/feature-requests?page=</text>
+    <text x="42" y="38" class="api-n">❌ 精选申请管理 — 整个功能未实现</text>
+    <text x="42" y="55" class="api-n">❌ POST /api/admin/feature-requests/{id}/approve</text>
+    <text x="42" y="68" class="api-n">❌ POST /api/admin/feature-requests/{id}/reject</text>
+  </g>
+
+  <!-- API 5: Category management ✅ -->
+  <g transform="translate(875,435)">
+    <rect width="490" height="95" rx="6" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+    <circle cx="20" cy="20" r="12" fill="#22c55e"/><text x="20" y="24" text-anchor="middle" class="num">5</text>
+    <text x="42" y="20" class="api-m" fill="#166534">CRUD</text>
+    <text x="90" y="20" class="api-p">/api/admin/categories + /api/categories</text>
+    <text x="42" y="38" class="api-n">分区管理 ✅ — 完整实现</text>
+    <text x="42" y="55" class="api-n">✅ GET(分页查询) · POST(创建) · PUT(更新/启用/禁用/排序)</text>
+    <text x="42" y="72" class="api-n">✅ DELETE(删除) · 帖子计数 · 启用/禁用切换</text>
+    <text x="42" y="87" class="api-n">CategoryController + admin/CategoryController 两套端点</text>
+  </g>
+
+  <!-- API 6: User management ✅ -->
+  <g transform="translate(875,540)">
+    <rect width="490" height="55" rx="6" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+    <circle cx="20" cy="20" r="12" fill="#22c55e"/><text x="20" y="24" text-anchor="middle" class="num">6</text>
+    <text x="42" y="20" class="api-m" fill="#166534">GET/DEL</text>
+    <text x="110" y="20" class="api-p">/api/auth/all + /api/auth/{id}</text>
+    <text x="42" y="38" class="api-n">用户列表+删除 ✅ — UserController (ADMIN)</text>
+  </g>
+
+  <!-- Notes -->
+  <g transform="translate(875,610)">
+    <rect width="490" height="120" rx="6" fill="#f1f5f9" stroke="#cbd5e1"/>
+    <text x="15" y="22" class="wlbl">📋 管理后台变更需求</text>
+    <text x="15" y="42" class="api-n">• 新建 GET /api/admin/posts?status= 按状态查询帖子</text>
+    <text x="15" y="58" class="api-n">• setPostStatus 增加 reject_reason 参数</text>
+    <text x="15" y="74" class="api-n">• Post 实体增加 rejectReason 字段</text>
+    <text x="15" y="90" class="api-n">• 新建 feature_requests 表 + 全套管理接口</text>
+    <text x="15" y="106" class="api-n">• 新建 post_moderation_log 审核日志表</text>
+  </g>
+
+  <g transform="translate(875,745)">
+    <rect width="490" height="60" rx="6" fill="#ede9fe" stroke="#a78bfa"/>
+    <text x="15" y="22" font-size="13" font-weight="700" fill="#5b21b6">管理后台总结</text>
+    <text x="15" y="42" class="api-n">实现度: ~43% · 分区管理+用户管理可用</text>
+    <text x="15" y="55" class="api-n">联调建议: 分区管理可直接联调, 审核流程需补接口</text>
+  </g>
+</svg>

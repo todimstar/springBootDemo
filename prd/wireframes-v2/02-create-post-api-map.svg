@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 920" font-family="'Segoe UI',system-ui,sans-serif">
+  <defs>
+    <style>
+      .title{font-size:18px;font-weight:700;fill:#1e293b}
+      .sub{font-size:12px;fill:#64748b}
+      .wlbl{font-size:13px;fill:#475569;font-weight:600}
+      .wsub{font-size:10px;fill:#94a3b8}
+      .api-m{font-size:11px;font-weight:700;font-family:Consolas,monospace}
+      .api-p{font-size:11px;font-family:Consolas,monospace;fill:#334155}
+      .api-n{font-size:10px;fill:#64748b}
+      .num{font-size:11px;font-weight:700;fill:#fff}
+      .lg{font-size:11px;fill:#475569}
+    </style>
+  </defs>
+  <rect width="1400" height="920" fill="#fafafa"/>
+  <text x="30" y="35" class="title">发帖页 — API 标注图</text>
+  <text x="30" y="52" class="sub">基于 PRD V1 · 绿=已实现 黄=部分实现 红=未实现</text>
+  <g transform="translate(1100,18)">
+    <rect width="12" height="12" rx="2" fill="#22c55e"/><text x="17" y="11" class="lg">已实现</text>
+    <rect x="75" width="12" height="12" rx="2" fill="#f59e0b"/><text x="92" y="11" class="lg">部分实现</text>
+    <rect x="165" width="12" height="12" rx="2" fill="#ef4444"/><text x="182" y="11" class="lg">未实现</text>
+  </g>
+
+  <!-- ===== WIREFRAME ===== -->
+  <!-- Page frame -->
+  <rect x="30" y="70" width="800" height="810" rx="8" fill="#fff" stroke="#e2e8f0"/>
+
+  <!-- Title input -->
+  <rect x="60" y="90" width="740" height="45" rx="4" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="75" y="118" class="wlbl">标题 (必填, ≤50字)</text>
+
+  <!-- Category + Tag row -->
+  <rect x="60" y="150" width="350" height="40" rx="4" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="75" y="175" class="wlbl">分区选择 (下拉)</text>
+  <circle cx="380" cy="170" r="12" fill="#22c55e"/><text x="380" y="174" text-anchor="middle" class="num">2</text>
+
+  <rect x="430" y="150" width="370" height="40" rx="4" fill="#fef3c7" stroke="#fbbf24"/>
+  <text x="445" y="175" class="wlbl">🏷 标签选择 (多选, ≤5个)</text>
+  <circle cx="770" cy="170" r="12" fill="#ef4444"/><text x="770" y="174" text-anchor="middle" class="num">5</text>
+
+  <!-- Summary -->
+  <rect x="60" y="205" width="740" height="60" rx="4" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="75" y="230" class="wlbl">摘要 (可选, ≤300字, 不填自动截取)</text>
+  <text x="75" y="248" class="wsub">summary 字段已在 Post 实体中</text>
+
+  <!-- Cover image -->
+  <rect x="60" y="280" width="250" height="100" rx="4" fill="#dbeafe" stroke="#93c5fd"/>
+  <text x="75" y="310" class="wlbl">封面图上传</text>
+  <text x="75" y="330" class="wsub">16:9 · 可选</text>
+  <text x="75" y="350" class="wsub">coverImage 字段已有</text>
+  <circle cx="280" cy="300" r="12" fill="#22c55e"/><text x="280" y="304" text-anchor="middle" class="num">4</text>
+
+  <!-- Markdown editor -->
+  <rect x="60" y="395" width="740" height="350" rx="4" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="75" y="420" class="wlbl">Markdown 编辑器 (必填, ≤15000字)</text>
+  <text x="75" y="440" class="wsub">工具栏: 加粗 · 斜体 · 代码块 · 链接 · 图片插入</text>
+  <rect x="80" y="460" width="700" height="260" rx="4" fill="#fff" stroke="#e2e8f0"/>
+  <text x="100" y="490" class="wsub">正文编辑区域</text>
+  <text x="100" y="510" class="wsub">支持实时预览 / 分屏预览</text>
+  <text x="100" y="530" class="wsub">图片通过工具栏插入 → 调用 /upload/upload</text>
+
+  <!-- Action buttons -->
+  <rect x="440" y="760" width="120" height="38" rx="6" fill="#e2e8f0" stroke="#94a3b8"/>
+  <text x="470" y="784" class="wlbl">保存草稿</text>
+  <circle cx="530" cy="755" r="12" fill="#22c55e"/><text x="530" y="759" text-anchor="middle" class="num">1</text>
+
+  <rect x="580" y="760" width="120" height="38" rx="6" fill="#3b82f6" stroke="#2563eb"/>
+  <text x="615" y="784" class="wlbl" fill="#fff">发布</text>
+  <circle cx="670" cy="755" r="12" fill="#ef4444"/><text x="670" y="759" text-anchor="middle" class="num">6</text>
+
+  <rect x="300" y="760" width="120" height="38" rx="6" fill="#e2e8f0" stroke="#94a3b8"/>
+  <text x="315" y="784" class="wlbl">自动保存</text>
+  <circle cx="390" cy="755" r="12" fill="#22c55e"/><text x="390" y="759" text-anchor="middle" class="num">3</text>
+
+  <!-- ===== API PANEL ===== -->
+  <rect x="860" y="70" width="520" height="810" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="885" y="100" font-size="15" font-weight="700" fill="#1e293b">API 端点清单</text>
+
+  <!-- API 1: Create Post ✅ -->
+  <g transform="translate(875,115)">
+    <rect width="490" height="55" rx="6" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+    <circle cx="20" cy="20" r="12" fill="#22c55e"/><text x="20" y="24" text-anchor="middle" class="num">1</text>
+    <text x="42" y="20" class="api-m" fill="#166534">POST</text>
+    <text x="90" y="20" class="api-p">/api/posts</text>
+    <text x="42" y="38" class="api-n">创建帖子(草稿) — CreatePostDTO → PostDetailVO ✅</text>
+  </g>
+
+  <!-- API 2: Categories ✅ -->
+  <g transform="translate(875,180)">
+    <rect width="490" height="55" rx="6" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+    <circle cx="20" cy="20" r="12" fill="#22c55e"/><text x="20" y="24" text-anchor="middle" class="num">2</text>
+    <text x="42" y="20" class="api-m" fill="#166534">GET</text>
+    <text x="80" y="20" class="api-p">/api/categories</text>
+    <text x="42" y="38" class="api-n">分区列表(下拉数据源) — CategoryController ✅</text>
+  </g>
+
+  <!-- API 3: Update/Auto-save ✅ -->
+  <g transform="translate(875,245)">
+    <rect width="490" height="55" rx="6" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+    <circle cx="20" cy="20" r="12" fill="#22c55e"/><text x="20" y="24" text-anchor="middle" class="num">3</text>
+    <text x="42" y="20" class="api-m" fill="#166534">PATCH</text>
+    <text x="100" y="20" class="api-p">/api/posts/{id}</text>
+    <text x="42" y="38" class="api-n">更新帖子(自动保存/手动保存共用) — PostController ✅</text>
+  </g>
+
+  <!-- API 4: File upload ✅ -->
+  <g transform="translate(875,310)">
+    <rect width="490" height="55" rx="6" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+    <circle cx="20" cy="20" r="12" fill="#22c55e"/><text x="20" y="24" text-anchor="middle" class="num">4</text>
+    <text x="42" y="20" class="api-m" fill="#166534">POST</text>
+    <text x="90" y="20" class="api-p">/upload/upload + /api/auth/upload/userAvatar</text>
+    <text x="42" y="38" class="api-n">文件上传(封面图/正文插图) — MinioService ✅ 带压缩</text>
+  </g>
+
+  <!-- API 5: Tags ❌ -->
+  <g transform="translate(875,375)">
+    <rect width="490" height="75" rx="6" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+    <circle cx="20" cy="20" r="12" fill="#ef4444"/><text x="20" y="24" text-anchor="middle" class="num">5</text>
+    <text x="42" y="20" class="api-m" fill="#991b1b">GET</text>
+    <text x="80" y="20" class="api-p">/api/tags</text>
+    <text x="42" y="38" class="api-n">❌ 标签列表 — 无 Tag Entity/Mapper/Service/Controller</text>
+    <text x="42" y="55" class="api-n">❌ POST /api/tags (自由创建标签) — 未实现</text>
+    <text x="42" y="68" class="api-n">❌ CreatePostDTO 中无 tagIds/tagNames 字段</text>
+  </g>
+
+  <!-- API 6: Publish ❌ -->
+  <g transform="translate(875,460)">
+    <rect width="490" height="75" rx="6" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+    <circle cx="20" cy="20" r="12" fill="#ef4444"/><text x="20" y="24" text-anchor="middle" class="num">6</text>
+    <text x="42" y="20" class="api-m" fill="#991b1b">POST</text>
+    <text x="90" y="20" class="api-p">/api/posts/{id}/publish</text>
+    <text x="42" y="38" class="api-n">❌ 独立发布动作 — PRD 要求草稿与发布分离</text>
+    <text x="42" y="55" class="api-n">当前: createPost 直接创建, 无草稿→发布转换</text>
+    <text x="42" y="68" class="api-n">需要: 后端根据 review.enabled 决定 status=1 或 2</text>
+  </g>
+
+  <!-- Notes -->
+  <g transform="translate(875,550)">
+    <rect width="490" height="100" rx="6" fill="#f1f5f9" stroke="#cbd5e1"/>
+    <text x="15" y="22" class="wlbl">📋 发帖页变更需求</text>
+    <text x="15" y="42" class="api-n">• CreatePostDTO 增加 tagIds/tagNames 字段</text>
+    <text x="15" y="58" class="api-n">• 新建 /api/posts/{id}/publish 端点 (草稿→发布)</text>
+    <text x="15" y="74" class="api-n">• 新建 Tag 全套: Entity → Mapper → Service → Controller</text>
+    <text x="15" y="90" class="api-n">• application.yml 增加 review.enabled 开关配置</text>
+  </g>
+
+  <g transform="translate(875,665)">
+    <rect width="490" height="60" rx="6" fill="#ede9fe" stroke="#a78bfa"/>
+    <text x="15" y="22" font-size="13" font-weight="700" fill="#5b21b6">发帖页总结</text>
+    <text x="15" y="42" class="api-n">实现度: ~57% · 核心 CRUD 可用, 标签+发布分离缺失</text>
+    <text x="15" y="55" class="api-n">联调建议: 先联调 创建+保存+分区选择, 标签和发布分离后续补</text>
+  </g>
+</svg>

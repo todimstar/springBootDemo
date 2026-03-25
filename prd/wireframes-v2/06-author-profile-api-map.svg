@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 750" font-family="'Segoe UI',system-ui,sans-serif">
+  <defs>
+    <style>
+      .title{font-size:18px;font-weight:700;fill:#1e293b}
+      .sub{font-size:12px;fill:#64748b}
+      .wlbl{font-size:13px;fill:#475569;font-weight:600}
+      .wsub{font-size:10px;fill:#94a3b8}
+      .api-m{font-size:11px;font-weight:700;font-family:Consolas,monospace}
+      .api-p{font-size:11px;font-family:Consolas,monospace;fill:#334155}
+      .api-n{font-size:10px;fill:#64748b}
+      .num{font-size:11px;font-weight:700;fill:#fff}
+      .lg{font-size:11px;fill:#475569}
+    </style>
+  </defs>
+  <rect width="1400" height="750" fill="#fafafa"/>
+  <text x="30" y="35" class="title">作者公开主页 — API 标注图</text>
+  <text x="30" y="52" class="sub">基于 PRD V1 · 绿=已实现 黄=部分实现 红=未实现</text>
+  <g transform="translate(1100,18)">
+    <rect width="12" height="12" rx="2" fill="#22c55e"/><text x="17" y="11" class="lg">已实现</text>
+    <rect x="75" width="12" height="12" rx="2" fill="#f59e0b"/><text x="92" y="11" class="lg">部分实现</text>
+    <rect x="165" width="12" height="12" rx="2" fill="#ef4444"/><text x="182" y="11" class="lg">未实现</text>
+  </g>
+
+  <!-- ===== WIREFRAME ===== -->
+  <rect x="30" y="70" width="800" height="640" rx="8" fill="#fff" stroke="#e2e8f0"/>
+
+  <!-- Author Profile Header -->
+  <rect x="60" y="90" width="740" height="180" rx="6" fill="#dbeafe" stroke="#93c5fd"/>
+  <text x="75" y="115" class="wlbl">👤 作者公开资料</text>
+  <rect x="75" y="125" width="90" height="90" rx="45" fill="#e2e8f0" stroke="#94a3b8"/>
+  <text x="120" y="175" text-anchor="middle" class="wsub">头像</text>
+  <text x="185" y="145" class="wlbl">作者昵称</text>
+  <text x="185" y="165" class="wsub">简介 / Bio</text>
+  <text x="185" y="182" class="wsub">地区 · 技术标签: Spring Boot, React, Docker</text>
+  <text x="185" y="199" class="wsub">帖子数: 42 · 获赞: 128 · 注册: 2024-01</text>
+  <text x="185" y="216" class="wsub">成就标记: 🏅 优质创作者 · ⭐ 精选作者</text>
+  <circle cx="770" cy="110" r="12" fill="#ef4444"/><text x="770" y="114" text-anchor="middle" class="num">1</text>
+
+  <!-- Author's Published Posts -->
+  <rect x="60" y="285" width="740" height="410" rx="6" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="75" y="310" class="wlbl">📝 TA 的帖子 (仅已发布)</text>
+  <circle cx="770" cy="305" r="12" fill="#f59e0b"/><text x="770" y="309" text-anchor="middle" class="num">2</text>
+
+  <rect x="75" y="325" width="700" height="65" rx="4" fill="#fff" stroke="#e2e8f0"/>
+  <text x="90" y="350" class="wsub">帖子标题 · Spring Boot 实战系列 (一)</text>
+  <text x="90" y="367" class="wsub">分区: 后端 · 标签: Spring Boot, Java</text>
+  <text x="90" y="380" class="wsub">浏览 256 · 评论 12 · 3天前</text>
+
+  <rect x="75" y="400" width="700" height="65" rx="4" fill="#fff" stroke="#e2e8f0"/>
+  <text x="90" y="425" class="wsub">帖子标题 · React Hooks 深入理解</text>
+  <text x="90" y="442" class="wsub">分区: 前端 · 标签: React, Hooks</text>
+  <text x="90" y="455" class="wsub">浏览 189 · 评论 8 · 1周前</text>
+
+  <rect x="75" y="475" width="700" height="65" rx="4" fill="#fff" stroke="#e2e8f0"/>
+  <text x="90" y="500" class="wsub">帖子标题 · Docker 容器化部署指南</text>
+  <text x="90" y="517" class="wsub">分区: DevOps · 标签: Docker, 部署</text>
+
+  <text x="340" y="580" class="wsub" text-anchor="middle">分页加载更多...</text>
+
+  <!-- Interaction area -->
+  <rect x="60" y="620" width="200" height="35" rx="4" fill="#e2e8f0" stroke="#94a3b8" stroke-dasharray="4"/>
+  <text x="80" y="642" class="wlbl">👥 关注 (V1.1)</text>
+
+  <!-- ===== API PANEL ===== -->
+  <rect x="860" y="70" width="520" height="640" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="885" y="100" font-size="15" font-weight="700" fill="#1e293b">API 端点清单</text>
+
+  <!-- API 1: Public profile ❌ -->
+  <g transform="translate(875,115)">
+    <rect width="490" height="95" rx="6" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+    <circle cx="20" cy="20" r="12" fill="#ef4444"/><text x="20" y="24" text-anchor="middle" class="num">1</text>
+    <text x="42" y="20" class="api-m" fill="#991b1b">GET</text>
+    <text x="80" y="20" class="api-p">/api/users/{id}/public</text>
+    <text x="42" y="38" class="api-n">❌ 用户公开资料 — 无此端点</text>
+    <text x="42" y="55" class="api-n">现有: UserMapper.findById() 返回完整 User 实体</text>
+    <text x="42" y="72" class="api-n" fill="#dc2626">需要: 新建公开资料 VO (脱敏: 不返回密码/邮箱)</text>
+    <text x="42" y="87" class="api-n" fill="#dc2626">需要: 新建 Controller 端点 + PublicUserVO</text>
+  </g>
+
+  <!-- API 2: User's posts ⚠️ -->
+  <g transform="translate(875,220)">
+    <rect width="490" height="95" rx="6" fill="#fef9c3" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="20" cy="20" r="12" fill="#f59e0b"/><text x="20" y="24" text-anchor="middle" class="num">2</text>
+    <text x="42" y="20" class="api-m" fill="#92400e">GET</text>
+    <text x="80" y="20" class="api-p">/api/posts/user/{userId}</text>
+    <text x="42" y="38" class="api-n">⚠ 用户帖子列表 — 基础分页已有</text>
+    <text x="42" y="55" class="api-n" fill="#dc2626">问题: 当前 findPostsByUserId 使用 isAuthor 参数</text>
+    <text x="42" y="72" class="api-n" fill="#dc2626">访客查看作者主页时, 应只返回 status=PUBLISHED</text>
+    <text x="42" y="87" class="api-n" fill="#dc2626">需确认: PostController 是否正确传入 isAuthor=false</text>
+  </g>
+
+  <!-- Notes -->
+  <g transform="translate(875,330)">
+    <rect width="490" height="130" rx="6" fill="#f1f5f9" stroke="#cbd5e1"/>
+    <text x="15" y="22" class="wlbl">📋 作者主页变更需求</text>
+    <text x="15" y="42" class="api-n">• 新建 GET /api/users/{id}/public 端点</text>
+    <text x="15" y="58" class="api-n">• 新建 PublicUserVO (id, username, avatarUrl, bio,</text>
+    <text x="15" y="74" class="api-n">  location, techTags, postCount, createdAt)</text>
+    <text x="15" y="90" class="api-n">• 确保帖子列表对游客只返回已发布帖子</text>
+    <text x="15" y="106" class="api-n">• PostSummaryVO 需包含标签列表</text>
+    <text x="15" y="122" class="api-n">• User 表需增加 techTags 字段 (技术标签)</text>
+  </g>
+
+  <g transform="translate(875,475)">
+    <rect width="490" height="60" rx="6" fill="#ede9fe" stroke="#a78bfa"/>
+    <text x="15" y="22" font-size="13" font-weight="700" fill="#5b21b6">作者主页总结</text>
+    <text x="15" y="42" class="api-n">实现度: ~25% · 帖子列表部分可用, 公开资料缺失</text>
+    <text x="15" y="55" class="api-n">联调建议: 先实现 /users/{id}/public, 帖子列表微调即可联调</text>
+  </g>
+
+  <g transform="translate(875,550)">
+    <rect width="490" height="80" rx="6" fill="#f1f5f9" stroke="#cbd5e1"/>
+    <text x="15" y="22" class="wlbl">💡 快速实现路径</text>
+    <text x="15" y="42" class="api-n">1. 最快方案: 复用 UserMapper.findById + 脱敏封装</text>
+    <text x="15" y="58" class="api-n">2. 帖子列表: 已有的 /api/posts/user/{userId} 直接可用</text>
+    <text x="15" y="72" class="api-n">3. 工作量评估: 1个新 VO + 1个新端点, 约 1-2 小时</text>
+  </g>
+</svg>

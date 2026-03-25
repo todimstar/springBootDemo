@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 750" font-family="'Segoe UI',system-ui,sans-serif">
+  <defs>
+    <style>
+      .title{font-size:18px;font-weight:700;fill:#1e293b}
+      .sub{font-size:12px;fill:#64748b}
+      .wlbl{font-size:13px;fill:#475569;font-weight:600}
+      .wsub{font-size:10px;fill:#94a3b8}
+      .api-m{font-size:11px;font-weight:700;font-family:Consolas,monospace}
+      .api-p{font-size:11px;font-family:Consolas,monospace;fill:#334155}
+      .api-n{font-size:10px;fill:#64748b}
+      .num{font-size:11px;font-weight:700;fill:#fff}
+      .lg{font-size:11px;fill:#475569}
+    </style>
+  </defs>
+  <rect width="1400" height="750" fill="#fafafa"/>
+  <text x="30" y="35" class="title">登录/注册页 — API 标注图</text>
+  <text x="30" y="52" class="sub">基于 PRD V1 · 全部已实现 ✅</text>
+  <g transform="translate(1100,18)">
+    <rect width="12" height="12" rx="2" fill="#22c55e"/><text x="17" y="11" class="lg">已实现</text>
+    <rect x="75" width="12" height="12" rx="2" fill="#f59e0b"/><text x="92" y="11" class="lg">部分实现</text>
+    <rect x="165" width="12" height="12" rx="2" fill="#ef4444"/><text x="182" y="11" class="lg">未实现</text>
+  </g>
+
+  <!-- ===== WIREFRAME ===== -->
+  <!-- Login Form -->
+  <rect x="30" y="70" width="380" height="450" rx="8" fill="#fff" stroke="#e2e8f0"/>
+  <text x="160" y="100" class="wlbl" text-anchor="middle">🔐 登录</text>
+  <rect x="60" y="120" width="320" height="40" rx="4" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="75" y="145" class="wsub">用户名</text>
+  <rect x="60" y="175" width="320" height="40" rx="4" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="75" y="200" class="wsub">密码</text>
+  <rect x="60" y="235" width="320" height="40" rx="6" fill="#3b82f6"/>
+  <text x="180" y="260" class="wlbl" fill="#fff" text-anchor="middle">登 录</text>
+  <circle cx="360" cy="250" r="12" fill="#22c55e"/><text x="360" y="254" text-anchor="middle" class="num">1</text>
+  <text x="60" y="300" class="wsub">返回: JWT Token + 用户基本信息</text>
+  <text x="60" y="316" class="wsub">LoginResponseVO { token, username, role }</text>
+  <text x="60" y="340" class="wsub">Token 有效期: 7天 (604800000ms)</text>
+  <text x="60" y="360" class="wsub">认证方式: Bearer Token in Authorization header</text>
+  <text x="60" y="385" class="wsub">密码加密: BCrypt (在注册时加密存储)</text>
+
+  <!-- Register Form -->
+  <rect x="430" y="70" width="380" height="550" rx="8" fill="#fff" stroke="#e2e8f0"/>
+  <text x="560" y="100" class="wlbl" text-anchor="middle">📝 注册</text>
+  <rect x="460" y="120" width="320" height="40" rx="4" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="475" y="145" class="wsub">用户名</text>
+  <rect x="460" y="175" width="320" height="40" rx="4" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="475" y="200" class="wsub">邮箱</text>
+  <rect x="460" y="230" width="200" height="40" rx="4" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="475" y="255" class="wsub">验证码</text>
+  <rect x="670" y="230" width="110" height="40" rx="4" fill="#e2e8f0" stroke="#94a3b8"/>
+  <text x="685" y="255" class="wsub">发送验证码</text>
+  <circle cx="760" cy="245" r="12" fill="#22c55e"/><text x="760" y="249" text-anchor="middle" class="num">3</text>
+  <rect x="460" y="285" width="320" height="40" rx="4" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="475" y="310" class="wsub">密码</text>
+  <rect x="460" y="340" width="320" height="40" rx="4" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="475" y="365" class="wsub">确认密码</text>
+  <rect x="460" y="400" width="320" height="40" rx="6" fill="#22c55e"/>
+  <text x="580" y="425" class="wlbl" fill="#fff" text-anchor="middle">注 册</text>
+  <circle cx="760" cy="415" r="12" fill="#22c55e"/><text x="760" y="419" text-anchor="middle" class="num">2</text>
+
+  <text x="460" y="470" class="wsub">验证码通过 Redis 存储, 有效期 5 分钟</text>
+  <text x="460" y="486" class="wsub">邮件异步发送 (@Async)</text>
+  <text x="460" y="502" class="wsub">RegisterDTO: username, email, password, code</text>
+  <text x="460" y="520" class="wsub">注册成功后密码 BCrypt 加密存储</text>
+
+  <!-- ===== API PANEL ===== -->
+  <rect x="860" y="70" width="520" height="550" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="885" y="100" font-size="15" font-weight="700" fill="#1e293b">API 端点清单</text>
+
+  <!-- API 1: Login ✅ -->
+  <g transform="translate(875,115)">
+    <rect width="490" height="75" rx="6" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+    <circle cx="20" cy="20" r="12" fill="#22c55e"/><text x="20" y="24" text-anchor="middle" class="num">1</text>
+    <text x="42" y="20" class="api-m" fill="#166534">POST</text>
+    <text x="90" y="20" class="api-p">/api/auth/login</text>
+    <text x="42" y="38" class="api-n">用户登录 ✅ — LoginInControllerDTO → LoginResponseVO</text>
+    <text x="42" y="55" class="api-n">返回: token + username + userId + role</text>
+    <text x="42" y="68" class="api-n">JWT: HS256 签名, 7天有效期, JwtAuthFilter 验证</text>
+  </g>
+
+  <!-- API 2: Register ✅ -->
+  <g transform="translate(875,200)">
+    <rect width="490" height="75" rx="6" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+    <circle cx="20" cy="20" r="12" fill="#22c55e"/><text x="20" y="24" text-anchor="middle" class="num">2</text>
+    <text x="42" y="20" class="api-m" fill="#166534">POST</text>
+    <text x="90" y="20" class="api-p">/api/auth/register</text>
+    <text x="42" y="38" class="api-n">用户注册 ✅ — RegisterDTO (username, email, password, code)</text>
+    <text x="42" y="55" class="api-n">校验: 用户名唯一 + 邮箱唯一 + 验证码匹配</text>
+    <text x="42" y="68" class="api-n">密码: BCrypt 加密存储, 默认 role=USER</text>
+  </g>
+
+  <!-- API 3: Send code ✅ -->
+  <g transform="translate(875,285)">
+    <rect width="490" height="75" rx="6" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+    <circle cx="20" cy="20" r="12" fill="#22c55e"/><text x="20" y="24" text-anchor="middle" class="num">3</text>
+    <text x="42" y="20" class="api-m" fill="#166534">POST</text>
+    <text x="90" y="20" class="api-p">/api/auth/sendRegisterCode?email=</text>
+    <text x="42" y="38" class="api-n">发送注册验证码 ✅ — EmailService (异步发送)</text>
+    <text x="42" y="55" class="api-n">验证码: 6位数字, Redis 存储, 5分钟过期</text>
+    <text x="42" y="68" class="api-n">邮件: 139 SMTP, HTML 模板, @Async 异步</text>
+  </g>
+
+  <!-- Summary -->
+  <g transform="translate(875,380)">
+    <rect width="490" height="100" rx="6" fill="#dcfce7" stroke="#22c55e"/>
+    <text x="15" y="22" font-size="13" font-weight="700" fill="#166534">🎉 登录/注册页总结</text>
+    <text x="15" y="45" class="api-n" fill="#166534">实现度: 100% · 所有必需接口已完整实现</text>
+    <text x="15" y="63" class="api-n">✅ 登录 + JWT 认证链路完整</text>
+    <text x="15" y="79" class="api-n">✅ 注册 + 邮箱验证码完整</text>
+    <text x="15" y="95" class="api-n">✅ 可直接联调, 无任何阻塞项</text>
+  </g>
+
+  <g transform="translate(875,495)">
+    <rect width="490" height="60" rx="6" fill="#f1f5f9" stroke="#cbd5e1"/>
+    <text x="15" y="22" class="wlbl">💡 优化建议 (非必须)</text>
+    <text x="15" y="42" class="api-n">• 可考虑增加密码重置功能 (V1.1)</text>
+    <text x="15" y="55" class="api-n">• 可考虑增加 OAuth 第三方登录 (GitHub等, V2)</text>
+  </g>
+</svg>

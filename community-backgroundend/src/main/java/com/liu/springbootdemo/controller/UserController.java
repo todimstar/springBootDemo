@@ -80,7 +80,7 @@ public class UserController {
     public Result<String> uploadUserAvatar(@RequestParam("file") MultipartFile file) throws Exception {
         String url = userService.uploadUserAvatar(file);
 
-        return Result.success(url);
+        return Result.success("头像上传成功", url);
     }
 
     /**

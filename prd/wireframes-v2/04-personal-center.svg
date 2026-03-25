@@ -1,0 +1,181 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <defs>
+    <style>
+      text { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
+      .ann { font-size: 9px; fill: #c0392b; font-style: italic; }
+      .h1 { font-size: 18px; font-weight: bold; fill: #111; }
+      .h2 { font-size: 14px; font-weight: bold; fill: #222; }
+      .h3 { font-size: 12px; font-weight: 600; fill: #333; }
+      .body { font-size: 12px; fill: #666; }
+      .meta { font-size: 10px; fill: #999; }
+      .stat-num { font-size: 20px; font-weight: bold; fill: #222; }
+      .stat-label { font-size: 10px; fill: #999; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="800" fill="#f5f5f5"/>
+
+  <!-- ==================== TOP NAV ==================== -->
+  <rect width="1200" height="52" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
+  <rect x="40" y="12" width="28" height="28" rx="6" fill="#333"/>
+  <text x="43" y="31" font-size="14" font-weight="bold" fill="#fff">T</text>
+  <text x="76" y="33" font-size="14" font-weight="bold" fill="#222">TechHub</text>
+  <rect x="200" y="11" width="340" height="30" rx="15" fill="none" stroke="#d5d5d5" stroke-width="1"/>
+  <text x="224" y="31" font-size="11" fill="#bbb">搜索...</text>
+  <rect x="920" y="12" width="84" height="28" rx="14" fill="#333"/>
+  <text x="938" y="31" font-size="12" fill="#fff">+ 写文章</text>
+  <circle cx="1044" cy="26" r="14" fill="#ddd"/>
+  <text x="1064" y="30" font-size="11" fill="#666">我 ▾</text>
+
+  <!-- ==================== PROFILE HEADER ==================== -->
+  <rect x="0" y="52" width="1200" height="140" fill="#fff" stroke="#eee" stroke-width="0.5"/>
+  <!-- Avatar -->
+  <circle cx="120" cy="122" r="40" fill="#e0e0e0" stroke="#fff" stroke-width="3"/>
+  <text x="106" y="128" font-size="14" fill="#999">头像</text>
+  <!-- User info -->
+  <text x="180" y="96" font-size="20" font-weight="bold" fill="#111">张三</text>
+  <rect x="248" y="80" width="72" height="22" rx="11" fill="#f0f0f0"/>
+  <text x="260" y="95" font-size="10" fill="#666">Lv.3 活跃</text>
+  <text x="180" y="118" font-size="12" fill="#666">Java 后端开发 · 热爱开源 · 坐标深圳</text>
+  <text x="180" y="138" class="meta">注册于 2024-01-15 · 最后活跃 3小时前</text>
+  <!-- Stats -->
+  <text x="600" y="96" class="stat-num">28</text>
+  <text x="600" y="114" class="stat-label">帖子</text>
+  <text x="700" y="96" class="stat-num">1.2k</text>
+  <text x="700" y="114" class="stat-label">获赞</text>
+  <text x="800" y="96" class="stat-num">456</text>
+  <text x="800" y="114" class="stat-label">被收藏</text>
+  <text x="900" y="96" class="stat-num">89</text>
+  <text x="900" y="114" class="stat-label">粉丝</text>
+  <text x="1000" y="96" class="stat-num">23</text>
+  <text x="1000" y="114" class="stat-label">关注</text>
+  <!-- Edit profile button -->
+  <rect x="600" y="130" width="88" height="28" rx="14" fill="none" stroke="#333" stroke-width="1"/>
+  <text x="616" y="149" font-size="11" fill="#333">编辑资料</text>
+  <text x="700" y="149" class="ann">→ 弹窗编辑头像/简介/性别/城市</text>
+
+  <!-- ==================== LEFT SIDEBAR: Menu ==================== -->
+  <rect x="32" y="208" width="180" height="340" rx="8" fill="#fff" stroke="#eee" stroke-width="1"/>
+  <text x="52" y="236" font-size="13" font-weight="bold" fill="#222">创作管理台</text>
+  <line x1="52" y1="244" x2="192" y2="244" stroke="#f0f0f0" stroke-width="1"/>
+  <!-- Active item -->
+  <rect x="40" y="252" width="164" height="32" rx="4" fill="#f0f0f0"/>
+  <rect x="40" y="252" width="3" height="32" rx="1" fill="#333"/>
+  <text x="56" y="273" font-size="12" font-weight="600" fill="#222">我的帖子</text>
+  <!-- Other items -->
+  <text x="56" y="305" font-size="12" fill="#666">我的收藏</text>
+  <text x="56" y="333" font-size="12" fill="#666">我的关注</text>
+  <text x="56" y="361" font-size="12" fill="#666">浏览足迹</text>
+  <text x="148" y="361" class="meta">V1.1</text>
+  <line x1="52" y1="376" x2="192" y2="376" stroke="#f0f0f0" stroke-width="1"/>
+  <text x="56" y="397" font-size="12" fill="#666">消息通知</text>
+  <circle cx="112" cy="392" r="8" fill="#e74c3c"/>
+  <text x="108" y="396" font-size="8" fill="#fff">3</text>
+  <line x1="52" y1="412" x2="192" y2="412" stroke="#f0f0f0" stroke-width="1"/>
+  <text x="56" y="433" font-size="12" fill="#666">账号设置</text>
+  <text x="56" y="461" font-size="12" fill="#e74c3c">退出登录</text>
+
+  <!-- Sidebar annotation -->
+  <text x="40" y="504" class="ann">左侧菜单 = 创作管理台</text>
+  <text x="40" y="516" class="ann">收藏/关注/足迹 V1.1</text>
+  <text x="40" y="528" class="ann">优先级：我的帖子</text>
+
+  <!-- ==================== MAIN CONTENT: My Posts ==================== -->
+  <rect x="228" y="208" width="940" height="560" rx="8" fill="#fff" stroke="#eee" stroke-width="1"/>
+
+  <!-- Sub-tabs: by status -->
+  <text x="256" y="236" font-size="13" font-weight="bold" fill="#222">全部</text>
+  <line x1="252" y1="242" x2="278" y2="242" stroke="#333" stroke-width="2"/>
+  <text x="300" y="236" font-size="13" fill="#999">已发布</text>
+  <text x="364" y="236" font-size="13" fill="#999">草稿</text>
+  <text x="416" y="236" font-size="13" fill="#999">待审核</text>
+  <text x="480" y="236" font-size="13" fill="#999">已拒绝</text>
+  <text x="548" y="236" class="ann">← Tab 按帖子状态筛选</text>
+  <text x="548" y="248" class="ann">status: 0草稿/1待审核/2已发布/3已拒绝</text>
+
+  <!-- Count badges -->
+  <rect x="348" y="222" width="14" height="14" rx="7" fill="#eee"/>
+  <text x="352" y="233" font-size="8" fill="#666">3</text>
+  <rect x="462" y="222" width="14" height="14" rx="7" fill="#eee"/>
+  <text x="466" y="233" font-size="8" fill="#666">1</text>
+
+  <line x1="248" y1="252" x2="1148" y2="252" stroke="#f0f0f0" stroke-width="1"/>
+
+  <!-- ===== Post Row 1: Published ===== -->
+  <rect x="248" y="260" width="900" height="72" rx="0" fill="#fff"/>
+  <rect x="264" y="270" width="48" height="18" rx="9" fill="#e8f5e9"/>
+  <text x="272" y="283" font-size="9" fill="#2e7d32">已发布</text>
+  <rect x="320" y="270" width="32" height="18" rx="9" fill="#333"/>
+  <text x="326" y="283" font-size="9" fill="#fff">精选</text>
+  <text x="264" y="306" font-size="14" font-weight="bold" fill="#111">Spring Boot 3.x 集成 Redis 实现分布式缓存最佳实践</text>
+  <text x="264" y="324" class="meta">后端与开发实践 · 3天前发布 · 浏览 1,234 · 评论 23</text>
+  <!-- Action buttons -->
+  <text x="980" y="296" font-size="10" fill="#666">编辑</text>
+  <text x="1020" y="296" font-size="10" fill="#666">查看</text>
+  <text x="1060" y="296" font-size="10" fill="#e74c3c">删除</text>
+  <text x="1100" y="296" font-size="10" fill="#888">···</text>
+  <line x1="264" y1="332" x2="1132" y2="332" stroke="#f5f5f5" stroke-width="0.5"/>
+
+  <!-- ===== Post Row 2: Draft ===== -->
+  <rect x="248" y="340" width="900" height="72" rx="0" fill="#fff"/>
+  <rect x="264" y="350" width="36" height="18" rx="9" fill="#f5f5f5"/>
+  <text x="272" y="363" font-size="9" fill="#999">草稿</text>
+  <text x="264" y="386" font-size="14" font-weight="bold" fill="#111">Docker Compose 多容器编排实战（未完成）</text>
+  <text x="264" y="404" class="meta">工具与资源 · 上次编辑 1天前 · 自动保存</text>
+  <text x="980" y="376" font-size="10" fill="#666">继续编辑</text>
+  <text x="1050" y="376" font-size="10" fill="#2e7d32">发布</text>
+  <text x="1088" y="376" font-size="10" fill="#e74c3c">删除</text>
+  <line x1="264" y1="412" x2="1132" y2="412" stroke="#f5f5f5" stroke-width="0.5"/>
+
+  <!-- ===== Post Row 3: Pending Review ===== -->
+  <rect x="248" y="420" width="900" height="72" rx="0" fill="#fff"/>
+  <rect x="264" y="430" width="48" height="18" rx="9" fill="#fff8e1" stroke="#ffe082" stroke-width="0.5"/>
+  <text x="272" y="443" font-size="9" fill="#f57f17">待审核</text>
+  <text x="264" y="466" font-size="14" font-weight="bold" fill="#111">MySQL 8.0 锁机制深度解析</text>
+  <text x="264" y="484" class="meta">后端与开发实践 · 提交审核 2小时前</text>
+  <text x="980" y="456" font-size="10" fill="#999">等待审核中...</text>
+  <text x="1068" y="456" font-size="10" fill="#888">撤回</text>
+  <text x="1068" y="466" class="ann">← V1.1增强</text>
+  <line x1="264" y1="492" x2="1132" y2="492" stroke="#f5f5f5" stroke-width="0.5"/>
+
+  <!-- ===== Post Row 4: Rejected ===== -->
+  <rect x="248" y="500" width="900" height="86" rx="0" fill="#fff"/>
+  <rect x="264" y="510" width="48" height="18" rx="9" fill="#ffebee"/>
+  <text x="272" y="523" font-size="9" fill="#c62828">已拒绝</text>
+  <text x="264" y="546" font-size="14" font-weight="bold" fill="#111">Python 爬虫入门教程</text>
+  <text x="264" y="564" class="meta">工具与资源 · 审核于 昨天</text>
+  <!-- Reject reason -->
+  <rect x="264" y="572" width="660" height="22" rx="4" fill="#fff5f5" stroke="#ffcdd2" stroke-width="0.5"/>
+  <text x="276" y="587" font-size="10" fill="#c62828">拒绝原因：内容涉及版权问题，建议修改后重新提交</text>
+  <text x="980" y="540" font-size="10" fill="#666">编辑</text>
+  <text x="1020" y="540" font-size="10" fill="#2e7d32">重新发布</text>
+  <text x="1094" y="540" font-size="10" fill="#e74c3c">删除</text>
+  <line x1="264" y1="594" x2="1132" y2="594" stroke="#f5f5f5" stroke-width="0.5"/>
+
+  <!-- ===== Post Row 5 (partial) ===== -->
+  <rect x="248" y="602" width="900" height="50" rx="0" fill="#fff"/>
+  <rect x="264" y="612" width="48" height="18" rx="9" fill="#e8f5e9"/>
+  <text x="272" y="625" font-size="9" fill="#2e7d32">已发布</text>
+  <text x="264" y="644" font-size="14" font-weight="bold" fill="#111">力扣周赛 380 解题思路分享...</text>
+
+  <!-- Fade -->
+  <defs>
+    <linearGradient id="fade3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f5f5f5" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#f5f5f5" stop-opacity="1"/>
+    </linearGradient>
+  </defs>
+  <rect x="248" y="640" width="900" height="40" fill="url(#fade3)"/>
+
+  <!-- Pagination -->
+  <text x="700" y="680" class="meta" text-anchor="middle">共 28 篇 · 每页 10 篇 · 第 1/3 页</text>
+  <text x="700" y="696" class="ann">GET /api/posts/user/{userId} 分页</text>
+
+  <!-- ==================== ANNOTATIONS ==================== -->
+  <rect x="248" y="710" width="900" height="56" rx="6" fill="none" stroke="#c0392b" stroke-width="0.8" stroke-dasharray="3,3"/>
+  <text x="264" y="730" class="ann" font-weight="bold">个人中心设计说明</text>
+  <text x="264" y="744" class="ann">定位：创作管理台，核心是帖子管理。状态 Tab 精准对应后端 status 枚举(0-3)。每行操作按钮按权限矩阵动态显隐。</text>
+  <text x="264" y="758" class="ann">已拒绝帖子显示拒绝原因，引导作者修改后重新发布。个人资料统计区展示创作成就。编辑资料使用弹窗模式，减少页面跳转。</text>
+
+  <text x="600" y="790" font-size="10" fill="#ccc" text-anchor="middle">个人中心（创作管理台） | TechHub 轻量技术创作社区 V1</text>
+</svg>

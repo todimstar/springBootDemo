@@ -23,7 +23,8 @@ public class Result<T> {
     public static Result success(String message) {
         return new Result(0,message,null);
     }
-    // 带成功数据返回
+    // 带成功数据返回, TODO:建议废除，如果数据是String会被精准匹配到上方无数据返回
+    @Deprecated
     public static <T> Result<T> success(T data){
         return new Result<>(0,"操作成功",data);
     }

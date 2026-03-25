@@ -1,0 +1,151 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 920" font-family="'Segoe UI',system-ui,sans-serif">
+  <defs>
+    <style>
+      .title{font-size:18px;font-weight:700;fill:#1e293b}
+      .sub{font-size:12px;fill:#64748b}
+      .wlbl{font-size:13px;fill:#475569;font-weight:600}
+      .wsub{font-size:10px;fill:#94a3b8}
+      .api-m{font-size:11px;font-weight:700;font-family:Consolas,monospace}
+      .api-p{font-size:11px;font-family:Consolas,monospace;fill:#334155}
+      .api-n{font-size:10px;fill:#64748b}
+      .num{font-size:11px;font-weight:700;fill:#fff}
+      .lg{font-size:11px;fill:#475569}
+    </style>
+  </defs>
+  <rect width="1400" height="920" fill="#fafafa"/>
+  <text x="30" y="35" class="title">帖子详情页 — API 标注图</text>
+  <text x="30" y="52" class="sub">基于 PRD V1 · 绿=已实现 黄=部分实现 红=未实现</text>
+  <g transform="translate(1100,18)">
+    <rect width="12" height="12" rx="2" fill="#22c55e"/><text x="17" y="11" class="lg">已实现</text>
+    <rect x="75" width="12" height="12" rx="2" fill="#f59e0b"/><text x="92" y="11" class="lg">部分实现</text>
+    <rect x="165" width="12" height="12" rx="2" fill="#ef4444"/><text x="182" y="11" class="lg">未实现</text>
+  </g>
+
+  <!-- ===== WIREFRAME ===== -->
+  <rect x="30" y="70" width="800" height="810" rx="8" fill="#fff" stroke="#e2e8f0"/>
+
+  <!-- Post Header -->
+  <rect x="60" y="90" width="740" height="80" rx="4" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="75" y="115" class="wlbl">帖子标题</text>
+  <text x="75" y="135" class="wsub">分区标签 · 标签列表 · 发布时间</text>
+  <text x="75" y="150" class="wsub">浏览量 viewCount · 评论数 commentCount</text>
+  <circle cx="770" cy="105" r="12" fill="#22c55e"/><text x="770" y="109" text-anchor="middle" class="num">1</text>
+
+  <!-- Author Card -->
+  <rect x="60" y="180" width="740" height="60" rx="4" fill="#dbeafe" stroke="#93c5fd"/>
+  <text x="75" y="200" class="wlbl">👤 作者信息</text>
+  <text x="75" y="218" class="wsub">头像 · 昵称 · 技术标签 · 成就标记</text>
+  <text x="75" y="232" class="wsub">→ 点击跳转作者主页 /users/:id</text>
+
+  <!-- Tags Row -->
+  <rect x="60" y="250" width="740" height="35" rx="4" fill="#fef3c7" stroke="#fbbf24"/>
+  <text x="75" y="272" class="wlbl">🏷 标签: Spring Boot · REST API · 教程</text>
+  <circle cx="770" cy="267" r="12" fill="#ef4444"/><text x="770" y="271" text-anchor="middle" class="num">4</text>
+
+  <!-- Content Area -->
+  <rect x="60" y="295" width="740" height="250" rx="4" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="75" y="320" class="wlbl">📝 帖子正文 (Markdown 渲染)</text>
+  <text x="75" y="345" class="wsub">支持: 标题 · 代码块 · 图片 · 链接 · 表格</text>
+  <text x="75" y="365" class="wsub">内容来自 PostDetailVO.content</text>
+
+  <!-- Status Bar (author/admin only) -->
+  <rect x="60" y="555" width="740" height="40" rx="4" fill="#fef3c7" stroke="#f59e0b" stroke-dasharray="4"/>
+  <text x="75" y="580" class="wlbl">⚠ 状态提示 (仅作者/管理员可见): 草稿 / 待审核 / 已拒绝+原因</text>
+  <circle cx="770" cy="575" r="12" fill="#f59e0b"/><text x="770" y="579" text-anchor="middle" class="num">5</text>
+
+  <!-- Comments Section -->
+  <rect x="60" y="610" width="740" height="250" rx="4" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="75" y="635" class="wlbl">💬 评论区</text>
+  <!-- Comment input -->
+  <rect x="80" y="650" width="700" height="45" rx="4" fill="#fff" stroke="#e2e8f0"/>
+  <text x="95" y="678" class="wsub">写下你的评论...</text>
+  <rect x="690" y="655" width="75" height="32" rx="4" fill="#3b82f6"/><text x="710" y="676" class="wsub" fill="#fff">发表</text>
+  <circle cx="750" cy="645" r="12" fill="#22c55e"/><text x="750" y="649" text-anchor="middle" class="num">3</text>
+
+  <!-- Comment list -->
+  <rect x="80" y="710" width="700" height="50" rx="4" fill="#fff" stroke="#e2e8f0"/>
+  <text x="95" y="730" class="wsub">用户A · 2小时前: 写得很好，学到了！</text>
+  <text x="95" y="745" class="wsub">回复 · 删除(仅本人)</text>
+  <rect x="80" y="770" width="700" height="50" rx="4" fill="#fff" stroke="#e2e8f0"/>
+  <text x="95" y="790" class="wsub">用户B · 5小时前: 代码示例能否补充完整？</text>
+  <circle cx="750" cy="720" r="12" fill="#22c55e"/><text x="750" y="724" text-anchor="middle" class="num">2</text>
+
+  <!-- ===== API PANEL ===== -->
+  <rect x="860" y="70" width="520" height="810" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="885" y="100" font-size="15" font-weight="700" fill="#1e293b">API 端点清单</text>
+
+  <!-- API 1: Post Detail ✅ -->
+  <g transform="translate(875,115)">
+    <rect width="490" height="75" rx="6" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+    <circle cx="20" cy="20" r="12" fill="#22c55e"/><text x="20" y="24" text-anchor="middle" class="num">1</text>
+    <text x="42" y="20" class="api-m" fill="#166534">GET</text>
+    <text x="80" y="20" class="api-p">/api/posts/{id}</text>
+    <text x="42" y="38" class="api-n">帖子详情 — PostDetailVO 包含: title/content/summary</text>
+    <text x="42" y="55" class="api-n">+ authorName/authorAvatarUrl + categoryName + viewCount ✅</text>
+    <text x="42" y="68" class="api-n">注意: 需权限控制 (游客只看 PUBLISHED, 作者看自己的)</text>
+  </g>
+
+  <!-- API 2: Comments List ✅ -->
+  <g transform="translate(875,200)">
+    <rect width="490" height="55" rx="6" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+    <circle cx="20" cy="20" r="12" fill="#22c55e"/><text x="20" y="24" text-anchor="middle" class="num">2</text>
+    <text x="42" y="20" class="api-m" fill="#166534">GET</text>
+    <text x="80" y="20" class="api-p">/api/comments/{postId}/comments?page=&amp;size=</text>
+    <text x="42" y="38" class="api-n">评论列表(分页) — CommentController ✅</text>
+  </g>
+
+  <!-- API 3: Create Comment ✅ -->
+  <g transform="translate(875,265)">
+    <rect width="490" height="75" rx="6" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+    <circle cx="20" cy="20" r="12" fill="#22c55e"/><text x="20" y="24" text-anchor="middle" class="num">3</text>
+    <text x="42" y="20" class="api-m" fill="#166534">PUT</text>
+    <text x="80" y="20" class="api-p">/api/comments/{postId}/comments</text>
+    <text x="42" y="38" class="api-n">发表评论 — CommentController ✅</text>
+    <text x="42" y="55" class="api-n" fill="#dc2626">⚠ PRD 要求: 评论成功后更新 comment_count + last_activity_time</text>
+    <text x="42" y="68" class="api-n" fill="#dc2626">需确认: CommentServiceImpl 是否已处理这些副作用</text>
+  </g>
+
+  <!-- API 4: Tags Display ❌ -->
+  <g transform="translate(875,350)">
+    <rect width="490" height="55" rx="6" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+    <circle cx="20" cy="20" r="12" fill="#ef4444"/><text x="20" y="24" text-anchor="middle" class="num">4</text>
+    <text x="42" y="20" class="api-m" fill="#991b1b">—</text>
+    <text x="60" y="20" class="api-p">PostDetailVO.tagList</text>
+    <text x="42" y="38" class="api-n">❌ 详情返回中无标签数据 — PostDetailVO 无 tagList 字段</text>
+  </g>
+
+  <!-- API 5: Status visibility ⚠️ -->
+  <g transform="translate(875,415)">
+    <rect width="490" height="75" rx="6" fill="#fef9c3" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="20" cy="20" r="12" fill="#f59e0b"/><text x="20" y="24" text-anchor="middle" class="num">5</text>
+    <text x="42" y="20" class="api-m" fill="#92400e">—</text>
+    <text x="60" y="20" class="api-p">权限控制 + 状态提示</text>
+    <text x="42" y="38" class="api-n">⚠ PostDetailVO 有 status 字段 — 可用于前端状态展示</text>
+    <text x="42" y="55" class="api-n" fill="#dc2626">但: 后端未实现严格的 GET /posts/{id} 权限校验</text>
+    <text x="42" y="68" class="api-n" fill="#dc2626">需确认: 草稿/待审核/已拒绝帖子是否对游客不可见</text>
+  </g>
+
+  <!-- Additional APIs -->
+  <g transform="translate(875,500)">
+    <rect width="490" height="55" rx="6" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+    <text x="15" y="20" class="api-m" fill="#166534">DELETE</text>
+    <text x="75" y="20" class="api-p">/api/comments/{commentId}</text>
+    <text x="15" y="38" class="api-n">删除评论 — CommentController ✅ (仅本人可删)</text>
+  </g>
+
+  <!-- Notes -->
+  <g transform="translate(875,570)">
+    <rect width="490" height="90" rx="6" fill="#f1f5f9" stroke="#cbd5e1"/>
+    <text x="15" y="22" class="wlbl">📋 详情页变更需求</text>
+    <text x="15" y="42" class="api-n">• PostDetailVO 增加 tagList: List&lt;TagVO&gt; 字段</text>
+    <text x="15" y="58" class="api-n">• GET /posts/{id} 需根据登录态做权限校验</text>
+    <text x="15" y="74" class="api-n">• 评论发布后需更新 post.comment_count + last_activity_time</text>
+  </g>
+
+  <g transform="translate(875,675)">
+    <rect width="490" height="60" rx="6" fill="#ede9fe" stroke="#a78bfa"/>
+    <text x="15" y="22" font-size="13" font-weight="700" fill="#5b21b6">详情页总结</text>
+    <text x="15" y="42" class="api-n">实现度: ~70% · 帖子详情 + 评论 CRUD 可用</text>
+    <text x="15" y="55" class="api-n">联调建议: 可直接联调, 标签展示和权限校验后续补</text>
+  </g>
+</svg>

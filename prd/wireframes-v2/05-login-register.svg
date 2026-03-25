@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <defs>
+    <style>
+      text { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
+      .ann { font-size: 9px; fill: #c0392b; font-style: italic; }
+      .h1 { font-size: 22px; font-weight: bold; fill: #111; }
+      .h2 { font-size: 14px; font-weight: bold; fill: #222; }
+      .body { font-size: 12px; fill: #666; }
+      .meta { font-size: 10px; fill: #999; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="800" fill="#f5f5f5"/>
+
+  <!-- ==================== TOP NAV ==================== -->
+  <rect width="1200" height="52" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
+  <rect x="40" y="12" width="28" height="28" rx="6" fill="#333"/>
+  <text x="43" y="31" font-size="14" font-weight="bold" fill="#fff">T</text>
+  <text x="76" y="33" font-size="14" font-weight="bold" fill="#222">TechHub</text>
+  <rect x="920" y="12" width="84" height="28" rx="14" fill="#333"/>
+  <text x="938" y="31" font-size="12" fill="#fff">+ 写文章</text>
+  <circle cx="1044" cy="26" r="14" fill="#ddd"/>
+
+  <!-- ==================== LOGIN / REGISTER SPLIT VIEW ==================== -->
+  <!-- Left Panel: Login -->
+  <rect x="80" y="80" width="480" height="640" rx="12" fill="#fff" stroke="#eee" stroke-width="1"/>
+
+  <!-- Login Header -->
+  <text x="280" y="130" class="h1" text-anchor="middle">登录</text>
+  <text x="280" y="152" font-size="12" fill="#999" text-anchor="middle">欢迎回来，继续你的技术创作之旅</text>
+
+  <!-- Username/Email field -->
+  <text x="140" y="192" font-size="11" font-weight="600" fill="#333">用户名或邮箱</text>
+  <rect x="140" y="200" width="320" height="40" rx="6" fill="none" stroke="#ddd" stroke-width="1"/>
+  <text x="160" y="225" font-size="12" fill="#bbb">请输入用户名或邮箱</text>
+
+  <!-- Password field -->
+  <text x="140" y="268" font-size="11" font-weight="600" fill="#333">密码</text>
+  <rect x="140" y="276" width="320" height="40" rx="6" fill="none" stroke="#ddd" stroke-width="1"/>
+  <text x="160" y="301" font-size="12" fill="#bbb">请输入密码</text>
+  <!-- Show/hide password -->
+  <text x="428" y="301" font-size="10" fill="#999">👁</text>
+
+  <!-- Login button -->
+  <rect x="140" y="340" width="320" height="42" rx="6" fill="#333"/>
+  <text x="280" y="366" font-size="14" fill="#fff" text-anchor="middle">登 录</text>
+
+  <!-- Divider -->
+  <line x1="140" y1="408" x2="244" y2="408" stroke="#eee" stroke-width="1"/>
+  <text x="280" y="412" font-size="10" fill="#ccc" text-anchor="middle">或</text>
+  <line x1="316" y1="408" x2="460" y2="408" stroke="#eee" stroke-width="1"/>
+
+  <!-- Other login methods placeholder -->
+  <rect x="220" y="432" width="120" height="36" rx="6" fill="none" stroke="#ddd" stroke-width="1"/>
+  <text x="280" y="455" font-size="11" fill="#888" text-anchor="middle">GitHub 登录</text>
+  <text x="280" y="480" class="ann" text-anchor="middle">第三方登录 V2 预留</text>
+
+  <!-- Go to register -->
+  <text x="220" y="520" font-size="12" fill="#666">还没有账号？</text>
+  <text x="316" y="520" font-size="12" fill="#333" font-weight="600">立即注册 →</text>
+
+  <!-- Login annotations -->
+  <rect x="100" y="548" width="400" height="100" rx="6" fill="none" stroke="#c0392b" stroke-width="0.6" stroke-dasharray="3,3"/>
+  <text x="116" y="568" class="ann" font-weight="bold">登录说明</text>
+  <text x="116" y="584" class="ann">POST /api/auth/login</text>
+  <text x="116" y="600" class="ann">返回 JWT token (7天有效)</text>
+  <text x="116" y="616" class="ann">5次错误锁定15分钟 (Redis计数)</text>
+  <text x="116" y="632" class="ann">封禁用户返回 ban_reason</text>
+
+  <!-- ==================== Right Panel: Register ==================== -->
+  <rect x="620" y="80" width="500" height="640" rx="12" fill="#fff" stroke="#eee" stroke-width="1"/>
+
+  <text x="840" y="130" class="h1" text-anchor="middle">注册</text>
+  <text x="840" y="152" font-size="12" fill="#999" text-anchor="middle">创建账号，开始你的技术分享</text>
+
+  <!-- Username -->
+  <text x="680" y="192" font-size="11" font-weight="600" fill="#333">用户名 *</text>
+  <rect x="680" y="200" width="340" height="38" rx="6" fill="none" stroke="#ddd" stroke-width="1"/>
+  <text x="700" y="224" font-size="12" fill="#bbb">设置一个独特的用户名</text>
+
+  <!-- Email -->
+  <text x="680" y="262" font-size="11" font-weight="600" fill="#333">邮箱 *</text>
+  <rect x="680" y="270" width="340" height="38" rx="6" fill="none" stroke="#ddd" stroke-width="1"/>
+  <text x="700" y="294" font-size="12" fill="#bbb">用于接收验证码</text>
+
+  <!-- Verification code row -->
+  <text x="680" y="332" font-size="11" font-weight="600" fill="#333">验证码 *</text>
+  <rect x="680" y="340" width="200" height="38" rx="6" fill="none" stroke="#ddd" stroke-width="1"/>
+  <text x="700" y="364" font-size="12" fill="#bbb">邮箱验证码</text>
+  <rect x="892" y="340" width="128" height="38" rx="6" fill="none" stroke="#333" stroke-width="1"/>
+  <text x="920" y="364" font-size="11" fill="#333">发送验证码</text>
+  <text x="892" y="390" class="ann">POST /api/auth/sendRegisterCode</text>
+  <text x="892" y="402" class="ann">60秒冷却 · Redis存储</text>
+
+  <!-- Password -->
+  <text x="680" y="428" font-size="11" font-weight="600" fill="#333">密码 *</text>
+  <rect x="680" y="436" width="340" height="38" rx="6" fill="none" stroke="#ddd" stroke-width="1"/>
+  <text x="700" y="460" font-size="12" fill="#bbb">至少 6 位，包含字母和数字</text>
+  <!-- Password strength indicator -->
+  <rect x="680" y="478" width="100" height="3" rx="1" fill="#eee"/>
+  <rect x="680" y="478" width="40" height="3" rx="1" fill="#e74c3c"/>
+  <text x="790" y="486" font-size="9" fill="#999">密码强度：弱</text>
+
+  <!-- Confirm password -->
+  <text x="680" y="508" font-size="11" font-weight="600" fill="#333">确认密码 *</text>
+  <rect x="680" y="516" width="340" height="38" rx="6" fill="none" stroke="#ddd" stroke-width="1"/>
+  <text x="700" y="540" font-size="12" fill="#bbb">再次输入密码</text>
+
+  <!-- Agreement -->
+  <rect x="680" y="572" width="14" height="14" rx="3" fill="none" stroke="#ccc" stroke-width="1"/>
+  <text x="700" y="584" font-size="10" fill="#666">我已阅读并同意</text>
+  <text x="792" y="584" font-size="10" fill="#333" font-weight="600">用户协议</text>
+  <text x="834" y="584" font-size="10" fill="#666">和</text>
+  <text x="848" y="584" font-size="10" fill="#333" font-weight="600">隐私政策</text>
+
+  <!-- Register button -->
+  <rect x="680" y="600" width="340" height="42" rx="6" fill="#333"/>
+  <text x="840" y="626" font-size="14" fill="#fff" text-anchor="middle">注 册</text>
+
+  <!-- Go to login -->
+  <text x="780" y="668" font-size="12" fill="#666">已有账号？</text>
+  <text x="845" y="668" font-size="12" fill="#333" font-weight="600">← 去登录</text>
+
+  <!-- Register annotations -->
+  <rect x="640" y="684" width="420" height="48" rx="6" fill="none" stroke="#c0392b" stroke-width="0.6" stroke-dasharray="3,3"/>
+  <text x="656" y="700" class="ann" font-weight="bold">注册说明</text>
+  <text x="656" y="716" class="ann">POST /api/auth/register · 入参: username, email, password, code · 默认角色 ROLE_USER · 密码BCrypt加密</text>
+
+  <!-- ==================== DESIGN NOTE ==================== -->
+  <rect x="80" y="660" width="480" height="60" rx="6" fill="none" stroke="#c0392b" stroke-width="0.8" stroke-dasharray="3,3"/>
+  <text x="96" y="680" class="ann" font-weight="bold">页面设计说明</text>
+  <text x="96" y="696" class="ann">左右双面板展示登录/注册，实际实现可以是 Tab 切换或独立路由 /login, /register</text>
+  <text x="96" y="712" class="ann">极简表单设计，减少注册门槛。邮箱验证码确保真实用户。登录失败5次锁定防暴力破解。</text>
+
+  <text x="600" y="790" font-size="10" fill="#ccc" text-anchor="middle">登录 / 注册页 | TechHub 轻量技术创作社区 V1</text>
+</svg>

@@ -1,0 +1,267 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <defs>
+    <style>
+      text { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
+      .ann { font-size: 9px; fill: #c0392b; font-style: italic; }
+      .h1 { font-size: 16px; font-weight: bold; fill: #111; }
+      .h2 { font-size: 13px; font-weight: bold; fill: #222; }
+      .h3 { font-size: 11px; font-weight: 600; fill: #333; }
+      .body { font-size: 11px; fill: #666; }
+      .meta { font-size: 10px; fill: #999; }
+      .btn { font-size: 11px; fill: #fff; }
+      .sidebar-title { font-size: 12px; font-weight: bold; fill: #333; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="800" fill="#fafafa"/>
+
+  <!-- ==================== SLIM TOP NAV ==================== -->
+  <rect width="1200" height="44" fill="#222"/>
+  <rect x="36" y="10" width="24" height="24" rx="5" fill="#fff"/>
+  <text x="39" y="27" font-size="12" font-weight="bold" fill="#222">T</text>
+  <text x="68" y="29" font-size="14" font-weight="bold" fill="#fff">TechHub</text>
+  <!-- Search -->
+  <rect x="200" y="8" width="320" height="28" rx="4" fill="#333" stroke="#555" stroke-width="0.5"/>
+  <text x="220" y="27" font-size="11" fill="#888">搜索帖子、标签、作者...</text>
+  <!-- Nav links -->
+  <text x="720" y="28" font-size="12" fill="#ccc">首页</text>
+  <text x="770" y="28" font-size="12" fill="#888">发现</text>
+  <!-- Write -->
+  <rect x="940" y="8" width="72" height="28" rx="4" fill="#fff"/>
+  <text x="955" y="27" font-size="11" fill="#222">+ 发布</text>
+  <!-- User -->
+  <circle cx="1048" cy="22" r="12" fill="#555" stroke="#777" stroke-width="0.5"/>
+  <text x="1068" y="26" font-size="11" fill="#ddd">用户名 ▾</text>
+  <!-- Annotation -->
+  <rect x="1130" y="2" width="65" height="40" fill="none" stroke="#c0392b" stroke-width="0.5" stroke-dasharray="2,2" rx="2"/>
+  <text x="1135" y="18" class="ann">未登录:</text>
+  <text x="1135" y="30" class="ann">[登录][注册]</text>
+
+  <!-- ==================== LEFT SIDEBAR: CATEGORIES ==================== -->
+  <rect x="0" y="44" width="180" height="756" fill="#fff" stroke="#eee" stroke-width="1"/>
+  <text x="24" y="72" class="sidebar-title">分区导航</text>
+  <line x1="20" y1="80" x2="160" y2="80" stroke="#f0f0f0" stroke-width="1"/>
+  <!-- Active category -->
+  <rect x="8" y="88" width="164" height="32" rx="4" fill="#f0f0f0"/>
+  <rect x="8" y="88" width="3" height="32" rx="1" fill="#333"/>
+  <text x="24" y="109" font-size="12" font-weight="600" fill="#222">全部分区</text>
+  <text x="148" y="109" class="meta">1.2k</text>
+  <!-- Other categories -->
+  <text x="24" y="140" font-size="12" fill="#555">后端与开发实践</text>
+  <text x="148" y="140" class="meta">456</text>
+  <text x="24" y="168" font-size="12" fill="#555">算法与竞赛</text>
+  <text x="148" y="168" class="meta">234</text>
+  <text x="24" y="196" font-size="12" fill="#555">AI与工具探索</text>
+  <text x="148" y="196" class="meta">178</text>
+  <text x="24" y="224" font-size="12" fill="#555">解决方案与踩坑</text>
+  <text x="148" y="224" class="meta">156</text>
+  <text x="24" y="252" font-size="12" fill="#555">工具与资源</text>
+  <text x="148" y="252" class="meta">98</text>
+  <text x="24" y="280" font-size="12" fill="#555">茶水间</text>
+  <text x="148" y="280" class="meta">87</text>
+  <!-- Sidebar annotation -->
+  <text x="16" y="310" class="ann">← 左侧竖栏分区</text>
+  <text x="16" y="322" class="ann">高亮当前选中</text>
+  <text x="16" y="334" class="ann">右侧显示帖子数</text>
+  <text x="16" y="346" class="ann">点击切换筛选</text>
+
+  <!-- Hot tags in sidebar -->
+  <line x1="20" y1="364" x2="160" y2="364" stroke="#eee" stroke-width="1"/>
+  <text x="24" y="386" class="sidebar-title">热门标签</text>
+  <rect x="20" y="396" width="50" height="20" rx="10" fill="#f0f0f0"/>
+  <text x="30" y="410" font-size="9" fill="#555">Spring</text>
+  <rect x="76" y="396" width="44" height="20" rx="10" fill="#f0f0f0"/>
+  <text x="86" y="410" font-size="9" fill="#555">Redis</text>
+  <rect x="126" y="396" width="42" height="20" rx="10" fill="#f0f0f0"/>
+  <text x="134" y="410" font-size="9" fill="#555">MySQL</text>
+  <rect x="20" y="422" width="38" height="20" rx="10" fill="#f0f0f0"/>
+  <text x="28" y="436" font-size="9" fill="#555">Java</text>
+  <rect x="64" y="422" width="38" height="20" rx="10" fill="#f0f0f0"/>
+  <text x="72" y="436" font-size="9" fill="#555">力扣</text>
+  <rect x="108" y="422" width="52" height="20" rx="10" fill="#f0f0f0"/>
+  <text x="116" y="436" font-size="9" fill="#555">Python</text>
+  <rect x="20" y="448" width="56" height="20" rx="10" fill="#f0f0f0"/>
+  <text x="28" y="462" font-size="9" fill="#555">Docker</text>
+  <rect x="82" y="448" width="38" height="20" rx="10" fill="#f0f0f0"/>
+  <text x="90" y="462" font-size="9" fill="#555">Linux</text>
+  <text x="16" y="490" class="ann">点击标签筛选帖子列表</text>
+
+  <!-- Stats -->
+  <line x1="20" y1="508" x2="160" y2="508" stroke="#eee" stroke-width="1"/>
+  <text x="24" y="530" class="sidebar-title">社区概览</text>
+  <text x="24" y="552" font-size="11" fill="#555">帖子</text>
+  <text x="120" y="552" font-size="11" font-weight="bold" fill="#222" text-anchor="end">1,234</text>
+  <text x="24" y="572" font-size="11" fill="#555">用户</text>
+  <text x="120" y="572" font-size="11" font-weight="bold" fill="#222" text-anchor="end">567</text>
+  <text x="24" y="592" font-size="11" fill="#555">今日新帖</text>
+  <text x="120" y="592" font-size="11" font-weight="bold" fill="#222" text-anchor="end">89</text>
+
+  <!-- ==================== MAIN FEED (center) ==================== -->
+  <!-- Sort Tabs -->
+  <rect x="192" y="52" width="700" height="34" rx="0" fill="#fff" stroke="#eee" stroke-width="0.5"/>
+  <text x="216" y="74" font-size="12" font-weight="bold" fill="#222">最新</text>
+  <line x1="212" y1="78" x2="240" y2="78" stroke="#333" stroke-width="2"/>
+  <text x="260" y="74" font-size="12" fill="#999">精选</text>
+  <text x="304" y="74" font-size="12" fill="#999">热门</text>
+  <text x="348" y="74" font-size="12" fill="#999">待解决</text>
+  <text x="420" y="74" class="ann">← 排序 Tab</text>
+
+  <!-- ===== LIST ROW 1 ===== -->
+  <rect x="192" y="90" width="700" height="82" rx="0" fill="#fff" stroke="#eee" stroke-width="0.5"/>
+  <rect x="204" y="100" width="64" height="18" rx="9" fill="#f5f5f5"/>
+  <text x="212" y="113" font-size="9" fill="#666">后端开发</text>
+  <rect x="274" y="100" width="32" height="18" rx="9" fill="#333"/>
+  <text x="280" y="113" font-size="9" fill="#fff">精选</text>
+  <text x="204" y="136" font-size="14" font-weight="bold" fill="#111">Spring Boot 3.x 集成 Redis 实现分布式缓存最佳实践</text>
+  <text x="204" y="154" font-size="11" fill="#888">本文详细介绍了 Spring Boot 3.x 中如何集成 Redis，包括连接池配置、序列化方案选择...</text>
+  <!-- Meta row -->
+  <circle cx="214" cy="168" r="7" fill="#e0e0e0"/>
+  <text x="226" y="171" font-size="10" fill="#555">张三</text>
+  <text x="270" y="171" class="meta">·</text>
+  <text x="280" y="171" class="meta">3小时前</text>
+  <text x="340" y="171" class="meta">·</text>
+  <text x="350" y="171" class="meta">👁 1.2k</text>
+  <text x="400" y="171" class="meta">·</text>
+  <text x="410" y="171" class="meta">💬 23</text>
+  <!-- Tags inline -->
+  <rect x="460" y="161" width="42" height="16" rx="8" fill="#f0f0f0"/>
+  <text x="468" y="173" font-size="8" fill="#777">Spring</text>
+  <rect x="508" y="161" width="38" height="16" rx="8" fill="#f0f0f0"/>
+  <text x="516" y="173" font-size="8" fill="#777">Redis</text>
+
+  <!-- Annotation: card fields -->
+  <line x1="892" y1="100" x2="920" y2="100" stroke="#c0392b" stroke-width="0.5" stroke-dasharray="2,2"/>
+  <text x="924" y="103" class="ann">紧凑帖子行</text>
+  <text x="924" y="115" class="ann">分区徽标 + 精选标</text>
+  <text x="924" y="127" class="ann">标题（单行加粗）</text>
+  <text x="924" y="139" class="ann">单行摘要（截断）</text>
+  <text x="924" y="151" class="ann">作者·时间·浏览·评论·标签</text>
+  <text x="924" y="167" class="ann">→ 点击整行进入详情</text>
+
+  <!-- ===== LIST ROW 2 ===== -->
+  <rect x="192" y="172" width="700" height="82" rx="0" fill="#fff" stroke="#eee" stroke-width="0.5"/>
+  <rect x="204" y="182" width="56" height="18" rx="9" fill="#f5f5f5"/>
+  <text x="212" y="195" font-size="9" fill="#666">算法竞赛</text>
+  <text x="204" y="218" font-size="14" font-weight="bold" fill="#111">力扣周赛 380：从前缀和到单调栈的优雅解法</text>
+  <text x="204" y="236" font-size="11" fill="#888">这道题乍看是个模拟，但换个角度用前缀和+单调栈可以做到 O(n) 复杂度...</text>
+  <circle cx="214" cy="250" r="7" fill="#e0e0e0"/>
+  <text x="226" y="253" font-size="10" fill="#555">李四</text>
+  <text x="260" y="253" class="meta">· 昨天 · 👁 856 · 💬 42</text>
+
+  <!-- ===== LIST ROW 3 ===== -->
+  <rect x="192" y="254" width="700" height="82" rx="0" fill="#fff" stroke="#eee" stroke-width="0.5"/>
+  <rect x="204" y="264" width="64" height="18" rx="9" fill="#f5f5f5"/>
+  <text x="210" y="277" font-size="9" fill="#666">AI与工具</text>
+  <text x="204" y="300" font-size="14" font-weight="bold" fill="#111">用 Claude + MCP 自动化我的整个开发工作流</text>
+  <text x="204" y="318" font-size="11" fill="#888">分享如何利用 Claude 的 MCP 协议连接本地工具链，实现全流程自动化...</text>
+  <circle cx="214" cy="332" r="7" fill="#e0e0e0"/>
+  <text x="226" y="335" font-size="10" fill="#555">王五</text>
+  <text x="260" y="335" class="meta">· 2天前 · 👁 3.4k · 💬 89</text>
+
+  <!-- ===== LIST ROW 4 ===== -->
+  <rect x="192" y="336" width="700" height="82" rx="0" fill="#fff" stroke="#eee" stroke-width="0.5"/>
+  <rect x="204" y="346" width="78" height="18" rx="9" fill="#f5f5f5"/>
+  <text x="210" y="359" font-size="9" fill="#666">解决方案</text>
+  <text x="204" y="382" font-size="14" font-weight="bold" fill="#111">MySQL 8.0 死锁排查全记录：从 binlog 到 MVCC</text>
+  <text x="204" y="400" font-size="11" fill="#888">线上突发死锁告警，本文记录从发现到定位到修复的完整过程...</text>
+  <circle cx="214" cy="414" r="7" fill="#e0e0e0"/>
+  <text x="226" y="417" font-size="10" fill="#555">赵六</text>
+  <text x="260" y="417" class="meta">· 3天前 · 👁 678 · 💬 31</text>
+
+  <!-- ===== LIST ROW 5 ===== -->
+  <rect x="192" y="418" width="700" height="82" rx="0" fill="#fff" stroke="#eee" stroke-width="0.5"/>
+  <rect x="204" y="428" width="56" height="18" rx="9" fill="#f5f5f5"/>
+  <text x="212" y="441" font-size="9" fill="#666">工具资源</text>
+  <text x="204" y="464" font-size="14" font-weight="bold" fill="#111">2024 年最值得使用的 10 个开发者效率工具</text>
+  <text x="204" y="482" font-size="11" fill="#888">精选十款能真正提升日常开发效率的工具，涵盖终端、编辑器、协作平台...</text>
+  <circle cx="214" cy="496" r="7" fill="#e0e0e0"/>
+  <text x="226" y="499" font-size="10" fill="#555">孙七</text>
+  <text x="260" y="499" class="meta">· 4天前 · 👁 2.1k · 💬 56</text>
+
+  <!-- ===== LIST ROW 6 ===== -->
+  <rect x="192" y="500" width="700" height="82" rx="0" fill="#fff" stroke="#eee" stroke-width="0.5"/>
+  <rect x="204" y="510" width="48" height="18" rx="9" fill="#f5f5f5"/>
+  <text x="212" y="523" font-size="9" fill="#666">茶水间</text>
+  <text x="204" y="546" font-size="14" font-weight="bold" fill="#111">程序员下班后都在干什么？来聊聊你的副业</text>
+  <text x="204" y="564" font-size="11" fill="#888">好奇大家工作之余都在做什么，是继续写代码还是有其他爱好...</text>
+  <circle cx="214" cy="578" r="7" fill="#e0e0e0"/>
+  <text x="226" y="581" font-size="10" fill="#555">周八</text>
+  <text x="260" y="581" class="meta">· 5天前 · 👁 4.5k · 💬 127</text>
+
+  <!-- ===== LIST ROW 7 (partial) ===== -->
+  <rect x="192" y="582" width="700" height="44" rx="0" fill="#fff" stroke="#eee" stroke-width="0.5"/>
+  <rect x="204" y="592" width="64" height="18" rx="9" fill="#f5f5f5"/>
+  <text x="212" y="605" font-size="9" fill="#666">后端开发</text>
+  <text x="204" y="622" font-size="14" font-weight="bold" fill="#111">MyBatis-Plus 代码生成器高级玩法...</text>
+  <!-- Fade -->
+  <defs>
+    <linearGradient id="fade2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fafafa" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#fafafa" stop-opacity="1"/>
+    </linearGradient>
+  </defs>
+  <rect x="192" y="610" width="700" height="30" fill="url(#fade2)"/>
+
+  <!-- Load more -->
+  <text x="540" y="650" font-size="11" fill="#999" text-anchor="middle">↓ 无限滚动 · 游标分页 ↓</text>
+
+  <!-- ==================== RIGHT SIDEBAR (compact) ==================== -->
+  <rect x="904" y="52" width="296" height="748" fill="#fff" stroke="#eee" stroke-width="0.5"/>
+
+  <!-- Trending Posts -->
+  <text x="920" y="78" class="sidebar-title">热门帖子 TOP5</text>
+  <line x1="920" y1="86" x2="1180" y2="86" stroke="#f0f0f0" stroke-width="1"/>
+  <text x="920" y="106" font-size="12" font-weight="bold" fill="#c0392b">1</text>
+  <text x="936" y="106" font-size="11" fill="#333">Claude + MCP 自动化开发工作流</text>
+  <text x="936" y="120" class="meta">👁 3.4k · 💬 89</text>
+  <text x="920" y="140" font-size="12" font-weight="bold" fill="#c0392b">2</text>
+  <text x="936" y="140" font-size="11" fill="#333">程序员下班后都在干什么</text>
+  <text x="936" y="154" class="meta">👁 4.5k · 💬 127</text>
+  <text x="920" y="174" font-size="12" font-weight="bold" fill="#c0392b">3</text>
+  <text x="936" y="174" font-size="11" fill="#333">10 个开发者效率工具推荐</text>
+  <text x="936" y="188" class="meta">👁 2.1k · 💬 56</text>
+  <text x="920" y="208" font-size="12" fill="#999">4</text>
+  <text x="936" y="208" font-size="11" fill="#333">Spring Boot 3.x 集成 Redis</text>
+  <text x="936" y="222" class="meta">👁 1.2k · 💬 23</text>
+  <text x="920" y="242" font-size="12" fill="#999">5</text>
+  <text x="936" y="242" font-size="11" fill="#333">力扣周赛 380 解题思路</text>
+  <text x="936" y="256" class="meta">👁 856 · 💬 42</text>
+
+  <!-- Active users -->
+  <line x1="920" y1="274" x2="1180" y2="274" stroke="#eee" stroke-width="1"/>
+  <text x="920" y="296" class="sidebar-title">活跃作者</text>
+  <line x1="920" y1="304" x2="1180" y2="304" stroke="#f0f0f0" stroke-width="1"/>
+  <circle cx="934" cy="324" r="10" fill="#e0e0e0"/>
+  <text x="950" y="328" font-size="11" fill="#444">张三</text>
+  <text x="1000" y="328" class="meta">28篇 · 精选3</text>
+  <circle cx="934" cy="350" r="10" fill="#e0e0e0"/>
+  <text x="950" y="354" font-size="11" fill="#444">李四</text>
+  <text x="1000" y="354" class="meta">22篇 · 精选2</text>
+  <circle cx="934" cy="376" r="10" fill="#e0e0e0"/>
+  <text x="950" y="380" font-size="11" fill="#444">王五</text>
+  <text x="1000" y="380" class="meta">19篇 · 精选5</text>
+
+  <!-- Announcement -->
+  <line x1="920" y1="400" x2="1180" y2="400" stroke="#eee" stroke-width="1"/>
+  <text x="920" y="422" class="sidebar-title">公告</text>
+  <line x1="920" y1="430" x2="1180" y2="430" stroke="#f0f0f0" stroke-width="1"/>
+  <text x="920" y="448" font-size="10" fill="#555">· 社区规范已更新，请查阅</text>
+  <text x="920" y="466" font-size="10" fill="#555">· 算法竞赛专区上线啦！</text>
+  <text x="920" y="484" font-size="10" fill="#555">· 精选机制说明</text>
+
+  <!-- ==================== ANNOTATIONS ==================== -->
+  <rect x="920" y="510" width="264" height="220" rx="6" fill="none" stroke="#c0392b" stroke-width="0.8" stroke-dasharray="3,3"/>
+  <text x="932" y="530" class="ann" font-weight="bold">设计说明 — B版：紧凑信息流</text>
+  <text x="932" y="548" class="ann">1. 深色顶栏：紧凑、专业感</text>
+  <text x="932" y="564" class="ann">2. 左侧栏：垂直分区列表 + 帖子计数</text>
+  <text x="932" y="580" class="ann">3. 中间列表：单行摘要、高信息密度</text>
+  <text x="932" y="596" class="ann">4. 右侧栏：热门TOP5 + 活跃作者 + 公告</text>
+  <text x="932" y="612" class="ann">5. 三栏布局：侧栏15% / 内容60% / 侧栏25%</text>
+  <text x="932" y="628" class="ann">6. 同屏可展示 7+ 条帖子（效率更高）</text>
+  <text x="932" y="644" class="ann">7. 适合内容消费型用户快速扫描</text>
+  <text x="932" y="664" class="ann">对比A版：信息密度高 2x，适合深度用户</text>
+  <text x="932" y="680" class="ann">   呼吸感弱，初次访问可能感觉拥挤</text>
+  <text x="932" y="700" class="ann">建议：可在A/B间加用户偏好切换</text>
+
+  <text x="600" y="790" font-size="10" fill="#ccc" text-anchor="middle">首页 — B版 紧凑信息流 | TechHub 轻量技术创作社区 V1</text>
+</svg>

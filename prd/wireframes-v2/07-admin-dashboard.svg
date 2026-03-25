@@ -1,0 +1,224 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <defs>
+    <style>
+      text { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
+      .ann { font-size: 9px; fill: #c0392b; font-style: italic; }
+      .h1 { font-size: 18px; font-weight: bold; fill: #111; }
+      .h2 { font-size: 14px; font-weight: bold; fill: #222; }
+      .h3 { font-size: 12px; font-weight: 600; fill: #333; }
+      .body { font-size: 11px; fill: #666; }
+      .meta { font-size: 10px; fill: #999; }
+      .stat-num { font-size: 22px; font-weight: bold; fill: #222; }
+      .stat-label { font-size: 10px; fill: #888; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="800" fill="#f0f0f0"/>
+
+  <!-- ==================== ADMIN TOP BAR ==================== -->
+  <rect width="1200" height="48" fill="#1a1a2e"/>
+  <text x="24" y="31" font-size="14" font-weight="bold" fill="#fff">TechHub 管理后台</text>
+  <text x="1060" y="31" font-size="11" fill="#888">管理员: admin</text>
+  <circle cx="1148" cy="24" r="12" fill="#555"/>
+  <text x="1140" y="28" font-size="8" fill="#fff">管理</text>
+  <text x="200" y="31" class="ann" style="fill: #ff6b6b;">仅 ROLE_ADMIN 可访问</text>
+
+  <!-- ==================== LEFT SIDEBAR ==================== -->
+  <rect x="0" y="48" width="200" height="752" fill="#16213e"/>
+  <!-- Menu items -->
+  <rect x="0" y="56" width="200" height="40" fill="#1a1a2e"/>
+  <rect x="0" y="56" width="3" height="40" fill="#fff"/>
+  <text x="24" y="81" font-size="12" font-weight="600" fill="#fff">仪表盘</text>
+  <text x="24" y="116" font-size="12" fill="#8899aa">帖子管理</text>
+  <rect x="180" y="104" width="14" height="14" rx="7" fill="#e74c3c"/>
+  <text x="184" y="114" font-size="8" fill="#fff">5</text>
+  <text x="24" y="148" font-size="12" fill="#8899aa">分区管理</text>
+  <text x="24" y="180" font-size="12" fill="#8899aa">用户管理</text>
+  <text x="24" y="212" font-size="12" fill="#8899aa">精选管理</text>
+  <line x1="16" y1="228" x2="184" y2="228" stroke="#2a3a5c" stroke-width="0.5"/>
+  <text x="24" y="252" font-size="12" fill="#8899aa">审核队列</text>
+  <rect x="180" y="240" width="14" height="14" rx="7" fill="#e74c3c"/>
+  <text x="184" y="250" font-size="8" fill="#fff">3</text>
+  <text x="24" y="284" font-size="12" fill="#8899aa">系统设置</text>
+  <line x1="16" y1="300" x2="184" y2="300" stroke="#2a3a5c" stroke-width="0.5"/>
+  <text x="24" y="324" font-size="11" fill="#556677">审核全局开关</text>
+  <!-- Toggle switch -->
+  <rect x="130" y="312" width="40" height="20" rx="10" fill="#2ecc71"/>
+  <circle cx="158" cy="322" r="8" fill="#fff"/>
+  <text x="24" y="348" class="ann" style="fill: #ff6b6b;">开启→发布进入待审核</text>
+  <text x="24" y="362" class="ann" style="fill: #ff6b6b;">关闭→直接发布</text>
+
+  <!-- ==================== MAIN CONTENT: Dashboard ==================== -->
+
+  <!-- Stats cards row -->
+  <rect x="220" y="62" width="220" height="88" rx="8" fill="#fff" stroke="#eee" stroke-width="0.5"/>
+  <text x="240" y="86" class="h3">帖子总数</text>
+  <text x="240" y="120" class="stat-num">1,234</text>
+  <text x="340" y="120" class="meta">↑ 12% 较上周</text>
+  <text x="240" y="140" class="stat-label">今日新增 +89</text>
+
+  <rect x="456" y="62" width="220" height="88" rx="8" fill="#fff" stroke="#eee" stroke-width="0.5"/>
+  <text x="476" y="86" class="h3">注册用户</text>
+  <text x="476" y="120" class="stat-num">567</text>
+  <text x="576" y="120" class="meta">↑ 8% 较上周</text>
+  <text x="476" y="140" class="stat-label">今日新增 +15</text>
+
+  <rect x="692" y="62" width="220" height="88" rx="8" fill="#fff" stroke="#eee" stroke-width="0.5"/>
+  <text x="712" y="86" class="h3">待审核</text>
+  <text x="712" y="120" font-size="22" font-weight="bold" fill="#e74c3c">3</text>
+  <text x="760" y="120" class="meta">需处理</text>
+  <text x="712" y="140" class="stat-label">平均审核耗时 2.3h</text>
+
+  <rect x="928" y="62" width="240" height="88" rx="8" fill="#fff" stroke="#eee" stroke-width="0.5"/>
+  <text x="948" y="86" class="h3">精选帖子</text>
+  <text x="948" y="120" class="stat-num">42</text>
+  <text x="1020" y="120" class="meta">待审精选 2</text>
+  <text x="948" y="140" class="stat-label">精选率 3.4%</text>
+
+  <!-- ==================== PENDING REVIEW TABLE ==================== -->
+  <rect x="220" y="166" width="948" height="296" rx="8" fill="#fff" stroke="#eee" stroke-width="0.5"/>
+  <text x="244" y="194" class="h2">待审核帖子</text>
+  <text x="380" y="194" font-size="10" fill="#e74c3c" font-weight="bold">3 条待处理</text>
+  <text x="1080" y="194" class="meta" text-anchor="end">查看全部 →</text>
+
+  <!-- Table header -->
+  <rect x="232" y="206" width="924" height="28" rx="0" fill="#f8f8f8"/>
+  <text x="244" y="224" font-size="10" font-weight="600" fill="#666">ID</text>
+  <text x="292" y="224" font-size="10" font-weight="600" fill="#666">标题</text>
+  <text x="632" y="224" font-size="10" font-weight="600" fill="#666">分区</text>
+  <text x="742" y="224" font-size="10" font-weight="600" fill="#666">作者</text>
+  <text x="832" y="224" font-size="10" font-weight="600" fill="#666">提交时间</text>
+  <text x="952" y="224" font-size="10" font-weight="600" fill="#666">摘要</text>
+  <text x="1072" y="224" font-size="10" font-weight="600" fill="#666">操作</text>
+
+  <!-- Row 1 -->
+  <text x="244" y="254" font-size="11" fill="#444">#156</text>
+  <text x="292" y="254" font-size="11" fill="#222" font-weight="600">MySQL 8.0 锁机制深度解析</text>
+  <text x="632" y="254" font-size="10" fill="#666">后端开发</text>
+  <text x="742" y="254" font-size="10" fill="#666">王五</text>
+  <text x="832" y="254" font-size="10" fill="#999">2小时前</text>
+  <text x="952" y="254" font-size="9" fill="#888">深入解析...</text>
+  <rect x="1060" y="240" width="40" height="20" rx="3" fill="#333"/>
+  <text x="1067" y="254" font-size="9" fill="#fff">通过</text>
+  <rect x="1106" y="240" width="40" height="20" rx="3" fill="none" stroke="#e74c3c" stroke-width="0.8"/>
+  <text x="1113" y="254" font-size="9" fill="#e74c3c">拒绝</text>
+  <line x1="244" y1="266" x2="1144" y2="266" stroke="#f5f5f5" stroke-width="0.5"/>
+
+  <!-- Row 2 -->
+  <text x="244" y="286" font-size="11" fill="#444">#157</text>
+  <text x="292" y="286" font-size="11" fill="#222" font-weight="600">Nginx 反向代理常见配置指南</text>
+  <text x="632" y="286" font-size="10" fill="#666">解决方案</text>
+  <text x="742" y="286" font-size="10" fill="#666">赵六</text>
+  <text x="832" y="286" font-size="10" fill="#999">4小时前</text>
+  <text x="952" y="286" font-size="9" fill="#888">常见Nginx...</text>
+  <rect x="1060" y="272" width="40" height="20" rx="3" fill="#333"/>
+  <text x="1067" y="286" font-size="9" fill="#fff">通过</text>
+  <rect x="1106" y="272" width="40" height="20" rx="3" fill="none" stroke="#e74c3c" stroke-width="0.8"/>
+  <text x="1113" y="286" font-size="9" fill="#e74c3c">拒绝</text>
+  <line x1="244" y1="298" x2="1144" y2="298" stroke="#f5f5f5" stroke-width="0.5"/>
+
+  <!-- Row 3 -->
+  <text x="244" y="318" font-size="11" fill="#444">#158</text>
+  <text x="292" y="318" font-size="11" fill="#222" font-weight="600">Python 爬虫实战：抓取豆瓣电影 TOP250</text>
+  <text x="632" y="318" font-size="10" fill="#666">工具资源</text>
+  <text x="742" y="318" font-size="10" fill="#666">孙七</text>
+  <text x="832" y="318" font-size="10" fill="#999">昨天</text>
+  <text x="952" y="318" font-size="9" fill="#888">使用Python...</text>
+  <rect x="1060" y="304" width="40" height="20" rx="3" fill="#333"/>
+  <text x="1067" y="318" font-size="9" fill="#fff">通过</text>
+  <rect x="1106" y="304" width="40" height="20" rx="3" fill="none" stroke="#e74c3c" stroke-width="0.8"/>
+  <text x="1113" y="318" font-size="9" fill="#e74c3c">拒绝</text>
+
+  <!-- Reject modal hint -->
+  <rect x="860" y="340" width="296" height="60" rx="6" fill="#fff" stroke="#ddd" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="876" y="358" font-size="10" fill="#333" font-weight="600">拒绝弹窗</text>
+  <rect x="876" y="366" width="256" height="22" rx="4" fill="none" stroke="#ddd" stroke-width="0.5"/>
+  <text x="888" y="381" font-size="9" fill="#bbb">请输入拒绝原因（必填）...</text>
+  <text x="876" y="400" class="ann">拒绝时必须填写原因，作者可在个人中心查看</text>
+
+  <!-- Table annotation -->
+  <text x="244" y="358" class="ann">POST /api/admin/posts/{postId} 设置状态</text>
+  <text x="244" y="372" class="ann">通过: status → 2(PUBLISHED)</text>
+  <text x="244" y="386" class="ann">拒绝: status → 3(REJECTED) + reason</text>
+
+  <!-- ==================== CATEGORY MANAGEMENT TABLE ==================== -->
+  <rect x="220" y="474" width="460" height="246" rx="8" fill="#fff" stroke="#eee" stroke-width="0.5"/>
+  <text x="244" y="500" class="h2">分区管理</text>
+  <rect x="576" y="486" width="80" height="24" rx="4" fill="#333"/>
+  <text x="592" y="503" font-size="10" fill="#fff">+ 新增分区</text>
+
+  <!-- Mini table -->
+  <rect x="232" y="512" width="436" height="24" rx="0" fill="#f8f8f8"/>
+  <text x="244" y="528" font-size="9" font-weight="600" fill="#666">排序</text>
+  <text x="284" y="528" font-size="9" font-weight="600" fill="#666">分区名</text>
+  <text x="424" y="528" font-size="9" font-weight="600" fill="#666">帖子数</text>
+  <text x="484" y="528" font-size="9" font-weight="600" fill="#666">状态</text>
+  <text x="548" y="528" font-size="9" font-weight="600" fill="#666">操作</text>
+  <!-- Rows -->
+  <text x="244" y="552" font-size="10" fill="#666">1</text>
+  <text x="284" y="552" font-size="10" fill="#333">后端与开发实践</text>
+  <text x="424" y="552" font-size="10" fill="#666">456</text>
+  <rect x="480" y="540" width="36" height="16" rx="8" fill="#e8f5e9"/>
+  <text x="487" y="552" font-size="8" fill="#2e7d32">启用</text>
+  <text x="548" y="552" font-size="9" fill="#666">编辑 | 禁用</text>
+  <line x1="244" y1="560" x2="652" y2="560" stroke="#f5f5f5" stroke-width="0.5"/>
+
+  <text x="244" y="578" font-size="10" fill="#666">2</text>
+  <text x="284" y="578" font-size="10" fill="#333">算法与竞赛</text>
+  <text x="424" y="578" font-size="10" fill="#666">234</text>
+  <rect x="480" y="566" width="36" height="16" rx="8" fill="#e8f5e9"/>
+  <text x="487" y="578" font-size="8" fill="#2e7d32">启用</text>
+  <text x="548" y="578" font-size="9" fill="#666">编辑 | 禁用</text>
+  <line x1="244" y1="586" x2="652" y2="586" stroke="#f5f5f5" stroke-width="0.5"/>
+
+  <text x="244" y="604" font-size="10" fill="#666">3</text>
+  <text x="284" y="604" font-size="10" fill="#333">AI与工具探索</text>
+  <text x="424" y="604" font-size="10" fill="#666">178</text>
+  <rect x="480" y="592" width="36" height="16" rx="8" fill="#e8f5e9"/>
+  <text x="487" y="604" font-size="8" fill="#2e7d32">启用</text>
+  <text x="548" y="604" font-size="9" fill="#666">编辑 | 禁用</text>
+  <line x1="244" y1="612" x2="652" y2="612" stroke="#f5f5f5" stroke-width="0.5"/>
+
+  <text x="244" y="630" font-size="10" fill="#666">...</text>
+  <text x="284" y="630" font-size="10" fill="#999">更多分区</text>
+
+  <!-- Category annotation -->
+  <text x="244" y="660" class="ann">GET /api/admin/categories (含禁用)</text>
+  <text x="244" y="674" class="ann">PUT /api/categories/{id}/enable|disable</text>
+  <text x="244" y="688" class="ann">PUT /api/categories/{id}/sort 修改排序</text>
+
+  <!-- ==================== FEATURED MANAGEMENT ==================== -->
+  <rect x="696" y="474" width="472" height="246" rx="8" fill="#fff" stroke="#eee" stroke-width="0.5"/>
+  <text x="716" y="500" class="h2">精选申请</text>
+  <text x="840" y="500" font-size="10" fill="#e74c3c" font-weight="bold">2 条待审</text>
+
+  <!-- Featured request list -->
+  <rect x="708" y="512" width="448" height="64" rx="4" fill="#fafafa" stroke="#f0f0f0" stroke-width="0.5"/>
+  <text x="720" y="532" font-size="11" font-weight="600" fill="#222">Spring Boot 3.x 集成 Redis...</text>
+  <text x="720" y="548" class="meta">申请人: 张三 · 帖子浏览 1.2k · 评论 23</text>
+  <text x="720" y="566" class="meta">申请时间: 2024-03-15</text>
+  <rect x="1048" y="524" width="44" height="20" rx="3" fill="#333"/>
+  <text x="1055" y="538" font-size="9" fill="#fff">通过</text>
+  <rect x="1098" y="524" width="44" height="20" rx="3" fill="none" stroke="#999" stroke-width="0.8"/>
+  <text x="1108" y="538" font-size="9" fill="#999">拒绝</text>
+
+  <rect x="708" y="584" width="448" height="64" rx="4" fill="#fafafa" stroke="#f0f0f0" stroke-width="0.5"/>
+  <text x="720" y="604" font-size="11" font-weight="600" fill="#222">力扣周赛 380 解题思路...</text>
+  <text x="720" y="620" class="meta">申请人: 李四 · 帖子浏览 856 · 评论 42</text>
+  <text x="720" y="638" class="meta">申请时间: 2024-03-14</text>
+  <rect x="1048" y="596" width="44" height="20" rx="3" fill="#333"/>
+  <text x="1055" y="610" font-size="9" fill="#fff">通过</text>
+  <rect x="1098" y="596" width="44" height="20" rx="3" fill="none" stroke="#999" stroke-width="0.8"/>
+  <text x="1108" y="610" font-size="9" fill="#999">拒绝</text>
+
+  <text x="716" y="680" class="ann">精选通过 → is_featured = true → 首页精选 Tab</text>
+  <text x="716" y="694" class="ann">V1 精选机制: 作者申请 → 管理员审核</text>
+
+  <!-- ==================== BOTTOM ANNOTATIONS ==================== -->
+  <rect x="220" y="734" width="948" height="50" rx="6" fill="none" stroke="#c0392b" stroke-width="0.8" stroke-dasharray="3,3"/>
+  <text x="240" y="754" class="ann" font-weight="bold">管理后台设计说明</text>
+  <text x="420" y="754" class="ann">深色侧栏 + 仪表盘概览 + 审核队列 + 分区管理 + 精选审核。左侧审核全局开关控制发布是否需要审核。</text>
+  <text x="240" y="770" class="ann">所有管理接口走 /api/admin/* 路由，@PreAuthorize("hasRole('ADMIN')") 鉴权。拒绝操作必填原因。后续可扩展用户管理（封禁/解封）和审核日志。</text>
+
+  <text x="600" y="794" font-size="10" fill="#999" text-anchor="middle">管理后台 (/admin) | TechHub 轻量技术创作社区 V1</text>
+</svg>

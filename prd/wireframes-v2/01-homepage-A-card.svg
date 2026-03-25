@@ -1,0 +1,245 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <defs>
+    <style>
+      text { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
+      .annotation { font-size: 9px; fill: #c0392b; font-style: italic; }
+      .title-lg { font-size: 18px; font-weight: bold; fill: #111; }
+      .title-md { font-size: 14px; font-weight: bold; fill: #222; }
+      .title-sm { font-size: 12px; font-weight: 600; fill: #333; }
+      .body { font-size: 12px; fill: #666; }
+      .meta { font-size: 10px; fill: #999; }
+      .label { font-size: 10px; fill: #555; }
+      .btn-text { font-size: 12px; fill: #fff; }
+      .section-title { font-size: 13px; font-weight: bold; fill: #333; }
+      .tag { font-size: 10px; fill: #555; }
+    </style>
+  </defs>
+
+  <!-- ==================== BACKGROUND ==================== -->
+  <rect width="1200" height="800" fill="#f5f5f5"/>
+
+  <!-- ==================== TOP NAV BAR ==================== -->
+  <rect width="1200" height="52" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
+  <!-- Logo -->
+  <rect x="40" y="12" width="28" height="28" rx="6" fill="#333"/>
+  <text x="42" y="31" font-size="14" font-weight="bold" fill="#fff">T</text>
+  <text x="76" y="33" class="title-md">TechHub</text>
+  <!-- Search -->
+  <rect x="220" y="11" width="340" height="30" rx="15" fill="none" stroke="#d5d5d5" stroke-width="1.2"/>
+  <text x="244" y="31" font-size="12" fill="#bbb">搜索帖子、标签、作者...</text>
+  <circle cx="538" cy="26" r="7" fill="none" stroke="#aaa" stroke-width="1.2"/>
+  <line x1="543" y1="31" x2="549" y2="37" stroke="#aaa" stroke-width="1.2"/>
+  <!-- Write button -->
+  <rect x="880" y="11" width="84" height="30" rx="15" fill="#333"/>
+  <text x="894" y="31" class="btn-text">+ 写文章</text>
+  <!-- Notification -->
+  <rect x="984" y="14" width="24" height="24" rx="5" fill="none" stroke="#999" stroke-width="1"/>
+  <circle cx="996" cy="22" r="6" fill="none" stroke="#999" stroke-width="1"/>
+  <line x1="996" y1="16" x2="996" y2="18" stroke="#999" stroke-width="1"/>
+  <!-- Avatar (logged in) -->
+  <circle cx="1044" cy="26" r="15" fill="#ddd" stroke="#ccc" stroke-width="1"/>
+  <text x="1036" y="30" font-size="9" fill="#999">头像</text>
+  <text x="1068" y="24" font-size="10" fill="#666">username</text>
+  <line x1="1110" y1="24" x2="1116" y2="28" stroke="#666" stroke-width="1"/>
+  <line x1="1116" y1="28" x2="1122" y2="24" stroke="#666" stroke-width="1"/>
+
+  <!-- Login state annotations -->
+  <rect x="1060" y="38" width="130" height="30" fill="none" stroke="#c0392b" stroke-width="0.5" stroke-dasharray="2,2" rx="3"/>
+  <text x="1066" y="50" class="annotation">未登录时显示:</text>
+  <text x="1066" y="62" class="annotation">[登录] [注册] 按钮</text>
+
+  <!-- ==================== CATEGORY NAVIGATION ==================== -->
+  <rect y="52" width="1200" height="40" fill="#fff" stroke="#e8e8e8" stroke-width="0.5"/>
+  <text x="48" y="77" font-size="12" font-weight="bold" fill="#111">全部</text>
+  <line x1="42" y1="82" x2="66" y2="82" stroke="#333" stroke-width="2"/>
+  <text x="90" y="77" font-size="12" fill="#666">后端与开发实践</text>
+  <text x="196" y="77" font-size="12" fill="#666">算法与竞赛</text>
+  <text x="280" y="77" font-size="12" fill="#666">AI与工具探索</text>
+  <text x="374" y="77" font-size="12" fill="#666">解决方案与踩坑</text>
+  <text x="480" y="77" font-size="12" fill="#666">工具与资源</text>
+  <text x="564" y="77" font-size="12" fill="#666">茶水间</text>
+  <!-- annotation -->
+  <text x="640" y="77" class="annotation">← 分区导航 / 点击切换筛选 / 下划线标识当前</text>
+
+  <!-- ==================== MAIN CONTENT AREA ==================== -->
+  <!-- Left Column: Post Feed (width ~780) -->
+
+  <!-- Tab: 最新发布 / 精选方案 -->
+  <rect x="32" y="104" width="780" height="36" rx="4" fill="#fff" stroke="#e8e8e8" stroke-width="0.5"/>
+  <text x="52" y="127" font-size="13" font-weight="bold" fill="#222">最新发布</text>
+  <line x1="48" y1="132" x2="100" y2="132" stroke="#333" stroke-width="2"/>
+  <text x="120" y="127" font-size="13" fill="#999">精选方案</text>
+  <text x="200" y="127" font-size="13" fill="#999">热门</text>
+  <text x="260" y="127" class="annotation">← Tab 切换：最新 / 精选 / 热门排序</text>
+
+  <!-- ===== POST CARD 1 ===== -->
+  <rect x="32" y="148" width="780" height="136" rx="8" fill="#fff" stroke="#eee" stroke-width="1"/>
+  <!-- Cover image placeholder (optional) -->
+  <rect x="636" y="162" width="160" height="108" rx="6" fill="#eee" stroke="#ddd" stroke-width="0.5"/>
+  <text x="688" y="220" font-size="11" fill="#bbb">封面图</text>
+  <text x="688" y="234" font-size="9" fill="#ccc">(可选)</text>
+  <!-- Category badge -->
+  <rect x="52" y="162" width="88" height="20" rx="10" fill="none" stroke="#aaa" stroke-width="0.8"/>
+  <text x="64" y="176" font-size="10" fill="#666">后端与开发实践</text>
+  <!-- Title -->
+  <text x="52" y="202" class="title-lg">Spring Boot 3.x 集成 Redis 实现分布式缓存最佳实践</text>
+  <!-- Summary -->
+  <text x="52" y="222" class="body">本文详细介绍了 Spring Boot 3.x 中如何集成 Redis，包括连接池配置、序列化方案选择、</text>
+  <text x="52" y="237" class="body">缓存注解使用以及集群部署方案，附带完整可运行示例代码...</text>
+  <!-- Author + Meta -->
+  <circle cx="62" cy="264" r="10" fill="#e0e0e0"/>
+  <text x="78" y="268" font-size="11" fill="#444">张三</text>
+  <text x="120" y="268" class="meta">3小时前活跃</text>
+  <text x="210" y="268" class="meta">浏览 1.2k</text>
+  <text x="278" y="268" class="meta">评论 23</text>
+  <!-- Tags -->
+  <rect x="340" y="256" width="48" height="18" rx="9" fill="#f0f0f0"/>
+  <text x="350" y="268" class="tag">Spring</text>
+  <rect x="396" y="256" width="42" height="18" rx="9" fill="#f0f0f0"/>
+  <text x="406" y="268" class="tag">Redis</text>
+  <rect x="446" y="256" width="42" height="18" rx="9" fill="#f0f0f0"/>
+  <text x="456" y="268" class="tag">Java</text>
+
+  <!-- Card annotation -->
+  <line x1="812" y1="150" x2="840" y2="150" stroke="#c0392b" stroke-width="0.5" stroke-dasharray="2,2"/>
+  <text x="845" y="153" class="annotation">帖子卡片</text>
+  <text x="845" y="165" class="annotation">必含: 标题 / 分区</text>
+  <text x="845" y="177" class="annotation">摘要 / 作者 / 活跃时间</text>
+  <text x="845" y="189" class="annotation">浏览量 / 评论数</text>
+  <text x="845" y="201" class="annotation">可选: 标签(前3) / 封面</text>
+  <text x="845" y="217" class="annotation">→ 点击整卡进入详情</text>
+
+  <!-- ===== POST CARD 2 ===== -->
+  <rect x="32" y="292" width="780" height="126" rx="8" fill="#fff" stroke="#eee" stroke-width="1"/>
+  <rect x="52" y="306" width="64" height="20" rx="10" fill="none" stroke="#aaa" stroke-width="0.8"/>
+  <text x="62" y="320" font-size="10" fill="#666">算法与竞赛</text>
+  <text x="52" y="344" class="title-lg">力扣周赛 380：从前缀和到单调栈的优雅解法</text>
+  <text x="52" y="364" class="body">这道题乍看是个模拟，但换个角度用前缀和+单调栈可以做到 O(n) 复杂度。分享我的</text>
+  <text x="52" y="379" class="body">思路演进过程和踩过的坑...</text>
+  <circle cx="62" cy="404" r="10" fill="#e0e0e0"/>
+  <text x="78" y="408" font-size="11" fill="#444">李四</text>
+  <text x="120" y="408" class="meta">昨天</text>
+  <text x="174" y="408" class="meta">浏览 856</text>
+  <text x="240" y="408" class="meta">评论 42</text>
+  <rect x="300" y="396" width="42" height="18" rx="9" fill="#f0f0f0"/>
+  <text x="309" y="408" class="tag">力扣</text>
+  <rect x="350" y="396" width="48" height="18" rx="9" fill="#f0f0f0"/>
+  <text x="358" y="408" class="tag">单调栈</text>
+
+  <!-- ===== POST CARD 3 ===== -->
+  <rect x="32" y="426" width="780" height="126" rx="8" fill="#fff" stroke="#eee" stroke-width="1"/>
+  <rect x="52" y="440" width="72" height="20" rx="10" fill="none" stroke="#aaa" stroke-width="0.8"/>
+  <text x="60" y="454" font-size="10" fill="#666">AI与工具探索</text>
+  <!-- "精选" badge -->
+  <rect x="140" y="440" width="36" height="20" rx="10" fill="#333"/>
+  <text x="147" y="454" font-size="10" fill="#fff">精选</text>
+  <text x="52" y="478" class="title-lg">用 Claude + MCP 自动化我的整个开发工作流</text>
+  <text x="52" y="498" class="body">分享如何利用 Claude 的 MCP 协议连接本地工具链，实现从需求分析到代码生成再到</text>
+  <text x="52" y="513" class="body">测试部署的全流程自动化实践...</text>
+  <circle cx="62" cy="538" r="10" fill="#e0e0e0"/>
+  <text x="78" y="542" font-size="11" fill="#444">王五</text>
+  <text x="120" y="542" class="meta">2天前</text>
+  <text x="174" y="542" class="meta">浏览 3.4k</text>
+  <text x="244" y="542" class="meta">评论 89</text>
+  <text x="186" y="454" class="annotation">← 精选标记</text>
+
+  <!-- ===== POST CARD 4 (partial, indicating scroll) ===== -->
+  <rect x="32" y="560" width="780" height="70" rx="8" fill="#fff" stroke="#eee" stroke-width="1"/>
+  <rect x="52" y="574" width="88" height="20" rx="10" fill="none" stroke="#aaa" stroke-width="0.8"/>
+  <text x="58" y="588" font-size="10" fill="#666">解决方案与踩坑</text>
+  <text x="52" y="612" class="title-lg">MySQL 8.0 死锁排查全记录：从 binlog 到 MVCC</text>
+  <!-- Fade out effect -->
+  <rect x="32" y="610" width="780" height="20" rx="0" fill="url(#fadeOut)"/>
+  <defs>
+    <linearGradient id="fadeOut" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f5f5f5" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#f5f5f5" stop-opacity="0.95"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Infinite scroll hint -->
+  <text x="370" y="650" font-size="11" fill="#999">↓ 无限滚动加载更多 (游标分页) ↓</text>
+  <text x="348" y="666" class="annotation">使用 /api/posts/feed 游标分页接口，高性能无限滚动</text>
+
+  <!-- ==================== RIGHT SIDEBAR ==================== -->
+  <!-- Hot Tags -->
+  <rect x="828" y="104" width="340" height="180" rx="8" fill="#fff" stroke="#eee" stroke-width="1"/>
+  <text x="848" y="130" class="section-title">热门标签</text>
+  <text x="1100" y="130" class="meta" text-anchor="end">查看全部 →</text>
+  <line x1="848" y1="138" x2="1148" y2="138" stroke="#f0f0f0" stroke-width="1"/>
+  <!-- Tag pills -->
+  <rect x="848" y="150" width="56" height="24" rx="12" fill="#f0f0f0" stroke="#e0e0e0" stroke-width="0.5"/>
+  <text x="860" y="166" class="tag">Spring</text>
+  <rect x="912" y="150" width="48" height="24" rx="12" fill="#f0f0f0" stroke="#e0e0e0" stroke-width="0.5"/>
+  <text x="924" y="166" class="tag">Redis</text>
+  <rect x="968" y="150" width="50" height="24" rx="12" fill="#f0f0f0" stroke="#e0e0e0" stroke-width="0.5"/>
+  <text x="978" y="166" class="tag">MySQL</text>
+  <rect x="1026" y="150" width="42" height="24" rx="12" fill="#f0f0f0" stroke="#e0e0e0" stroke-width="0.5"/>
+  <text x="1036" y="166" class="tag">Java</text>
+  <rect x="1076" y="150" width="42" height="24" rx="12" fill="#f0f0f0" stroke="#e0e0e0" stroke-width="0.5"/>
+  <text x="1086" y="166" class="tag">力扣</text>
+  <rect x="848" y="182" width="56" height="24" rx="12" fill="#f0f0f0" stroke="#e0e0e0" stroke-width="0.5"/>
+  <text x="858" y="198" class="tag">Python</text>
+  <rect x="912" y="182" width="48" height="24" rx="12" fill="#f0f0f0" stroke="#e0e0e0" stroke-width="0.5"/>
+  <text x="924" y="198" class="tag">Linux</text>
+  <rect x="968" y="182" width="72" height="24" rx="12" fill="#f0f0f0" stroke="#e0e0e0" stroke-width="0.5"/>
+  <text x="978" y="198" class="tag">Claude AI</text>
+  <rect x="1048" y="182" width="64" height="24" rx="12" fill="#f0f0f0" stroke="#e0e0e0" stroke-width="0.5"/>
+  <text x="1058" y="198" class="tag">蓝桥杯</text>
+  <rect x="848" y="214" width="56" height="24" rx="12" fill="#f0f0f0" stroke="#e0e0e0" stroke-width="0.5"/>
+  <text x="858" y="230" class="tag">Docker</text>
+  <rect x="912" y="214" width="42" height="24" rx="12" fill="#f0f0f0" stroke="#e0e0e0" stroke-width="0.5"/>
+  <text x="924" y="230" class="tag">Git</text>
+  <rect x="962" y="214" width="72" height="24" rx="12" fill="#f0f0f0" stroke="#e0e0e0" stroke-width="0.5"/>
+  <text x="972" y="230" class="tag">前缀和</text>
+  <rect x="1042" y="214" width="80" height="24" rx="12" fill="#f0f0f0" stroke="#e0e0e0" stroke-width="0.5"/>
+  <text x="1052" y="230" class="tag">环境配置</text>
+  <text x="848" y="270" class="annotation">点击标签 → 筛选帖子列表</text>
+
+  <!-- Community Stats -->
+  <rect x="828" y="296" width="340" height="120" rx="8" fill="#fff" stroke="#eee" stroke-width="1"/>
+  <text x="848" y="322" class="section-title">社区数据</text>
+  <line x1="848" y1="330" x2="1148" y2="330" stroke="#f0f0f0" stroke-width="1"/>
+  <text x="888" y="356" font-size="22" font-weight="bold" fill="#222">1,234</text>
+  <text x="900" y="374" class="meta">帖子总数</text>
+  <text x="1008" y="356" font-size="22" font-weight="bold" fill="#222">567</text>
+  <text x="1012" y="374" class="meta">注册用户</text>
+  <text x="888" y="402" font-size="22" font-weight="bold" fill="#222">89</text>
+  <text x="888" y="420" class="meta" text-anchor="start">今日新帖</text>
+  <text x="1008" y="402" font-size="22" font-weight="bold" fill="#222">42</text>
+  <text x="1008" y="420" class="meta" text-anchor="start">精选帖子</text>
+
+  <!-- Active Authors -->
+  <rect x="828" y="428" width="340" height="148" rx="8" fill="#fff" stroke="#eee" stroke-width="1"/>
+  <text x="848" y="454" class="section-title">活跃作者</text>
+  <line x1="848" y1="462" x2="1148" y2="462" stroke="#f0f0f0" stroke-width="1"/>
+  <!-- Author 1 -->
+  <circle cx="862" cy="484" r="12" fill="#e0e0e0"/>
+  <text x="882" y="488" font-size="11" fill="#444">张三</text>
+  <text x="932" y="488" class="meta">发布 28 篇</text>
+  <!-- Author 2 -->
+  <circle cx="862" cy="514" r="12" fill="#e0e0e0"/>
+  <text x="882" y="518" font-size="11" fill="#444">李四</text>
+  <text x="932" y="518" class="meta">发布 22 篇</text>
+  <!-- Author 3 -->
+  <circle cx="862" cy="544" r="12" fill="#e0e0e0"/>
+  <text x="882" y="548" font-size="11" fill="#444">王五</text>
+  <text x="932" y="548" class="meta">发布 19 篇</text>
+  <text x="848" y="572" class="meta">查看更多 →</text>
+
+  <!-- ==================== ANNOTATIONS PANEL ==================== -->
+  <rect x="828" y="590" width="340" height="190" rx="8" fill="none" stroke="#c0392b" stroke-width="0.8" stroke-dasharray="3,3"/>
+  <text x="848" y="612" class="annotation" font-weight="bold">设计说明 — A版：现代卡片流</text>
+  <text x="848" y="630" class="annotation">1. 顶栏：品牌 + 全局搜索 + 写文章入口</text>
+  <text x="848" y="646" class="annotation">2. 分区导航：水平标签页，下划线标识当前分区</text>
+  <text x="848" y="662" class="annotation">3. 内容区：Tab(最新/精选/热门) + 卡片列表</text>
+  <text x="848" y="678" class="annotation">4. 帖子卡片：大标题 + 摘要 + 元信息 + 可选封面</text>
+  <text x="848" y="694" class="annotation">5. 右侧栏：热门标签 / 社区统计 / 活跃作者</text>
+  <text x="848" y="710" class="annotation">6. 无限滚动加载（游标分页 feed 接口）</text>
+  <text x="848" y="726" class="annotation">7. 大量留白 + 圆角卡片 → 呼吸感 + 现代感</text>
+  <text x="848" y="746" class="annotation">布局比例：内容区 68% / 侧栏 32%</text>
+  <text x="848" y="762" class="annotation">响应式：&lt;768px 侧栏折叠到顶部标签云</text>
+
+  <!-- Page title -->
+  <text x="600" y="790" font-size="10" fill="#ccc" text-anchor="middle">首页 — A版 现代卡片流 | TechHub 轻量技术创作社区 V1</text>
+</svg>

@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <defs>
+    <style>
+      text { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
+      .ann { font-size: 9px; fill: #c0392b; font-style: italic; }
+      .h1 { font-size: 20px; font-weight: bold; fill: #111; }
+      .h2 { font-size: 14px; font-weight: bold; fill: #222; }
+      .body { font-size: 12px; fill: #666; }
+      .meta { font-size: 10px; fill: #999; }
+      .stat-num { font-size: 24px; font-weight: bold; fill: #222; }
+      .stat-label { font-size: 10px; fill: #999; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="800" fill="#f5f5f5"/>
+
+  <!-- ==================== TOP NAV ==================== -->
+  <rect width="1200" height="52" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
+  <rect x="40" y="12" width="28" height="28" rx="6" fill="#333"/>
+  <text x="43" y="31" font-size="14" font-weight="bold" fill="#fff">T</text>
+  <text x="76" y="33" font-size="14" font-weight="bold" fill="#222">TechHub</text>
+  <text x="180" y="33" font-size="12" fill="#999">/ 作者主页</text>
+  <rect x="920" y="12" width="84" height="28" rx="14" fill="#333"/>
+  <text x="938" y="31" font-size="12" fill="#fff">+ 写文章</text>
+  <circle cx="1044" cy="26" r="14" fill="#ddd"/>
+
+  <!-- ==================== HERO BANNER ==================== -->
+  <rect x="0" y="52" width="1200" height="180" fill="#fafafa" stroke="#eee" stroke-width="0.5"/>
+  <!-- Avatar (large) -->
+  <circle cx="600" cy="108" r="48" fill="#e0e0e0" stroke="#fff" stroke-width="4"/>
+  <text x="584" y="114" font-size="16" fill="#999">头像</text>
+  <!-- Username -->
+  <text x="600" y="178" class="h1" text-anchor="middle">张三</text>
+  <text x="600" y="200" font-size="13" fill="#666" text-anchor="middle">Java 后端开发 · 热爱开源 · 坐标深圳</text>
+  <!-- Follow button -->
+  <rect x="548" y="210" width="72" height="28" rx="14" fill="#333"/>
+  <text x="568" y="229" font-size="11" fill="#fff">+ 关注</text>
+  <rect x="630" y="210" width="52" height="28" rx="14" fill="none" stroke="#ccc" stroke-width="1"/>
+  <text x="642" y="229" font-size="11" fill="#666">私信</text>
+  <text x="700" y="229" class="ann">← follows 表已建</text>
+
+  <!-- Stats row -->
+  <rect x="200" y="248" width="800" height="60" rx="0" fill="#fff" stroke="#eee" stroke-width="0.5"/>
+  <text x="320" y="276" class="stat-num" text-anchor="middle">28</text>
+  <text x="320" y="296" class="stat-label" text-anchor="middle">已发布帖子</text>
+  <text x="480" y="276" class="stat-num" text-anchor="middle">1,234</text>
+  <text x="480" y="296" class="stat-label" text-anchor="middle">获赞总数</text>
+  <text x="640" y="276" class="stat-num" text-anchor="middle">456</text>
+  <text x="640" y="296" class="stat-label" text-anchor="middle">被收藏</text>
+  <text x="800" y="276" class="stat-num" text-anchor="middle">89</text>
+  <text x="800" y="296" class="stat-label" text-anchor="middle">粉丝</text>
+  <text x="920" y="276" class="stat-num" text-anchor="middle">23</text>
+  <text x="920" y="296" class="stat-label" text-anchor="middle">关注</text>
+
+  <!-- ==================== CONTENT AREA ==================== -->
+  <!-- Tab: 帖子 / 关于 -->
+  <rect x="200" y="320" width="800" height="36" rx="0" fill="#fff" stroke="#eee" stroke-width="0.5"/>
+  <text x="240" y="343" font-size="13" font-weight="bold" fill="#222">帖子 (28)</text>
+  <line x1="232" y1="348" x2="300" y2="348" stroke="#333" stroke-width="2"/>
+  <text x="328" y="343" font-size="13" fill="#999">关于</text>
+  <text x="388" y="343" class="ann">← 公开主页仅显示已发布(status=2)帖子</text>
+
+  <!-- ===== Post Card 1 ===== -->
+  <rect x="200" y="364" width="800" height="90" rx="6" fill="#fff" stroke="#eee" stroke-width="0.5"/>
+  <rect x="220" y="378" width="80" height="18" rx="9" fill="#f0f0f0"/>
+  <text x="230" y="391" font-size="9" fill="#666">后端开发</text>
+  <rect x="308" y="378" width="32" height="18" rx="9" fill="#333"/>
+  <text x="314" y="391" font-size="9" fill="#fff">精选</text>
+  <text x="220" y="416" font-size="14" font-weight="bold" fill="#111">Spring Boot 3.x 集成 Redis 实现分布式缓存最佳实践</text>
+  <text x="220" y="436" class="body">本文详细介绍了 Spring Boot 3.x 中如何集成 Redis，包括连接池配置...</text>
+  <text x="220" y="450" class="meta">3天前 · 浏览 1,234 · 评论 23</text>
+
+  <!-- ===== Post Card 2 ===== -->
+  <rect x="200" y="462" width="800" height="90" rx="6" fill="#fff" stroke="#eee" stroke-width="0.5"/>
+  <rect x="220" y="476" width="64" height="18" rx="9" fill="#f0f0f0"/>
+  <text x="230" y="489" font-size="9" fill="#666">算法竞赛</text>
+  <text x="220" y="514" font-size="14" font-weight="bold" fill="#111">力扣周赛 380：从前缀和到单调栈的优雅解法</text>
+  <text x="220" y="534" class="body">这道题乍看是个模拟，但换个角度用前缀和+单调栈可以做到 O(n)...</text>
+  <text x="220" y="548" class="meta">5天前 · 浏览 856 · 评论 42</text>
+
+  <!-- ===== Post Card 3 ===== -->
+  <rect x="200" y="560" width="800" height="90" rx="6" fill="#fff" stroke="#eee" stroke-width="0.5"/>
+  <rect x="220" y="574" width="64" height="18" rx="9" fill="#f0f0f0"/>
+  <text x="228" y="587" font-size="9" fill="#666">AI与工具</text>
+  <text x="220" y="612" font-size="14" font-weight="bold" fill="#111">用 Claude + MCP 自动化我的整个开发工作流</text>
+  <text x="220" y="632" class="body">分享如何利用 Claude 的 MCP 协议连接本地工具链，实现全流程自动化...</text>
+  <text x="220" y="646" class="meta">1周前 · 浏览 3,456 · 评论 89</text>
+
+  <!-- ===== Post Card 4 (partial) ===== -->
+  <rect x="200" y="658" width="800" height="50" rx="6" fill="#fff" stroke="#eee" stroke-width="0.5"/>
+  <rect x="220" y="672" width="64" height="18" rx="9" fill="#f0f0f0"/>
+  <text x="228" y="685" font-size="9" fill="#666">工具资源</text>
+  <text x="220" y="704" font-size="14" font-weight="bold" fill="#111">2024 年最值得使用的 10 个开发者效率工具...</text>
+  <defs>
+    <linearGradient id="fade4" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f5f5f5" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#f5f5f5" stop-opacity="1"/>
+    </linearGradient>
+  </defs>
+  <rect x="200" y="690" width="800" height="30" fill="url(#fade4)"/>
+
+  <text x="600" y="738" class="meta" text-anchor="middle">↓ 加载更多帖子 ↓</text>
+
+  <!-- ==================== ANNOTATIONS ==================== -->
+  <rect x="200" y="748" width="800" height="36" rx="6" fill="none" stroke="#c0392b" stroke-width="0.8" stroke-dasharray="3,3"/>
+  <text x="220" y="766" class="ann" font-weight="bold">作者公开主页说明</text>
+  <text x="420" y="766" class="ann">GET /api/posts/user/{userId} 仅返回 status=2 帖子 · 头像居中+统计栏+帖子列表 · 简洁大方的个人品牌展示页</text>
+
+  <text x="600" y="790" font-size="10" fill="#ccc" text-anchor="middle">作者公开主页 (/users/:id) | TechHub 轻量技术创作社区 V1</text>
+</svg>

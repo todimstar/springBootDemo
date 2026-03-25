@@ -22,7 +22,7 @@ public class UploadFileController {
     public Result<String> uploadFile(@RequestParam("file")MultipartFile file){
         try {
             String objectName = minioService.uploadFile(file, FileType.OTHER);
-            return Result.success(objectName);
+            return Result.success("上传成功", objectName);
         }catch (BusinessException e){
             throw e;
         }catch (Exception e) {
@@ -34,8 +34,8 @@ public class UploadFileController {
     @GetMapping("/getUrl")
     public Result<String> getFileUrl(@RequestParam String objectName){
         try {
-            String url = minioService.getFileUrl(objectName);//,3600);//60*60=3600=60小时=2.5天
-            return Result.success(url);
+            String url = minioService.getFileUrl(objectName);
+            return Result.success("获取成功", url);
         } catch (Exception e) {
             throw new BusinessException(ErrorCode.FILE_URL_GET_BAD);
         }
@@ -45,7 +45,7 @@ public class UploadFileController {
     public Result<String> deleteFile(@RequestParam String objectName){
         try {
             minioService.deleteFile(objectName);
-            return Result.success(objectName + "删除成功");
+            return Result.success("删除成功", objectName);
         } catch (Exception e) {
             throw new BusinessException(ErrorCode.FILE_DEL_FAIL);
         }

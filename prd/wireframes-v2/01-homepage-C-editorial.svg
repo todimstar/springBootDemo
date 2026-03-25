@@ -1,0 +1,213 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <defs>
+    <style>
+      text { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
+      .ann { font-size: 9px; fill: #c0392b; font-style: italic; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="800" fill="#fff"/>
+
+  <!-- ==================== TOP NAV — 极简一行 ==================== -->
+  <line x1="0" y1="48" x2="1200" y2="48" stroke="#eee" stroke-width="1"/>
+  <!-- Logo -->
+  <text x="48" y="31" font-size="18" font-weight="bold" fill="#111" letter-spacing="1">TechHub</text>
+  <!-- Center: nothing. Breathe. -->
+  <!-- Right actions -->
+  <rect x="980" y="12" width="28" height="28" rx="14" fill="none" stroke="#ddd" stroke-width="1"/>
+  <circle cx="994" cy="22" r="5" fill="none" stroke="#999" stroke-width="1.2"/>
+  <line x1="998" y1="26" x2="1002" y2="30" stroke="#999" stroke-width="1.2"/>
+  <rect x="1024" y="12" width="76" height="28" rx="14" fill="#111"/>
+  <text x="1042" y="31" font-size="11" fill="#fff">写文章</text>
+  <circle cx="1136" cy="26" r="14" fill="#f0f0f0"/>
+  <text x="1128" y="30" font-size="9" fill="#aaa">头像</text>
+  <!-- Annotation -->
+  <text x="1078" y="9" class="ann">搜索 · 写文章 · 头像下拉</text>
+
+  <!-- ==================== LEFT SIDEBAR ==================== -->
+  <!-- 超窄侧栏：仅图标+文字，不占过多空间 -->
+  <rect x="0" y="48" width="200" height="752" fill="#fafafa"/>
+  <line x1="200" y1="48" x2="200" y2="800" stroke="#f0f0f0" stroke-width="1"/>
+
+  <!-- Brand tagline -->
+  <text x="32" y="84" font-size="10" fill="#bbb" letter-spacing="0.5">轻量技术创作社区</text>
+
+  <!-- Category navigation -->
+  <text x="32" y="120" font-size="11" fill="#bbb" letter-spacing="1">分区</text>
+
+  <!-- Active -->
+  <rect x="20" y="132" width="168" height="36" rx="8" fill="#f0f0f0"/>
+  <text x="40" y="155" font-size="13" fill="#111" font-weight="600">全部</text>
+  <text x="168" y="155" font-size="10" fill="#ccc" text-anchor="end">1.2k</text>
+
+  <text x="40" y="188" font-size="13" fill="#666">后端与开发实践</text>
+  <text x="40" y="218" font-size="13" fill="#666">算法与竞赛</text>
+  <text x="40" y="248" font-size="13" fill="#666">AI与工具探索</text>
+  <text x="40" y="278" font-size="13" fill="#666">解决方案与踩坑</text>
+  <text x="40" y="308" font-size="13" fill="#666">工具与资源</text>
+  <text x="40" y="338" font-size="13" fill="#666">茶水间</text>
+
+  <!-- Annotation -->
+  <text x="28" y="370" class="ann">点击切换分区筛选</text>
+  <text x="28" y="382" class="ann">选中态: 浅灰圆角底</text>
+  <text x="28" y="394" class="ann">数字仅选中时显示</text>
+
+  <!-- Spacer -->
+  <line x1="32" y1="420" x2="176" y2="420" stroke="#eee" stroke-width="0.5"/>
+
+  <!-- 精简的辅助入口，替代俗气的标签云 -->
+  <text x="32" y="450" font-size="11" fill="#bbb" letter-spacing="1">发现</text>
+  <text x="40" y="478" font-size="12" fill="#888">精选内容</text>
+  <text x="40" y="504" font-size="12" fill="#888">最近讨论</text>
+
+  <line x1="32" y1="530" x2="176" y2="530" stroke="#eee" stroke-width="0.5"/>
+
+  <!-- 底部: 极简的信息 -->
+  <text x="32" y="740" font-size="10" fill="#ddd">帖子 1,234</text>
+  <text x="32" y="758" font-size="10" fill="#ddd">作者 567</text>
+  <text x="32" y="780" class="ann">社区数据极低调展示</text>
+  <text x="32" y="792" class="ann">不抢内容区注意力</text>
+
+  <!-- ==================== MAIN FEED — 大面积留白 ==================== -->
+
+  <!-- Sort row — 不用传统 Tab，用更克制的方式 -->
+  <text x="240" y="80" font-size="14" font-weight="bold" fill="#111">最新</text>
+  <text x="296" y="80" font-size="14" fill="#ccc">·</text>
+  <text x="316" y="80" font-size="14" fill="#bbb">精选</text>
+  <text x="370" y="80" font-size="14" fill="#ccc">·</text>
+  <text x="390" y="80" font-size="14" fill="#bbb">热门</text>
+  <text x="450" y="80" class="ann">← 排序切换，选中加粗，其余灰色</text>
+
+  <!-- ===== POST CARD 1 ===== -->
+  <!-- 大量上方留白后开始第一张卡片 -->
+  <text x="240" y="130" font-size="20" font-weight="bold" fill="#111" letter-spacing="-0.3">Spring Boot 3.x 集成 Redis 实现分布式缓存最佳实践</text>
+
+  <text x="240" y="158" font-size="13" fill="#888" letter-spacing="0.2">本文详细介绍了 Spring Boot 3.x 中如何集成 Redis，包括连接池配置、</text>
+  <text x="240" y="176" font-size="13" fill="#888" letter-spacing="0.2">序列化方案选择、缓存注解使用以及集群部署方案。</text>
+
+  <!-- Meta: 极简一行 -->
+  <circle cx="252" cy="204" r="8" fill="#eee"/>
+  <text x="266" y="208" font-size="11" fill="#555">张三</text>
+  <text x="310" y="208" font-size="11" fill="#ddd">·</text>
+  <text x="322" y="208" font-size="11" fill="#bbb">后端与开发实践</text>
+  <text x="426" y="208" font-size="11" fill="#ddd">·</text>
+  <text x="438" y="208" font-size="11" fill="#bbb">3小时前</text>
+  <text x="510" y="208" font-size="11" fill="#ddd">·</text>
+  <text x="522" y="208" font-size="11" fill="#bbb">23 评论</text>
+  <!-- 精选标记：不用花哨的徽章，一个小点就够 -->
+  <circle cx="600" cy="204" r="3" fill="#111"/>
+  <text x="610" y="208" font-size="10" fill="#111" font-weight="600">精选</text>
+  <!-- Annotation -->
+  <text x="680" y="208" class="ann">精选用实心小圆点标记，不用徽章</text>
+
+  <!-- Divider — 细到极致 -->
+  <line x1="240" y1="232" x2="1120" y2="232" stroke="#f0f0f0" stroke-width="0.5"/>
+
+  <!-- ===== POST CARD 2 ===== -->
+  <text x="240" y="268" font-size="20" font-weight="bold" fill="#111" letter-spacing="-0.3">力扣周赛 380：从前缀和到单调栈的优雅解法</text>
+
+  <text x="240" y="296" font-size="13" fill="#888" letter-spacing="0.2">这道题乍看是个模拟，但换个角度用前缀和+单调栈可以做到 O(n) 复杂度。</text>
+  <text x="240" y="314" font-size="13" fill="#888" letter-spacing="0.2">分享我的思路演进过程和踩过的坑。</text>
+
+  <circle cx="252" cy="342" r="8" fill="#eee"/>
+  <text x="266" y="346" font-size="11" fill="#555">李四</text>
+  <text x="300" y="346" font-size="11" fill="#ddd">·</text>
+  <text x="312" y="346" font-size="11" fill="#bbb">算法与竞赛</text>
+  <text x="392" y="346" font-size="11" fill="#ddd">·</text>
+  <text x="404" y="346" font-size="11" fill="#bbb">昨天</text>
+  <text x="446" y="346" font-size="11" fill="#ddd">·</text>
+  <text x="458" y="346" font-size="11" fill="#bbb">42 评论</text>
+
+  <line x1="240" y1="370" x2="1120" y2="370" stroke="#f0f0f0" stroke-width="0.5"/>
+
+  <!-- ===== POST CARD 3 ===== -->
+  <text x="240" y="406" font-size="20" font-weight="bold" fill="#111" letter-spacing="-0.3">用 Claude + MCP 自动化我的整个开发工作流</text>
+
+  <text x="240" y="434" font-size="13" fill="#888" letter-spacing="0.2">分享如何利用 Claude 的 MCP 协议连接本地工具链，实现从需求分析到</text>
+  <text x="240" y="452" font-size="13" fill="#888" letter-spacing="0.2">代码生成再到测试部署的全流程自动化实践。</text>
+
+  <circle cx="252" cy="480" r="8" fill="#eee"/>
+  <text x="266" y="484" font-size="11" fill="#555">王五</text>
+  <text x="300" y="484" font-size="11" fill="#ddd">·</text>
+  <text x="312" y="484" font-size="11" fill="#bbb">AI与工具探索</text>
+  <text x="404" y="484" font-size="11" fill="#ddd">·</text>
+  <text x="416" y="484" font-size="11" fill="#bbb">2天前</text>
+  <text x="464" y="484" font-size="11" fill="#ddd">·</text>
+  <text x="476" y="484" font-size="11" fill="#bbb">89 评论</text>
+  <circle cx="548" cy="480" r="3" fill="#111"/>
+  <text x="558" y="484" font-size="10" fill="#111" font-weight="600">精选</text>
+
+  <line x1="240" y1="508" x2="1120" y2="508" stroke="#f0f0f0" stroke-width="0.5"/>
+
+  <!-- ===== POST CARD 4 ===== -->
+  <text x="240" y="544" font-size="20" font-weight="bold" fill="#111" letter-spacing="-0.3">MySQL 8.0 死锁排查全记录：从 binlog 到 MVCC</text>
+
+  <text x="240" y="572" font-size="13" fill="#888" letter-spacing="0.2">线上突发死锁告警，本文记录从发现到定位到修复的完整过程，</text>
+  <text x="240" y="590" font-size="13" fill="#888" letter-spacing="0.2">希望给遇到类似问题的同学一些参考。</text>
+
+  <circle cx="252" cy="618" r="8" fill="#eee"/>
+  <text x="266" y="622" font-size="11" fill="#555">赵六</text>
+  <text x="300" y="622" font-size="11" fill="#ddd">·</text>
+  <text x="312" y="622" font-size="11" fill="#bbb">解决方案与踩坑</text>
+  <text x="420" y="622" font-size="11" fill="#ddd">·</text>
+  <text x="432" y="622" font-size="11" fill="#bbb">3天前</text>
+  <text x="480" y="622" font-size="11" fill="#ddd">·</text>
+  <text x="492" y="622" font-size="11" fill="#bbb">31 评论</text>
+
+  <line x1="240" y1="646" x2="1120" y2="646" stroke="#f0f0f0" stroke-width="0.5"/>
+
+  <!-- ===== POST CARD 5 ===== -->
+  <text x="240" y="682" font-size="20" font-weight="bold" fill="#111" letter-spacing="-0.3">程序员下班后都在干什么？来聊聊你的副业</text>
+
+  <text x="240" y="710" font-size="13" fill="#888" letter-spacing="0.2">好奇大家工作之余都在做什么，是继续写代码还是有其他爱好？</text>
+
+  <circle cx="252" cy="738" r="8" fill="#eee"/>
+  <text x="266" y="742" font-size="11" fill="#555">周八</text>
+  <text x="300" y="742" font-size="11" fill="#ddd">·</text>
+  <text x="312" y="742" font-size="11" fill="#bbb">茶水间</text>
+  <text x="366" y="742" font-size="11" fill="#ddd">·</text>
+  <text x="378" y="742" font-size="11" fill="#bbb">5天前</text>
+  <text x="426" y="742" font-size="11" fill="#ddd">·</text>
+  <text x="438" y="742" font-size="11" fill="#bbb">127 评论</text>
+
+  <!-- Fade -->
+  <defs>
+    <linearGradient id="fadeC" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#fff" stop-opacity="1"/>
+    </linearGradient>
+  </defs>
+  <rect x="220" y="756" width="960" height="44" fill="url(#fadeC)"/>
+
+  <!-- Scroll hint -->
+  <text x="660" y="788" font-size="10" fill="#ddd" text-anchor="middle">↓ 继续滚动 ↓</text>
+
+  <!-- ==================== ANNOTATIONS OVERLAY ==================== -->
+  <!-- Card structure annotation -->
+  <rect x="870" y="108" width="260" height="130" rx="6" fill="none" stroke="#c0392b" stroke-width="0.6" stroke-dasharray="3,3"/>
+  <text x="882" y="128" class="ann" font-weight="bold">帖子卡片结构</text>
+  <text x="882" y="144" class="ann">第1行: 标题（20px 大字，视觉主体）</text>
+  <text x="882" y="160" class="ann">第2行: 摘要（灰色，2行截断）</text>
+  <text x="882" y="176" class="ann">第3行: 作者·分区·时间·评论数</text>
+  <text x="882" y="196" class="ann">去掉: 浏览量（不重要）</text>
+  <text x="882" y="212" class="ann">去掉: 标签pills（俗气源头之一）</text>
+  <text x="882" y="228" class="ann">精选 = 小圆点，克制不张扬</text>
+
+  <!-- Design philosophy -->
+  <rect x="870" y="260" width="260" height="164" rx="6" fill="none" stroke="#c0392b" stroke-width="0.6" stroke-dasharray="3,3"/>
+  <text x="882" y="280" class="ann" font-weight="bold">C版设计哲学</text>
+  <text x="882" y="298" class="ann">1. 两栏: 窄导航(200) + 宽内容(1000)</text>
+  <text x="882" y="314" class="ann">2. 无右侧栏 → 内容区一望到底</text>
+  <text x="882" y="330" class="ann">3. 砍掉: 热门标签/社区统计/排行榜</text>
+  <text x="882" y="346" class="ann">4. 全白底 → 纯净，不用灰色背景</text>
+  <text x="882" y="362" class="ann">5. 分隔线极细(0.5px) → 呼吸感</text>
+  <text x="882" y="378" class="ann">6. 元信息用中间点(·)分隔，不用图标</text>
+  <text x="882" y="394" class="ann">7. 排序不用Tab框，纯文字加粗切换</text>
+  <text x="882" y="410" class="ann">参考: Linear / Notion / 少数派</text>
+
+  <!-- Responsive note -->
+  <rect x="870" y="440" width="260" height="56" rx="6" fill="none" stroke="#c0392b" stroke-width="0.6" stroke-dasharray="3,3"/>
+  <text x="882" y="460" class="ann" font-weight="bold">响应式</text>
+  <text x="882" y="476" class="ann">&lt;768px: 左侧栏收起为汉堡菜单</text>
+  <text x="882" y="492" class="ann">内容区全宽，帖子标题缩至16px</text>
+</svg>

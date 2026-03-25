@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <defs>
+    <style>
+      text { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
+      .ann { font-size: 9px; fill: #c0392b; font-style: italic; }
+      .h1 { font-size: 18px; font-weight: bold; fill: #111; }
+      .h2 { font-size: 14px; font-weight: bold; fill: #222; }
+      .body { font-size: 12px; fill: #666; }
+      .meta { font-size: 10px; fill: #999; }
+      .placeholder { font-size: 12px; fill: #bbb; }
+      .btn-dark { font-size: 12px; fill: #fff; }
+      .btn-light { font-size: 12px; fill: #333; }
+      .label { font-size: 11px; font-weight: 600; fill: #333; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="800" fill="#f5f5f5"/>
+
+  <!-- ==================== TOP NAV (simplified) ==================== -->
+  <rect width="1200" height="52" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
+  <rect x="40" y="12" width="28" height="28" rx="6" fill="#333"/>
+  <text x="43" y="31" font-size="14" font-weight="bold" fill="#fff">T</text>
+  <text x="76" y="33" font-size="14" font-weight="bold" fill="#222">TechHub</text>
+  <text x="180" y="33" font-size="14" fill="#999">/ 创建帖子</text>
+  <!-- Right side actions -->
+  <rect x="880" y="12" width="80" height="30" rx="4" fill="none" stroke="#ccc" stroke-width="1"/>
+  <text x="895" y="32" class="btn-light">存草稿</text>
+  <rect x="972" y="12" width="72" height="30" rx="4" fill="#333"/>
+  <text x="992" y="32" class="btn-dark">发布</text>
+  <text x="1056" y="32" font-size="10" fill="#999">Ctrl+S 保存</text>
+  <!-- Annotation -->
+  <text x="1056" y="16" class="ann">发布流程:</text>
+  <text x="1056" y="28" class="ann">审核关闭→直接发布</text>
+  <text x="1056" y="40" class="ann">审核开启→进入待审核</text>
+
+  <!-- ==================== EDITOR AREA (centered) ==================== -->
+  <rect x="160" y="68" width="880" height="720" rx="8" fill="#fff" stroke="#eee" stroke-width="1"/>
+
+  <!-- Title input -->
+  <text x="200" y="104" class="label">标题 *</text>
+  <rect x="200" y="112" width="800" height="40" rx="6" fill="none" stroke="#ddd" stroke-width="1"/>
+  <text x="216" y="137" class="placeholder">请输入帖子标题（最多 50 字）</text>
+  <text x="960" y="137" class="meta" text-anchor="end">0 / 50</text>
+
+  <!-- Category + Tags Row -->
+  <text x="200" y="180" class="label">分区 *</text>
+  <rect x="200" y="188" width="240" height="36" rx="6" fill="none" stroke="#ddd" stroke-width="1"/>
+  <text x="216" y="211" class="placeholder">请选择分区</text>
+  <!-- Dropdown arrow -->
+  <line x1="416" y1="202" x2="422" y2="208" stroke="#999" stroke-width="1.2"/>
+  <line x1="422" y1="208" x2="428" y2="202" stroke="#999" stroke-width="1.2"/>
+  <!-- Dropdown annotation -->
+  <rect x="200" y="228" width="240" height="100" rx="4" fill="#fff" stroke="#ddd" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="216" y="248" font-size="11" fill="#444">后端与开发实践</text>
+  <text x="216" y="268" font-size="11" fill="#444">算法与竞赛</text>
+  <text x="216" y="288" font-size="11" fill="#444">AI与工具探索</text>
+  <text x="216" y="308" font-size="11" fill="#888">...</text>
+  <text x="216" y="324" class="ann">下拉选择，来自 /api/categories</text>
+
+  <!-- Tags -->
+  <text x="476" y="180" class="label">标签（最多 5 个）</text>
+  <rect x="476" y="188" width="524" height="36" rx="6" fill="none" stroke="#ddd" stroke-width="1"/>
+  <!-- Sample tags in input -->
+  <rect x="488" y="196" width="54" height="20" rx="10" fill="#f0f0f0"/>
+  <text x="498" y="210" font-size="10" fill="#555">Spring</text>
+  <text x="534" y="210" font-size="10" fill="#999">×</text>
+  <rect x="550" y="196" width="44" height="20" rx="10" fill="#f0f0f0"/>
+  <text x="560" y="210" font-size="10" fill="#555">Redis</text>
+  <text x="588" y="210" font-size="10" fill="#999">×</text>
+  <text x="616" y="210" class="placeholder">输入或选择标签...</text>
+  <!-- Tag annotation -->
+  <text x="476" y="248" class="ann">输入联想 + 自由创建新标签</text>
+  <text x="476" y="260" class="ann">V1 标签表尚未建，可先用自由文本</text>
+
+  <!-- Summary -->
+  <text x="200" y="360" class="label">摘要</text>
+  <text x="248" y="360" font-size="10" fill="#999">（推荐填写，帮助读者快速了解内容）</text>
+  <rect x="200" y="368" width="800" height="64" rx="6" fill="none" stroke="#ddd" stroke-width="1"/>
+  <text x="216" y="392" class="placeholder">请输入帖子摘要，最多 300 字（不填则自动截取正文前 300 字）</text>
+  <text x="960" y="420" class="meta" text-anchor="end">0 / 300</text>
+
+  <!-- Cover Image -->
+  <text x="200" y="460" class="label">封面图</text>
+  <text x="260" y="460" font-size="10" fill="#999">（可选，推荐 16:9 比例）</text>
+  <rect x="200" y="468" width="160" height="90" rx="6" fill="#f8f8f8" stroke="#ddd" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="248" y="510" font-size="20" fill="#ccc">+</text>
+  <text x="232" y="530" font-size="9" fill="#bbb">点击上传</text>
+  <text x="232" y="544" font-size="9" fill="#bbb">或拖放文件</text>
+  <!-- Upload annotation -->
+  <text x="376" y="500" class="ann">上传至 MinIO</text>
+  <text x="376" y="512" class="ann">自动压缩（Thumbnailator）</text>
+  <text x="376" y="524" class="ann">POST /upload/upload</text>
+
+  <!-- Rich Text Editor -->
+  <text x="200" y="586" class="label">正文 *</text>
+  <text x="248" y="586" font-size="10" fill="#999">（最多 15000 字）</text>
+  <!-- Editor toolbar -->
+  <rect x="200" y="594" width="800" height="32" rx="6 6 0 0" fill="#fafafa" stroke="#ddd" stroke-width="1"/>
+  <text x="216" y="615" font-size="12" font-weight="bold" fill="#666">B</text>
+  <text x="240" y="615" font-size="12" font-style="italic" fill="#666">I</text>
+  <text x="260" y="615" font-size="12" fill="#666">H1</text>
+  <text x="286" y="615" font-size="12" fill="#666">H2</text>
+  <text x="312" y="615" font-size="12" fill="#666">引</text>
+  <text x="336" y="615" font-size="12" fill="#666">代码</text>
+  <text x="366" y="615" font-size="12" fill="#666">链接</text>
+  <text x="396" y="615" font-size="12" fill="#666">图片</text>
+  <text x="428" y="615" font-size="12" fill="#666">列表</text>
+  <line x1="460" y1="600" x2="460" y2="620" stroke="#ddd" stroke-width="0.5"/>
+  <text x="472" y="615" font-size="11" fill="#999">Markdown</text>
+  <!-- Separators -->
+  <line x1="228" y1="600" x2="228" y2="620" stroke="#eee" stroke-width="0.5"/>
+  <line x1="250" y1="600" x2="250" y2="620" stroke="#eee" stroke-width="0.5"/>
+  <line x1="276" y1="600" x2="276" y2="620" stroke="#eee" stroke-width="0.5"/>
+  <line x1="302" y1="600" x2="302" y2="620" stroke="#eee" stroke-width="0.5"/>
+  <line x1="326" y1="600" x2="326" y2="620" stroke="#eee" stroke-width="0.5"/>
+  <line x1="356" y1="600" x2="356" y2="620" stroke="#eee" stroke-width="0.5"/>
+  <line x1="388" y1="600" x2="388" y2="620" stroke="#eee" stroke-width="0.5"/>
+  <line x1="420" y1="600" x2="420" y2="620" stroke="#eee" stroke-width="0.5"/>
+
+  <!-- Editor body -->
+  <rect x="200" y="626" width="800" height="140" rx="0 0 6 6" fill="none" stroke="#ddd" stroke-width="1"/>
+  <text x="216" y="654" class="placeholder">开始写作...</text>
+  <text x="216" y="676" font-size="11" fill="#ddd">支持 Markdown 语法 / 粘贴图片自动上传 / 代码块高亮</text>
+  <!-- Editor annotation -->
+  <text x="216" y="748" class="ann">正文图片上传走 PostImage 关联表</text>
+  <text x="216" y="760" class="ann">图片状态: 0=临时 → 发布后变 1=使用中</text>
+
+  <!-- Bottom bar -->
+  <text x="960" y="758" class="meta" text-anchor="end">字数: 0 / 15000</text>
+
+  <!-- ==================== GLOBAL ANNOTATIONS ==================== -->
+  <rect x="16" y="68" width="130" height="260" rx="6" fill="none" stroke="#c0392b" stroke-width="0.8" stroke-dasharray="3,3"/>
+  <text x="24" y="88" class="ann" font-weight="bold">发帖页设计说明</text>
+  <text x="24" y="106" class="ann">居中单栏编辑器</text>
+  <text x="24" y="122" class="ann">沉浸式写作体验</text>
+  <text x="24" y="142" class="ann">必填: 标题+分区+正文</text>
+  <text x="24" y="158" class="ann">可选: 摘要+封面+标签</text>
+  <text x="24" y="178" class="ann">顶部双按钮:</text>
+  <text x="24" y="194" class="ann">  [存草稿] → status=0</text>
+  <text x="24" y="210" class="ann">  [发布] → status=1/2</text>
+  <text x="24" y="230" class="ann">对应后端接口:</text>
+  <text x="24" y="246" class="ann">POST /api/posts</text>
+  <text x="24" y="262" class="ann">CreatePostDTO</text>
+  <text x="24" y="282" class="ann">编辑模式复用此页</text>
+  <text x="24" y="298" class="ann">PATCH /api/posts/{id}</text>
+  <text x="24" y="318" class="ann">Ctrl+S 快捷保存草稿</text>
+
+  <text x="600" y="790" font-size="10" fill="#ccc" text-anchor="middle">发帖页 | TechHub 轻量技术创作社区 V1</text>
+</svg>
