@@ -1,57 +1,56 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/views/HomeView.vue'
+import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/', //重定向到首页
-      name: 'home',
-      component: HomeView,//一开始就加载 组件
-    },
-    {
-      path: '/posts',  //当用户访问 /posts 时，加载 PostsView 组件
-      name: 'posts',
-      component: () => import('../views/PostListView.vue'),//用懒加载引入
-    },
-    {
-      path: '/about',
-      name: 'about',
-      component: () => import('../views/AboutView.vue'),
+      path: '/',
+      component: () => import('@/layouts/MainLayout.vue'),
+      children: [
+        { path: '', name: 'home', component: () => import('@/views/HomeView.vue') },
+        { path: 'posts/:id', name: 'post-detail', component: () => import('@/views/PostDetailView.vue') },
+        { path: 'create-post', name: 'create-post', component: () => import('@/views/PostCreateView.vue'), meta: { requiresAuth: true } },
+        { path: 'edit-post/:id', name: 'edit-post', component: () => import('@/views/PostEditView.vue'), meta: { requiresAuth: true } },
+        { path: 'me', name: 'personal-center', component: () => import('@/views/PersonalCenterView.vue'), meta: { requiresAuth: true } },
+        { path: 'users/:id', name: 'user-profile', component: () => import('@/views/UserProfileView.vue') },
+      ],
     },
     {
       path: '/login',
-      name: 'login',
-      component: () => import('../views/LoginView.vue'),
+      component: () => import('@/layouts/BlankLayout.vue'),
+      children: [
+        { path: '', name: 'login', component: () => import('@/views/LoginView.vue') },
+      ],
     },
     {
-      path: '/create-post',
-      name: 'create-post',
-      component: () => import('../views/PostCreateView.vue'),
+      path: '/admin',
+      component: () => import('@/layouts/AdminLayout.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true },
+      children: [
+        { path: '', name: 'admin-dashboard', component: () => import('@/views/admin/DashboardView.vue') },
+        { path: 'categories', name: 'admin-categories', component: () => import('@/views/admin/CategoryManageView.vue') },
+        { path: 'users', name: 'admin-users', component: () => import('@/views/admin/UserManageView.vue') },
+        { path: 'posts', name: 'admin-posts', component: () => import('@/views/admin/PostReviewView.vue') },
+      ],
     },
-    {
-      path: '/posts/:id', //动态路由
-      name: 'post-detail',
-      component: () => import('../views/PostDetailView.vue'),
-    }
   ],
 })
 
-import {useAuthStore} from '@/stores/auth';
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore()
 
-// 全局前置守卫
-router.beforeEach((to,from,next) => {
-  const authStore = useAuthStore();
-
-  const requiresAuth = ['/create-post']; // 需要认证的路由列表
-
-  if(requiresAuth.includes(to.name) && !authStore.isAuthenticated) {
-    // 如果访问需要认证页面且用户未认证，重定向到登录页面
-    next({ name: 'login' });
-  }else{
-    next(); // 直接next()放行路由
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    next({ name: 'login', query: { redirect: to.fullPath } })
+    return
   }
 
+  if (to.meta.requiresAdmin && !authStore.isAdmin) {
+    next({ name: 'home' })
+    return
+  }
+
+  next()
 })
 
 export default router

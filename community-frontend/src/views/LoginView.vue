@@ -1,203 +1,191 @@
 <template>
-  <div class="login-view">
-    <div>
-      <h1>欢迎回来</h1>
-      <p>登录账号，开始新的旅程</p>
-    </div>
-    <div>
-      <label for="usernameOrEmailInput">账号名/邮箱</label>
-      <input
-        ref="usernameOrEmailInput"
-        v-model="usernameOrEmail"
-        id="usernameOrEmailInput"
-        type="text"
-        placeholder="请输入账号名/邮箱"
-      />
-    </div>
-    <div>
-      <div class="password-header">
-        <label for="passwordInput">密码</label>
-        <a href="#">
-          <small>忘记密码？</small>
-        </a>
-      </div>
-      <input
-        ref="passwordInput"
-        v-model="password"
-        id="passwordInput"
-        type="password"
-        placeholder="请输入密码"
-      />
-    </div>
-    <div>
-      <button @click="handleLogin" id="loginButton" type="submit" data-loading-text="正在提交...">
-        登录
-      </button>
+  <div class="login-page">
+    <div class="login-card">
+      <h2 class="login-title">TechForum</h2>
+      <p class="login-subtitle">技术社区 · 分享与成长</p>
+
+      <el-tabs v-model="activeTab" class="login-tabs">
+        <!-- 登录 Tab -->
+        <el-tab-pane label="登录" name="login">
+          <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" @submit.prevent="handleLogin">
+            <el-form-item prop="usernameOrEmail">
+              <el-input v-model="loginForm.usernameOrEmail" placeholder="用户名或邮箱" prefix-icon="User" size="large" />
+            </el-form-item>
+            <el-form-item prop="password">
+              <el-input v-model="loginForm.password" type="password" placeholder="密码" prefix-icon="Lock" size="large" show-password />
+            </el-form-item>
+            <el-button type="primary" size="large" style="width: 100%" :loading="loginLoading" @click="handleLogin">
+              登 录
+            </el-button>
+          </el-form>
+        </el-tab-pane>
+
+        <!-- 注册 Tab -->
+        <el-tab-pane label="注册" name="register">
+          <el-form ref="registerFormRef" :model="registerForm" :rules="registerRules" @submit.prevent="handleRegister">
+            <el-form-item prop="username">
+              <el-input v-model="registerForm.username" placeholder="用户名" prefix-icon="User" size="large" />
+            </el-form-item>
+            <el-form-item prop="email">
+              <el-input v-model="registerForm.email" placeholder="邮箱" prefix-icon="Message" size="large" />
+            </el-form-item>
+            <el-form-item prop="verCode">
+              <div class="code-row">
+                <el-input v-model="registerForm.verCode" placeholder="验证码" size="large" />
+                <el-button size="large" :disabled="codeCooldown > 0" @click="handleSendCode">
+                  {{ codeCooldown > 0 ? `${codeCooldown}s` : '发送验证码' }}
+                </el-button>
+              </div>
+            </el-form-item>
+            <el-form-item prop="password">
+              <el-input v-model="registerForm.password" type="password" placeholder="密码 (至少6位)" prefix-icon="Lock" size="large" show-password />
+            </el-form-item>
+            <el-form-item prop="confirmPassword">
+              <el-input v-model="registerForm.confirmPassword" type="password" placeholder="确认密码" prefix-icon="Lock" size="large" show-password />
+            </el-form-item>
+            <el-button type="primary" size="large" style="width: 100%" :loading="registerLoading" @click="handleRegister">
+              注 册
+            </el-button>
+          </el-form>
+        </el-tab-pane>
+      </el-tabs>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useAuthStore } from '@/stores/auth.js'
+import { ref, reactive } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import { registerApi, sendRegisterCodeApi } from '@/api/auth'
+import { useRouter, useRoute } from 'vue-router'
+import { ElMessage } from 'element-plus'
 
-const usernameOrEmail = ref('')
-const password = ref('')
-
-const usernameOrEmailInput = ref(null)
-const passwordInput = ref(null)
-
-//获取userAuthStore实例
+const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
 
+const activeTab = ref('login')
+const loginLoading = ref(false)
+const registerLoading = ref(false)
+const codeCooldown = ref(0)
+
+const loginFormRef = ref()
+const registerFormRef = ref()
+
+const loginForm = reactive({ usernameOrEmail: '', password: '' })
+const registerForm = reactive({ username: '', email: '', verCode: '', password: '', confirmPassword: '' })
+
+const loginRules = {
+  usernameOrEmail: [{ required: true, message: '请输入用户名或邮箱', trigger: 'blur' }],
+  password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+}
+
+const registerRules = {
+  username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+  email: [
+    { required: true, message: '请输入邮箱', trigger: 'blur' },
+    { type: 'email', message: '邮箱格式不正确', trigger: 'blur' },
+  ],
+  verCode: [{ required: true, message: '请输入验证码', trigger: 'blur' }],
+  password: [
+    { required: true, message: '请输入密码', trigger: 'blur' },
+    { min: 6, message: '密码至少6位', trigger: 'blur' },
+  ],
+  confirmPassword: [
+    { required: true, message: '请确认密码', trigger: 'blur' },
+    {
+      validator: (rule, value, callback) => {
+        if (value !== registerForm.password) callback(new Error('两次密码不一致'))
+        else callback()
+      },
+      trigger: 'blur',
+    },
+  ],
+}
+
 async function handleLogin() {
-  console.log('handleLogin到的数据:', {
-    usernameOrEmail: usernameOrEmail.value,
-    password: password.value,
-  })
-  // 之后会写API调用
-
-  //基础校验
-  if (!usernameOrEmail.value) {
-    alert('请填写账号名/邮箱')
-    usernameOrEmailInput.value.focus()
-    return
-  }
-  if (!password.value) {
-    alert('请填写密码')
-    passwordInput.value.focus()
-    return
-  }
-
+  await loginFormRef.value.validate()
+  loginLoading.value = true
   try {
-    await authStore.login(usernameOrEmail.value, password.value)
-  } catch (error) {
-    console.error('请求出错', error)
-    const errorMessage = error.response?.data?.message || '服务器开小差了，稍后重试' //开小差就是返回结构异常或者空白
-    alert('登录出错：' + errorMessage)
+    await authStore.login(loginForm.usernameOrEmail, loginForm.password)
+    const redirect = route.query.redirect || '/'
+    router.push(redirect)
+  } catch (e) {
+    // error handled in store/interceptor
+  } finally {
+    loginLoading.value = false
+  }
+}
+
+async function handleRegister() {
+  await registerFormRef.value.validate()
+  registerLoading.value = true
+  try {
+    await registerApi(registerForm)
+    ElMessage.success('注册成功，请登录')
+    activeTab.value = 'login'
+    loginForm.usernameOrEmail = registerForm.username
+  } catch (e) {
+    // error handled in interceptor
+  } finally {
+    registerLoading.value = false
+  }
+}
+
+async function handleSendCode() {
+  if (!registerForm.email) {
+    ElMessage.warning('请先输入邮箱')
+    return
+  }
+  try {
+    await sendRegisterCodeApi(registerForm.email)
+    ElMessage.success('验证码已发送')
+    codeCooldown.value = 60
+    const timer = setInterval(() => {
+      codeCooldown.value--
+      if (codeCooldown.value <= 0) clearInterval(timer)
+    }, 1000)
+  } catch (e) {
+    // handled in interceptor
   }
 }
 </script>
 
 <style scoped>
-/* 将样式应用到整个组件的根元素 */
-.login-view {
-  max-width: 420px; /* 稍微加宽一点 */
-  margin: 50px auto;
-  padding: 2.5rem; /* 增加内边距，让内容有更多呼吸空间 */
-  background: #ffffff;
-  border-radius: 16px; /* 更大的圆角 */
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); /* 更柔和、更弥散的阴影 */
-  display: flex; /* 使用 Flexbox 布局 */
-  flex-direction: column; /* 设置为主轴为垂直方向 */
-  gap: 1.5rem; /* 设置 flex 子项之间的间距，替代 margin-bottom */
+.login-page {
+  width: 100%;
 }
 
-/* 优化标题和描述文本 */
-.login-view h1 {
-  font-size: 2rem;
+.login-card {
+  width: 420px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+.login-title {
+  text-align: center;
+  font-size: 28px;
   font-weight: 700;
-  color: #333;
+  color: #303133;
+  margin-bottom: 4px;
+}
+
+.login-subtitle {
   text-align: center;
-  margin-bottom: 0.5rem;
+  color: #909399;
+  margin-bottom: 24px;
+  font-size: 14px;
 }
 
-.login-view p {
-  text-align: center;
-  color: #666;
-  margin-bottom: 1rem;
-}
-
-/* 优化表单组的 div 容器 */
-.login-view > div {
-  margin-bottom: 0; /* 由于使用了 gap，不再需要 margin-bottom */
-}
-
-.login-view label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600; /* 字体稍粗 */
-  color: #555;
-}
-
-/* 优化输入框样式 */
-.login-view input {
-  width: 100%;
-  padding: 0.8rem 1rem;
-  border: 1px solid #ddd;
-  border-radius: 8px; /* 圆角与容器协调 */
-  font-size: 1rem;
-  background-color: #f9f9f9;
-  /*
-    transition: all 0.3s ease;
-    解释: transition 是一个 CSS 属性，用于创建平滑的过渡效果。
-    - all: 表示所有可动画的属性（如 border-color, box-shadow）都将应用过渡效果。
-    - 0.3s: 表示过渡的持续时间为 0.3 秒。
-    - ease: 是一种缓动函数（easing function），表示过渡效果开始慢，中间快，结束时又变慢，模仿真实世界的物理效果。
-  */
-  transition: all 0.3s ease;
-}
-
-/*
-  :focus 伪类 (pseudo-class)
-  解释: 当用户点击或通过 Tab 键导航到某个元素（如 <input>）时，该元素就处于 :focus 状态。
-  我们可以为这个状态定义特定的样式，以提供视觉反馈。
-*/
-.login-view input:focus {
-  outline: none; /* 移除浏览器默认的蓝色或橙色轮廓 */
-  border-color: hsla(160, 100%, 37%, 1); /* 将边框颜色变为主题色 */
-  box-shadow: 0 0 0 3px hsla(160, 100%, 37%, 0.2); /* 添加一个柔和的发光效果 */
-  background-color: #fff;
-}
-
-/* 密码输入框头部的布局 */
-.password-header {
+.code-row {
   display: flex;
-  justify-content: space-between; /* 两端对齐 */
-  align-items: center; /* 垂直居中 */
-}
-
-.password-header a {
-  color: hsla(160, 100%, 37%, 1);
-  text-decoration: none;
-  font-size: 0.9rem;
-}
-
-.password-header a:hover {
-  text-decoration: underline;
-}
-
-/* 优化按钮样式 */
-.login-view button {
+  gap: 8px;
   width: 100%;
-  padding: 0.8rem 1rem;
-  border: none;
-  border-radius: 8px;
-  background-color: hsla(160, 100%, 37%, 1);
-  color: white;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 0.5rem; /* 给按钮顶部增加一点空间 */
 }
 
-/*
-  :hover 伪类
-  解释: 当鼠标指针悬停在元素上时，该元素处于 :hover 状态。
-*/
-.login-view button:hover {
-  background-color: hsla(160, 100%, 30%, 1); /* 悬停时颜色变深 */
-  transform: translateY(-2px); /* 向上移动2像素，产生轻微的浮动感 */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-/*
-  :active 伪类
-  解释: 当用户点击元素（鼠标按下但还未松开）时，该元素处于 :active 状态。
-*/
-.login-view button:active {
-  transform: translateY(0); /* 按下时恢复原位 */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* 阴影变小，产生被按下的感觉 */
+.code-row .el-input {
+  flex: 1;
 }
 </style>
